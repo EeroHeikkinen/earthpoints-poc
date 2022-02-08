@@ -1,4 +1,4 @@
-export class Achievement {
+export class PointEvent {
     facebookId: number;
     email: string;
     points: number;

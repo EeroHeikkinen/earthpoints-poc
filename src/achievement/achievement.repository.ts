@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { mapping } from 'cassandra-driver';
-import { Achievement } from './achievement.model';
+import { PointEvent } from './point-event.model';
 import { CassandraService } from 'src/cassandra/cassandra.service';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class AchievementRepository implements OnModuleInit {
 
     constructor(private cassandraService: CassandraService) { }
 
-    achievementMapper: mapping.ModelMapper<Achievement>;
+    achievementMapper: mapping.ModelMapper<PointEvent>;
 
     onModuleInit() {
         const mappingOptions: mapping.MappingOptions = {
@@ -23,7 +23,7 @@ export class AchievementRepository implements OnModuleInit {
         this.achievementMapper = this.cassandraService.createMapper(mappingOptions).forModel('Achievement');
     }
 
-    async addAchievement(achievement: Achievement) {
+    async addAchievement(achievement: PointEvent) {
         return (await this.achievementMapper.insert(achievement)).toArray();
     }
 

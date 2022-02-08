@@ -9,15 +9,21 @@ dotenv.config();
 
 @Injectable()
 export class FacebookService {
-    private token: string = process.env.FACEBOOK_ACCESS_TOKEN
+    //private token: string = process.env.FACEBOOK_ACCESS_TOKEN
     private apiUrl: string = 'https://graph.facebook.com/v12.0'
 
     constructor(
         private httpService: HttpService,
     ) {}
 
-    async getQuery(query) {
-        const source$ = this.httpService.get(this.apiUrl + '/' + query + '?access_token=' + this.token)
+    async getQuery(authToken, query) {
+        if(!query.includes('?')) {
+            query += '?';
+        } else {
+            query += '&'
+        }
+        query += 'access_token=' + authToken;
+        const source$ = this.httpService.get(this.apiUrl + '/' + query)
         return await lastValueFrom(source$)
     }
 
@@ -26,8 +32,8 @@ export class FacebookService {
         return await lastValueFrom(source$)
     }
 
-    async getFeed(facebookId) {
-        var dataBuffer = await this.getQuery(facebookId + '/feed');
+    async getFeed(authToken, facebookId) {
+        var dataBuffer = await this.getQuery(authToken, facebookId + '/feed?fields=status_type,message,description');
         if (!dataBuffer.data) {
             return null;
         }
