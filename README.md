@@ -45,6 +45,8 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+after that goto https://localhost:3000 (It needs to be secure(https))
+
 ## Test
 
 ```bash

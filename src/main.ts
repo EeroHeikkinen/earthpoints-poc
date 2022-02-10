@@ -16,8 +16,8 @@ dotenv.config();
 
 async function bootstrap() {
   const fs = require('fs');
-  const keyFile  = fs.readFileSync('/Users/eero/.ssh/localhost.key');
-  const certFile = fs.readFileSync('/Users/eero/.ssh/localhost.crt');
+  const keyFile  = fs.readFileSync(process.env.NEST_APP_KEY_PATH);
+  const certFile = fs.readFileSync(process.env.NEST_APP_CERT_PATH);
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     httpsOptions: {

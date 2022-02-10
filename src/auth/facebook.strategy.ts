@@ -18,8 +18,8 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     private jwtStrategy: JwtStrategy
     ) {
     super({
-      clientID: process.env.APP_ID,
-      clientSecret: process.env.APP_SECRET,
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: 'https://localhost:3000/facebook/redirect',
       scope: ['email', 
       'user_likes',
