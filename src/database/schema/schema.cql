@@ -1,3 +1,9 @@
+CREATE KEYSPACE IF NOT EXISTS earthpoints
+  WITH REPLICATION = {
+   'class' : 'SimpleStrategy',
+   'replication_factor' : 1
+  };
+
 CREATE TABLE earthpoints.user (
    userid uuid PRIMARY KEY,
    first_name varchar
