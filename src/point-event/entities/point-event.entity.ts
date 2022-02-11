@@ -4,18 +4,9 @@ export class PointEvent {
     isBurn: boolean;
     points: number;
     message: string;
+    verb?: string;
+    platform?: string;
     icon?: string;
     timestamp: Date;
     metadata: Map<string, string>;
 }
-
-// export class PointEvent {
-//     hash: string;
-//     userid: string;
-//     isBurn: boolean;
-//     message: string;
-//     icon?: string;
-//     points: number;
-//     timestamp: Date;
-//     metadata: Map<string, string>
-// }

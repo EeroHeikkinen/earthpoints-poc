@@ -33,7 +33,7 @@ export class FacebookService {
     }
 
     async getFeed(authToken, facebookId) {
-        var dataBuffer = await this.getQuery(authToken, facebookId + '/feed?fields=status_type,message,description');
+        var dataBuffer = await this.getQuery(authToken, facebookId + '/feed?fields=status_type,message,description,created_time');
         if (!dataBuffer.data) {
             return null;
         }

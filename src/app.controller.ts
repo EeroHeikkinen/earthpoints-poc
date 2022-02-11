@@ -37,6 +37,7 @@ export class AppController {
     for(let event of events) {
       const formattedEvent = event as any
       formattedEvent.formattedTimestamp = Utils.getFormattedDate(event.timestamp); 
+      formattedEvent.platform = event.platform[0].toUpperCase() + event.platform.slice(1);
       formattedEvents.push(formattedEvent)
     }
 
