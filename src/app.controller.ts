@@ -85,7 +85,7 @@ export class AppController {
 
   @Get('/facebook/redirect') 
   @UseGuards(AuthGuard('facebook'))
-  @Redirect('https://localhost:3000')
+  @Redirect('/')
   async facebookLoginRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
     console.log(req.cookies)
     var user:User = req.user as User; 
@@ -103,7 +103,7 @@ export class AppController {
   }
 
   @Get('/logout') 
-  @Redirect('https://localhost:3000')
+  @Redirect('/')
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
     res.cookie('auth-cookie', '', {httpOnly:true,});
 
@@ -112,7 +112,7 @@ export class AppController {
 
   @Get('/instagram/redirect') 
   @UseGuards(AuthGuard('instagram'))
-  @Redirect('https://localhost:3000')
+  @Redirect('/')
   async instagramLoginRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
     console.log(req.cookies)
     var user:User = req.user as User; 
@@ -131,7 +131,7 @@ export class AppController {
 
   @Get('/twitter/redirect') 
   @UseGuards(AuthGuard('twitter'))
-  @Redirect('https://localhost:3000')
+  @Redirect('/')
   async twitterLoginRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
     console.log(req.cookies)
     var user:User = req.user as User; 
