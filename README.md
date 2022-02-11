@@ -34,16 +34,23 @@ $ npm install
 
 ## Running the app
 
-```bash
-# development
-$ npm run start
+first make sure you have completed .env file from .env.template
 
-# watch mode
+```bash
+
+# development locally
+
+$ docker-compose up cassandra
 $ npm run start:dev
 
+# watch mode
+$ docker-compose up cassandra dev 
+
 # production mode
-$ npm run start:prod
+$ docker-compose up cassandra prod 
 ```
+
+after that goto https://localhost:3000 (It needs to be secure(https))
 
 ## Test
 
