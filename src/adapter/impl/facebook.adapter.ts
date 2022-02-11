@@ -18,6 +18,9 @@ export class FacebookAdapter implements IPlatformAdapter {
 
         for(var i in feedContent) {
             const item = feedContent[i];
+            if(item.created_time) {
+                item.timestamp = new Date(item.created_time)
+            }
             await this.ruleService.trigger('user.published', { 'userid': userid, 'platform': 'facebook', message: item.message, data: item } );
             await this.processFeedItem(item, userid);
         }  

@@ -29,7 +29,7 @@ export class DemoSaveSoilRule implements IPointRule {
                     verb: 'posted',
                     platform: item.platform,
                     points: parseInt(process.env.REWARD_POINTS),
-                    timestamp: new Date(),
+                    timestamp: item.data.timestamp,
                     message: process.env.REWARD_MESSAGE,
                     metadata: new Map<string, string>()
                 }
