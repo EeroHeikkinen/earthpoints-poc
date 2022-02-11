@@ -17,8 +17,7 @@ export class InstagramStrategy extends PassportStrategy(Strategy, 'instagram') {
     super({
       clientId: process.env.INSTAGRAM_APP_ID,
       clientSecret: process.env.INSTAGRAM_APP_SECRET,
-      // TODO setup https for this
-      callbackUrl: 'https://localhost:3000/instagram/redirect',
+      callbackUrl: process.env.INSTAGRAM_CALLBACK_URL,
       scope: ['user_profile','user_media'],
       scopeSeparator: ','
     });
