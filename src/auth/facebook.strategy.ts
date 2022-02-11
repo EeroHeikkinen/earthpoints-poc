@@ -20,7 +20,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     super({
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: 'https://localhost:3000/facebook/redirect',
+      callbackURL: process.env.FACEBOOK_CALLBACK_URL,
       scope: ['email', 
       'user_likes',
       'user_link',

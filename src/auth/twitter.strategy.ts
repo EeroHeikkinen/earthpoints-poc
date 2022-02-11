@@ -13,7 +13,7 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
     super({
       consumerKey: process.env.TWITTER_KEY,
       consumerSecret: process.env.TWITTER_SECRET,
-      callbackURL: 'https://localhost:3000/twitter/redirect',
+      callbackURL: process.env.TWITTER_CALLBACK_URL,
     });
   }
 

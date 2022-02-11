@@ -29,8 +29,14 @@
 ## Installation
 
 ```bash
-$ npm install # to install local
-$ docker-compose build --no-cache # to install on docker
+# to install local
+$ npm install 
+
+# to install on docker
+$ docker-compose build --no-cache 
+
+# to init DB
+$ docker exec -i earthpoints-poc-cassandra-1 cqlsh < src/database/schema/schema.cql
 ```
 
 ## Running the app
