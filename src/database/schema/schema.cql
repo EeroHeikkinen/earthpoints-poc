@@ -1,4 +1,4 @@
-CREATE TABLE earthpints.user (
+CREATE TABLE earthpoints.user (
    userid uuid PRIMARY KEY,
    first_name varchar
 );
