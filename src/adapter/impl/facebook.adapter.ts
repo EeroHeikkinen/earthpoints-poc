@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { emit } from 'process';
 import { FacebookService } from 'src/facebook/facebook.service';
-import { PointEvent } from '../../achievement/point-event.model';
-import { AchievementRepository } from '../../achievement/achievement.repository';
 import { RuleService } from 'src/rule/rule.service';
 import { IPlatformAdapter } from 'src/interfaces/platform-adapter.interface';
 import { SocialCredential } from 'src/social-credential/entities/social-credential.entity';
@@ -16,19 +14,20 @@ export class FacebookAdapter implements IPlatformAdapter {
 
     async syncUser(credential: SocialCredential) {
         const feedContent = await this.facebookService.getFeed(credential.authToken, credential.profileId);
+        const userid = credential.userid;
 
         for(var i in feedContent) {
             const item = feedContent[i];
-            await this.ruleService.trigger('user.published', { 'platform': 'facebook', message: item.message, data: item } );
-            await this.processFeedItem(item);
+            await this.ruleService.trigger('user.published', { 'userid': userid, 'platform': 'facebook', message: item.message, data: item } );
+            await this.processFeedItem(item, userid);
         }  
     }  
 
-    private async processFeedItem(item) {
+    private async processFeedItem(item, userid) {
         if(item.status_type == 'shared_story') {
-            await this.ruleService.trigger('user.published.share', { 'platform': 'facebook', message: item.message, data: item })
+            await this.ruleService.trigger('user.published.share', {  'userid': userid, 'platform': 'facebook', message: item.message, data: item })
         } else {
-            await this.ruleService.trigger('user.published.post', { 'platform': 'facebook', message: item.message, data: item })
+            await this.ruleService.trigger('user.published.post', {  'userid': userid, 'platform': 'facebook', message: item.message, data: item })
         }
     }
 }
