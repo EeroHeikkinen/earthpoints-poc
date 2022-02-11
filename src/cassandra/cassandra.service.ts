@@ -7,10 +7,10 @@ export class CassandraService {
     mapper: mapping.Mapper;
     private createClient() {
         this.client = new Client({
-            contactPoints: ['0.0.0.0'],
-            keyspace: 'earthpoints',
-            localDataCenter: 'datacenter1',
-            authProvider: new auth.PlainTextAuthProvider('cassandra', 'cassandra')
+            contactPoints: [process.env.CASSANDRA_CONTACT_POINTS],
+            keyspace: process.env.CASSANDRA_KEYSPACE,
+            localDataCenter: process.env.CASSANDRA_LOCAL_DATA_CENTER,
+            authProvider: new auth.PlainTextAuthProvider(process.env.CASSANDRA_USERNAME, process.env.CASSANDRA_PASSWORD)
         });
     }
     
