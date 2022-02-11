@@ -11,9 +11,13 @@ import { TemplateModule } from './template/template.module';
 import { AdapterModule } from './adapter/adapter.module';
 import { SocialCredentialModule } from './social-credential/social-credential.module';
 import { PointEventModule } from './point-event/point-event.module';
-
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'static'),
+    }),
     AuthModule,
     CassandraModule,
     FacebookModule,

@@ -1,0 +1,67 @@
+html {
+  scroll-behavior: smooth; }
+
+#intro {
+  background: url("../img/panorama-3094696_1920.jpg") no-repeat center center;
+  background-size: cover; }
+
+.top-nav-collapse {
+  background-color: white !important; 
+color: #72b73b!important}
+
+.navbar:not(.top-nav-collapse) {
+  color: #72b73b !important; 
+background-color: white !important; }
+
+@media (max-width: 768px) {
+  .navbar:not(.top-nav-collapse) {
+    background: white !important; color: #72b73b !important; } }
+
+    .navbar-dark .navbar-brand {
+      color: #fff;
+      }
+
+#intro .h6 {
+  font-weight: 300;
+  line-height: 1.7; }
+
+.site-bg-img {
+  height: 100vh;
+  min-height: 480px;
+  max-height: 1080px; }
+
+.hm-gradient .site-bg-img {
+  background: rgba(42, 27, 161, 0.7);
+  background: linear-gradient(45deg, rgba(42, 27, 161, 0.7), rgba(29, 210, 177, 0.7) 100%); }
+
+@media (max-width: 450px) {
+  .margins {
+    margin-right: 1rem;
+    margin-left: 1rem; } }
+
+
+    .btn-primary {
+      background-color: #72b73b !important;
+    }
+
+#pricing .lead {
+  opacity: 0.7; }
+
+#pricing ul li {
+  font-size: 1.1em; }
+
+.facebook .card-image {
+    background: url("../img/fb.jpg") no-repeat center center; 
+    background-size: cover;
+  }
+
+
+.twitter .card-image {
+      background: url("../img/twitter.png") no-repeat center center; 
+      background-size: cover;
+}
+
+.instagram .card-image {
+        background: url("../img/instagram.jpeg") no-repeat center center;
+        background-size: cover
+}

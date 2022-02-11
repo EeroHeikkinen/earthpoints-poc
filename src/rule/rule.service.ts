@@ -22,7 +22,7 @@ export class RuleService {
         //console.log("Trigger: " + name + " msg: " + item.message)
         const result = await this.demoSaveSoilRule.process(name, item)
         if(result) {
-            this.pointEventService.create(result)
+            await this.pointEventService.create(result)
             console.log("MATCH!!!" + JSON.stringify(result))
         }
     }

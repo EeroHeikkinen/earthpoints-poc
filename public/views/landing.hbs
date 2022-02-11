@@ -1,44 +1,88 @@
-<!-- public/views/login.hbs -->
-<!-- public/views/profile.hbs -->
+      <div id="content">
 
-<div class="mdl-layout mdl-js-layout mdl-color--grey-100">
-  <main class="mdl-layout__content">
-      <a href="/login/facebook">
-      <div class="mdl-card mdl-shadow--6dp">
-        <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
-          <h2 class="mdl-card__title-text">Connect Facebook</h2>
-        </div>
-        <div>
-          <figure>
-          </figure>
-        </div>
-      </div>
-      </a>
-
-
-      <a href="/login/instagram">
-      <div class="mdl-card mdl-shadow--6dp">
-        <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
-          <h2 class="mdl-card__title-text">Connect Instagram</h2>
-        </div>
-        <div>
-          <figure>
-          </figure>
-        </div>
-      </div>
-      </a>
-
-    <a href="/login/twitter">
-            <div class="mdl-card mdl-shadow--6dp">
-          <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
-            <h2 class="mdl-card__title-text">Connect Twitter</h2>
+      <section class="text-center py-5 grey lighten-4" id="about">
+        <div class="container">
+          <div class="wow fadeIn">
+            <h2 class="h1 pt-5 pb-3">Welcome to Earth Points Dashboard Demo!</h2>
+            <p class="px-5 mb-5 pb-3 lead blue-grey-text">
+              The Earth Point Dashboard helps keep track of your efforts and allows you to earn points & spend them in various ways.
+            </p>
           </div>
-          <div>
-            <figure>
-            </figure>
+          <div class="row">
+            <div class="col-md-4 mb-5 wow fadeInUp" data-wow-delay=".3s">
+              <img class="img-fluid rounded z-depth-2" src="img/step1.png" alt="project image"/>
+              <h3 class="h4 mt-3">Step 1</h3>
+              <p class="mt-3 blue-grey-text">
+                Connect your social media
+              </p>
+            </div>
+            <div class="col-md-4 mb-5 wow fadeInUp" data-wow-delay=".4s"><img class="img-fluid rounded z-depth-2" src="img/step2.png" alt="project image"/>
+              <h3 class="h4 mt-3">Step 2</h3>
+              <p class="mt-3 blue-grey-text">
+                Earn points by doing various tasks
+              </p>
+            </div>
+            <div class="col-md-4 mb-5 wow fadeInUp" data-wow-delay=".5s"><img class="img-fluid rounded z-depth-2" src="img/step3.png" alt="project image"/>
+              <h3 class="h4 mt-3">Step 3</h3>
+              <p class="mt-3 blue-grey-text">
+                Redeem points. Plant a tree, get vouchers...
+              </p>
+            </div>
           </div>
         </div>
-      </a>
+      </section>
 
+<section class="text-center py-5" id="pricing">
+  <div class="container">
+    <div class="wow fadeIn">
+      <h2 class="h1 pt-5 pb-3">Login or connect:</h2>
+    </div>
+    <div class="row wow zoomIn">
+      <div class="col-lg-4 col-md-12 mb-5 facebook">
+        <div class="card card-image">
+          <div class="text-white text-center pricing-card d-flex align-items-center rgba-stylish-strong py-3 px-3 rounded">
+            <div class="card-body">
+              <div class="py-5"><span class="display-4">Facebook</span></div>
+              <a class="btn btn-outline-white mt-5" href="/login/facebook">Connect</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-12 mb-5 twitter">
+        <div class="card card-image">
+          <div class="text-white text-center pricing-card d-flex align-items-center rgba-teal-strong py-3 px-3 rounded">
+            <div class="card-body">
+              <div class="py-5"><span class="display-4">Twitter</span></div>
+              <a class="btn btn-outline-white mt-5" href="/login/twitter">Connect</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-12 mb-5 instagram">
+        <div class="card card-image">
+          <div class="text-white text-center pricing-card d-flex align-items-center rgba-red-strong py-3 px-3 rounded">
+            <div class="card-body">
+              <div class="py-5"><span class="display-4">Instagram</span></div>
+              <a class="btn btn-outline-white mt-5" href="/login/instagram">Connect</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  </main>
+<section id="contact" style="background-image:url('img/join-the-movement-bg.webp')">
+  <div class="py-5">
+    <div class="container">
+      <div class="wow fadeIn">
+        <h2 class="h1 pt-5 pb-3 text-center">About Conscious Planet</h2>
+        <p class="px-5 mb-5 pb-3 lead text-center">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, error amet numquam iure provident voluptate
+          esse quasi, veritatis totam voluptas nostrum quisquam eum porro a pariatur accusamus veniam.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>

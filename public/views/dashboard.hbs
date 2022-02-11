@@ -1,26 +1,91 @@
-<!-- public/views/profile.hbs -->
-<div class="mdl-layout mdl-js-layout mdl-color--grey-100">
-  <main class="mdl-layout__content">
-    <div class="mdl-card mdl-shadow--6dp">
-      <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
-        <h2 class="mdl-card__title-text">Earth Points for {{ user.firstName }}</h2>
-      </div>
-      <div>
-        <figure>
-          <h1>{{ summedPoints }} 🌎</h1>
-        </figure>
-        <figure>
-          <ul class="achievements_list"></ul>
-            {{#each events}}
-              <li>{{this.formattedTimestamp}}: {{this.message}}<br/>{{this.points}} 🌎</li>
-            {{/each}}
-          </ul>
-        </figure>
+<div id="content">
 
-        <div class="mdl-card__actions mdl-card--border">
-          <a class="mdl-button" href='/logout'>Log Out</a>
+      <section class="py-5 grey lighten-4" id="about">
+        <div class="container">
+          <div class="pt-5 wow fadeIn text-center">
+            <h2 class="h1 pt-5 pb-3">You have <span class="display-2">{{ summedPoints }}</span> <span class="display-5"><i class="fa fa-globe fa-2x green-text"></i></span> earth points</h2>
+          </div>
+          <div class="row wow" data-wow-delay=".3s">
+      <div class="col-lg-12 pl-lg-5 pb-4">
+
+        <div class="pt-5 row wow" data-wow-delay=".3s">
+      <div class="pt-5 col-lg-12 pl-lg-5 pb-4">
+
+        {{#each events}}
+              <div class="row mb-12">
+                <div class="col-1 mr-1"><i class="fa fa-{{this.icon}} fa-2x green-text"></i></div>
+                <div class="col-6">
+                  <h5 class="font-weight-bold">You {{this.verb}} on {{this.platform}} - {{this.formattedTimestamp}}</h5>
+                  <p class="grey-text">
+                    {{this.message}}
+                  </p>
+                </div>
+                <div class="col-2"><b><span class="display-5">{{this.points}}</span></b> <span style="font-size: 12px;"><i class="fa fa-globe fa-2x green-text"></i></span></div>
+              </div>
+         {{/each}}
+      </div>
+    </div>
+      </div>
+    </div>
+        </div>
+      </section>
+
+
+<section class="text-center py-5" id="pricing">
+  <div class="container">
+    <div class="wow fadeIn">
+      <h2 class="h1 pt-5 pb-3">Earn points:</h2>
+    </div>
+    <div class="row wow zoomIn">
+      <div class="col-lg-4 col-md-12 mb-5 twitter">
+        <div class="card card-image">
+          <div class="text-white text-center pricing-card d-flex align-items-center rgba-teal-strong py-3 px-3 rounded">
+            <div class="card-body">
+              <div class="py-5"><b>Connect Twitter</b></div>
+              <div class="py-5"><b>10 <i class="fa fa-globe fa-2x green-text"></i></b></div>
+              <a class="btn btn-outline-white mt-5" href="/login/twitter">Connect</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-12 mb-5 instagram">
+        <div class="card card-image">
+          <div class="text-white text-center pricing-card d-flex align-items-center rgba-red-strong py-3 px-3 rounded">
+            <div class="card-body">
+              <div class="py-5"><b>Connect Instagram</b></div>
+              <div class="py-5"><b>10 <i class="fa fa-globe fa-2x green-text"></i></b></div>
+              <a class="btn btn-outline-white mt-5" href="/login/instagram">Connect</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-12 mb-5 facebook">
+        <div class="card card-image">
+          <div class="text-white text-center pricing-card d-flex align-items-center rgba-blue-strong py-3 px-3 rounded">
+            <div class="card-body">
+              <div class="py-5"><b>Share today's post</b></div>
+              <div class="py-5"><b>15 <i class="fa fa-globe fa-2x green-text"></i></b></div>
+              <a class="btn btn-outline-white mt-5" href="/login/instagram">Share</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
+</section>
+
+
+<section id="contact" style="background-image:url('img/join-the-movement-bg.webp')">
+  <div class="py-5">
+    <div class="container">
+      <div class="wow fadeIn">
+        <h2 class="h1 pt-5 pb-3 text-center">About Conscious Planet</h2>
+        <p class="px-5 mb-5 pb-3 lead text-center">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, error amet numquam iure provident voluptate
+          esse quasi, veritatis totam voluptas nostrum quisquam eum porro a pariatur accusamus veniam.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 </div>
