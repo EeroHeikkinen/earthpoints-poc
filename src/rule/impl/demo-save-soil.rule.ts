@@ -8,6 +8,7 @@ import { SocialCredential } from 'src/social-credential/entities/social-credenti
 import { IPointRule } from 'src/interfaces/point-rule.interface';
 import { stringify } from 'querystring';
 import { PointEvent } from 'src/point-event/entities/point-event.entity';
+var crypto = require('crypto');
 
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -19,7 +20,9 @@ export class DemoSaveSoilRule implements IPointRule {
     async process(eventName: any, item:any): Promise<false | PointEvent> {
         if(eventName.startsWith('user.published.post')) {
             if(item.message && item.message.includes("#" + process.env.REWARD_HASHTAG)) {
-                const hash = await bcrypt.hash(item.platform + item.data.id + this.hashkey, 10);
+                var hashString = item.platform + item.data.id + this.hashkey;
+                const hash = crypto.createHash('sha256').update(hashString).digest('base64');
+
                 console.log("hash for " + item.platform + item.data.id + this.hashkey + " = "  + hash)
                 const pointEvent:PointEvent = {
                     'hash': hash,
