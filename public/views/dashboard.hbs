@@ -7,12 +7,12 @@
       </div>
       <div>
         <figure>
-          <h1>{{ earthPoints }} 🌎</h1>
+          <h1>{{ summedPoints }} 🌎</h1>
         </figure>
         <figure>
           <ul class="achievements_list"></ul>
-            {{#each achievements}}
-              <li>{{this.formattedTimestamp}}: earned {{this.points}} Earth Points from post: {{this.objectUrl}}</li>
+            {{#each events}}
+              <li>{{this.formattedTimestamp}}: {{this.message}}<br/>{{this.points}} 🌎</li>
             {{/each}}
           </ul>
         </figure>

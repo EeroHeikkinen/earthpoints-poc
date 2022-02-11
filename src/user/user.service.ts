@@ -6,11 +6,13 @@ import { SocialCredentialRepository } from 'src/social-credential/social-credent
 import { AdapterService } from 'src/adapter/adapter.service';
 import { SocialCredentialService } from 'src/social-credential/social-credential.service';
 import { UserRepository } from './user.repository';
+import { PointEventService } from 'src/point-event/point-event.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly adapterService: AdapterService,
+    private readonly pointEventService: PointEventService,
     private readonly socialCredentialService: SocialCredentialService,
     private readonly userRepository: UserRepository
     ) {}
@@ -20,7 +22,9 @@ export class UserService {
   }
 
   async findByUserId(userid: string) {
-    return await this.userRepository.get(userid);
+    const user = await this.userRepository.get(userid);
+
+    return user;
   }
 
   findOne(id: number) {
@@ -35,13 +39,13 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
-  async calculatePoints(userid) {
+  async syncPoints(userid) {
       const credentials = await this.socialCredentialService.findByUserId(userid);
-      credentials.forEach((credential) => {
+      for(const credential of credentials) {
         const adapter = this.adapterService.findOne(credential.platform);  
 
-        adapter.syncUser(credential)
-      })
+        await adapter.syncUser(credential)
+      }
       return 1;
   }
 }

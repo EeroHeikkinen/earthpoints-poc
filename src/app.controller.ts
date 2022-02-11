@@ -7,45 +7,45 @@ import { Response } from 'express';
 import { Request } from 'express';
 
 import { AuthService } from './auth/auth.service';
-import { AchievementService } from './achievement/achievement.service';
 
 import Utils from 'src/utils';
 import { UserService } from './user/user.service';
 import { SocialCredentialService } from './social-credential/social-credential.service';
 import { User } from './user/entities/user.entity';
+import { PointEventService } from './point-event/point-event.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly socialCredentialService: SocialCredentialService, private readonly userService: UserService, private readonly authService: AuthService, private readonly achievementService: AchievementService) {}
-
-  @Get('test')
-  //@UseFilters(UnauthorizedExceptionFilter)
-  //@Render('dashboard')
-  //@UseGuards(JwtAuthGuard)
-  async test(@Req() req): Promise<any> {
-    return this.userService.calculatePoints('00000000-0000-0000-0000-000000000000');
-  }
+  constructor(
+    private readonly socialCredentialService: SocialCredentialService, 
+    private readonly userService: UserService, 
+    private readonly authService: AuthService,
+    private readonly pointEventService: PointEventService) {}
 
   @Get()
   @UseFilters(UnauthorizedExceptionFilter)
   @Render('dashboard')
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req): Promise<any> {
-    await this.userService.calculatePoints(req.user.userid);
+    const userid = req.user.userid;
 
-    //let achievements = await this.achievementService.getAchievements(req.user.facebookId)
+    await this.userService.syncPoints(userid);
 
-    /*achievements = achievements.map((item)=> {
-      item.formattedTimestamp = Utils.getFormattedDate(item.timestamp);
-      return item;
-    })*/
+    const events = await this.pointEventService.findAllForUser(userid);
 
-    //const earthPoints = await this.achievementService.getEarthPoints(req.user.facebookId)
+    const formattedEvents = []
+    for(let event of events) {
+      const formattedEvent = event as any
+      formattedEvent.formattedTimestamp = Utils.getFormattedDate(event.timestamp); 
+      formattedEvents.push(formattedEvent)
+    }
 
+    const summedPoints = events.map((event) => event.points).reduce((previous, current) => previous + current, 0)
+    
     return {
       user: req.user,
-      //achievements,
-      //earthPoints
+      summedPoints,
+      events: formattedEvents
     }
   }
 
@@ -65,6 +65,7 @@ export class AppController {
   }
 
   @Get('/login/facebook')
+  
   @UseGuards(AuthGuard('facebook'))
   async facebookLogin(): Promise<any> {
     return HttpStatus.OK;
