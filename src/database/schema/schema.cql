@@ -37,11 +37,11 @@ CREATE TABLE earthpoints.point_event (
    PRIMARY KEY (userid)
 );
 
-#CREATE TABLE computation_rule (
-#   id uuid PRIMARY KEY,
-#   profile_id string,
-#   platform varchar,
-#   auth_token varchar,
-#   auth_expiration timestamp,
-#   last_sync timestamp
-#);
+/*CREATE TABLE computation_rule (
+   id uuid PRIMARY KEY,
+   profile_id string,
+   platform varchar,
+   auth_token varchar,
+   auth_expiration timestamp,
+   last_sync timestamp
+);*/
