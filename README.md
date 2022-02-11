@@ -29,7 +29,8 @@
 ## Installation
 
 ```bash
-$ npm install
+$ npm install # to install local
+$ docker-compose build --no-cache # to install on docker
 ```
 
 ## Running the app
@@ -39,14 +40,13 @@ first make sure you have completed .env file from .env.template
 ```bash
 
 # development locally
-
 $ docker-compose up cassandra
 $ npm run start:dev
 
-# watch mode
+# watch mode on docker
 $ docker-compose up cassandra dev 
 
-# production mode
+# production mode on docker
 $ docker-compose up cassandra prod 
 ```
 
