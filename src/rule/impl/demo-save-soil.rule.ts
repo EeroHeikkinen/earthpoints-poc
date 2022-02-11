@@ -19,7 +19,7 @@ export class DemoSaveSoilRule implements IPointRule {
 
     async process(eventName: any, item:any): Promise<false | PointEvent> {
         if(eventName.startsWith('user.published.post')) {
-            if(item.message && item.message.includes("#" + process.env.REWARD_HASHTAG)) {
+            if(item.message && item.message.toLowerCase().includes("#" + process.env.REWARD_HASHTAG.toLowerCase())) {
                 var hashString = item.platform + item.data.id + this.hashkey;
                 const hash = crypto.createHash('sha256').update(hashString).digest('base64');
 
