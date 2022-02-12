@@ -22,7 +22,7 @@ export class AppController {
     private readonly authService: AuthService,
     private readonly pointEventService: PointEventService) {}
 
-  @Get()
+  @Get('/')
   @UseFilters(UnauthorizedExceptionFilter)
   @Render('dashboard')
   @UseGuards(JwtAuthGuard)
