@@ -57,7 +57,7 @@ CREATE TABLE earthpoints.point_event_by_userid (
    message varchar,
    icon varchar,
    metadata map<varchar, varchar>,
-   PRIMARY KEY (userid)
+   PRIMARY KEY (userid,hash)
 );
 
 /*CREATE TABLE computation_rule (
