@@ -34,7 +34,9 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-#secrets
-/secrets
+# secrets
+/secrets/*
+!/secrets/generatelocalcertificate.sh
+!/secrets/localhost.conf
 
 .env
