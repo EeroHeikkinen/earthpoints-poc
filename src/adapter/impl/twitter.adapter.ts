@@ -38,8 +38,10 @@ export class TwitterAdapter implements IPlatformAdapter {
        let tweets;
        try {
        tweets = await roClient.v2.userTimeline(credential.profileId, { 
-           'tweet.fields': ['created_at'],
-           //expansions: 'created_at',
+           'tweet.fields': ['created_at', 'text', 'attachments', 'author_id', 'id', 'entities'],
+           'user.fields': ['id','name','profile_image_url','url','username'],
+           'expansions': ['referenced_tweets.id', 'referenced_tweets.id.author_id', 'entities.mentions.username', 'in_reply_to_user_id', 'attachments.media_keys'],
+           'media.fields': ['preview_image_url', 'type', 'url'],
            exclude: 'replies' 
         });
        } catch(err) {
@@ -52,7 +54,19 @@ export class TwitterAdapter implements IPlatformAdapter {
             if(tweet.created_at) {
                 tweet.timestamp = new Date(tweet.created_at)
             }
-            await this.ruleService.trigger('user.published.post', {  'userid': userid, 'platform': 'twitter', message: tweet.text, data: tweet })
+            if(tweet.referenced_tweets && tweet.referenced_tweets.length && tweet.referenced_tweets[0].type == 'retweeted') {
+                const referencedId = tweet.referenced_tweets[0].id;
+                let augmentedText = tweet.text;
+                for(const referencedTweet of tweets.includes.tweets) {
+                    if(referencedTweet.id == referencedId) {
+                        augmentedText += " ";
+                        augmentedText += referencedTweet.text; 
+                        await this.ruleService.trigger('user.published.share', { 'userid': userid, 'platform': 'twitter', message: augmentedText, data: tweet })
+                    }
+                }
+            } else {
+                await this.ruleService.trigger('user.published.post', {  'userid': userid, 'platform': 'twitter', message: tweet.text, data: tweet })
+            }
         }  
     }  
 }
