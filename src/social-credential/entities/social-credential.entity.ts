@@ -3,6 +3,7 @@ export class SocialCredential {
     profileId: string;
     platform: string;
     authToken: string;
+    tokenSecret?: string;
     authExpiration: Date;
     lastSync: Date;
     watchedResources: string[];

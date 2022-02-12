@@ -14,6 +14,7 @@ CREATE TABLE earthpoints.social_credential (
    profile_id varchar,
    platform varchar,
    auth_token varchar,
+   token_secret varchar,
    auth_expiration timestamp,
    last_sync timestamp,
    watched_resources list<varchar>,
