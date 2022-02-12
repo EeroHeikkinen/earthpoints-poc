@@ -13,11 +13,11 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 @Injectable()
-export class DemoSaveSoilRule implements IPointRule {
-    private hashkey = 'demorule';
+export class DemoShareRule implements IPointRule {
+    private hashkey = 'demosharerule';
 
     async process(eventName: any, item:any): Promise<false | PointEvent> {
-        if(eventName.startsWith('user.published.post')) {
+        if(eventName.startsWith('user.published.share')) {
             if(item.message && item.message.toLowerCase().includes("#" + process.env.REWARD_HASHTAG.toLowerCase())) {
                 var hashString = item.platform + item.data.id + this.hashkey;
                 const hash = crypto.createHash('sha256').update(hashString).digest('base64');
@@ -28,11 +28,11 @@ export class DemoSaveSoilRule implements IPointRule {
                     userid: item.userid,
                     isBurn: false,
                     icon: 'star',
-                    verb: 'posted',
+                    verb: 'shared',
                     platform: item.platform,
-                    points: parseInt(process.env.REWARD_POINTS),
+                    points: parseInt(process.env.SHARE_POINTS),
                     timestamp: item.data.timestamp,
-                    message: process.env.REWARD_MESSAGE,
+                    message: process.env.SHARE_MESSAGE,
                     metadata: new Map<string, string>()
                 }
                 return pointEvent;
