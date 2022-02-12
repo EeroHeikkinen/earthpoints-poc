@@ -1,4 +1,3 @@
-import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { emit } from 'process';
 import { FacebookService } from 'src/facebook/facebook.service';
