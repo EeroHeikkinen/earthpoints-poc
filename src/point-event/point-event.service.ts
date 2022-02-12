@@ -13,12 +13,12 @@ export class PointEventService {
     return await this.pointEventRepository.addPointEvent(createPointEventDto)
   }
 
-  findAll() {
-    return `This action returns all pointEvent`;
+  async findAll() {
+    return await this.pointEventRepository.findAll();
   }
 
   async findAllForUser(userid: string) {
-    return await this.pointEventRepository.findByUserId(userid)
+    return await this.pointEventRepository.getPointEventsByUserId(userid)
   }
 
   findOne(id: number) {

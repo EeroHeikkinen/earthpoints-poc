@@ -43,6 +43,20 @@ CREATE TABLE earthpoints.point_event (
    message varchar,
    icon varchar,
    metadata map<varchar, varchar>,
+   PRIMARY KEY (hash)
+);
+
+CREATE TABLE earthpoints.point_event_by_userid (
+   hash varchar,
+   userid uuid,
+   is_burn boolean,
+   points double,
+   timestamp timestamp,  
+   platform varchar, 
+   verb varchar,
+   message varchar,
+   icon varchar,
+   metadata map<varchar, varchar>,
    PRIMARY KEY (userid)
 );
 
