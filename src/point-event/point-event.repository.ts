@@ -11,14 +11,6 @@ export class PointEventRepository implements OnModuleInit {
         return (await this.pointEventMapper.update(updatePointEventDto)).toArray();
     }
 
-    async findByProfileIdAndPlatform(profileid: string, platform: string) {
-        return (await this.pointEventMapper.find({profileId: profileid, platform: platform})).toArray();
-    }
-
-    async findByUserId(userid: any) {
-        return (await this.pointEventMapper.find({userid})).toArray();
-    }
-
     constructor(private cassandraService: CassandraService) { }
 
     pointEventMapper: mapping.ModelMapper<PointEvent>;
@@ -27,7 +19,7 @@ export class PointEventRepository implements OnModuleInit {
         const mappingOptions: mapping.MappingOptions = {
             models: {
                 'PointEvent': {
-                    tables: ['point_event'],
+                    tables: ['point_event', 'point_event_by_userid'],
                     mappings: new mapping.UnderscoreCqlToCamelCaseMappings
                 }
             }
@@ -40,7 +32,11 @@ export class PointEventRepository implements OnModuleInit {
         return (await this.pointEventMapper.insert(profile)).toArray();
     }
 
-    async getPointEvents(userid) {
+    async findAll() {
+        return (await this.pointEventMapper.findAll()).toArray();
+    }
+
+    async getPointEventsByUserId(userid) {
         return (await this.pointEventMapper.find({userid})).toArray();
     }
 }
