@@ -55,6 +55,11 @@ background-color: white !important; }
     background-size: cover;
   }
 
+.tree .card-image {
+    background: url("../img/plant-tree.jpg") no-repeat center center; 
+    background-size: cover;
+  }
+
 
 .twitter .card-image {
       background: url("../img/twitter.png") no-repeat center center; 
