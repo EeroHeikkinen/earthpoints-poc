@@ -7,6 +7,8 @@ import { SocialCredentialService } from 'src/social-credential/social-credential
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { JwtStrategy } from './jwt.strategy';
+import { Reflector } from '@nestjs/core';
+import express = require('express');
 
 dotenv.config();
 
@@ -29,10 +31,12 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       'user_videos',
       'pages_show_list'],
       profileFields: ['emails', 'name', ],
+      passReqToCallback: true
     });
   }
 
   async validate(
+    req: any,
     accessToken: string,
     refreshToken: string,
     profile: Profile,
@@ -40,42 +44,51 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   ): Promise<any> {
     const { name, emails, id, displayName } = profile;
 
-    // Do we have a cookie for dashboardUserId?
-    // 
-
-
-    let credentials = await this.socialCredentialService.findByProfileIdAndPlatform(id, 'facebook');
-    
     let userid: string;
 
-    if(!credentials.length) {
-      // First login for user
-      const Uuid = require('cassandra-driver').types.Uuid;
-      userid = Uuid.random().toString();
+    if(req.user) {
+      /* User already logged in via JWT cookie: we are adding an additional social profile */
+      userid = req.user.userid;
 
-      const newUser = await this.userService.create({
-        userid,
-        firstName: name.givenName
-      });
-
-      credentials = await this.socialCredentialService.create({
+      await this.socialCredentialService.create({
         userid,
         profile_id: id,
         platform: 'facebook',
         auth_token: accessToken,
         auth_expiration: undefined
       })
-    } else {
-      userid = credentials[0].userid;
-      
-      // Update new access token (to all tables)
-      credentials = await this.socialCredentialService.update({
-        userid,
-        profile_id: id,
-        platform: 'facebook',
-        auth_token: accessToken,
-        auth_expiration: undefined
-      })
+    }
+    else {
+      let credentials = await this.socialCredentialService.findByProfileIdAndPlatform(id, 'facebook');
+      if(!credentials.length) {
+        // First login for user
+        const Uuid = require('cassandra-driver').types.Uuid;
+        userid = Uuid.random().toString();
+
+        const newUser = await this.userService.create({
+          userid,
+          firstName: name.givenName
+        });
+
+        credentials = await this.socialCredentialService.create({
+          userid,
+          profile_id: id,
+          platform: 'facebook',
+          auth_token: accessToken,
+          auth_expiration: undefined
+        })
+      } else {
+        userid = credentials[0].userid;
+        
+        // Update new access token (to all tables)
+        credentials = await this.socialCredentialService.update({
+          userid,
+          profile_id: id,
+          platform: 'facebook',
+          auth_token: accessToken,
+          auth_expiration: undefined
+        })
+      }
     }
 
     const user:User = {

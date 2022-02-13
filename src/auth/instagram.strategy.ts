@@ -19,50 +19,66 @@ export class InstagramStrategy extends PassportStrategy(Strategy, 'instagram') {
       clientSecret: process.env.INSTAGRAM_APP_SECRET,
       callbackUrl: process.env.INSTAGRAM_CALLBACK_URL,
       scope: ['user_profile','user_media'],
-      scopeSeparator: ','
+      scopeSeparator: ',',
+      passReqToCallback: true
     });
   }
   //
 
   async validate(
+    req: any,
     token: string,
     profile: any,
     done: (err: any, user: any, info?: any) => void,
   ): Promise<any> {
     const { id, username } = profile;
 
-    let credentials = await this.socialCredentialService.findByProfileIdAndPlatform(id, 'instagram');
-    
     let userid: string;
 
-    if(!credentials.length) {
-      // First login for user
-      const Uuid = require('cassandra-driver').types.Uuid;
-      userid = Uuid.random().toString();
+    if(req.user) {
+      /* User already logged in via JWT cookie: we are adding an additional social profile */
+      userid = req.user.userid;
 
-      const newUser = await this.userService.create({
-        userid,
-        firstName: username
-      });
-
-      credentials = await this.socialCredentialService.create({
+      await this.socialCredentialService.create({
         userid,
         profile_id: id,
         platform: 'instagram',
         auth_token: token,
         auth_expiration: undefined
       })
-    } else {
-      userid = credentials[0].userid;
+    }
+    else {
+      let credentials = await this.socialCredentialService.findByProfileIdAndPlatform(id, 'instagram');
       
-      // Update new access token (to all tables)
-      credentials = await this.socialCredentialService.update({
-        userid,
-        profile_id: id,
-        platform: 'instagram',
-        auth_token: token,
-        auth_expiration: undefined
-      })
+      if(!credentials.length) {
+        // First login for user
+        const Uuid = require('cassandra-driver').types.Uuid;
+        userid = Uuid.random().toString();
+
+        const newUser = await this.userService.create({
+          userid,
+          firstName: username
+        });
+
+        credentials = await this.socialCredentialService.create({
+          userid,
+          profile_id: id,
+          platform: 'instagram',
+          auth_token: token,
+          auth_expiration: undefined
+        })
+      } else {
+        userid = credentials[0].userid;
+        
+        // Update new access token (to all tables)
+        credentials = await this.socialCredentialService.update({
+          userid,
+          profile_id: id,
+          platform: 'instagram',
+          auth_token: token,
+          auth_expiration: undefined
+        })
+      }
     }
 
     const user:User = {
