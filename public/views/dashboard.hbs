@@ -30,41 +30,34 @@
         </div>
       </section>
 
-
 <section class="text-center py-5" id="pricing">
   <div class="container">
     <div class="wow fadeIn">
       <h2 class="h1 pt-5 pb-3">Earn points:</h2>
     </div>
     <div class="row wow zoomIn">
-      <div class="col-lg-4 col-md-12 mb-5 facebook">
-        <div class="card card-image">
-          <div class="text-white text-center pricing-card d-flex align-items-center rgba-blue-strong py-3 px-3 rounded">
-            <div class="card-body">
-              <div class="py-5"><b>Connect Facebook</b></div>
-              <div class="py-5"><b>10 <i class="fa fa-globe fa-2x green-text"></i></b></div>
-              <a class="btn disabled btn-outline-white mt-5">Coming soon</a>
+      {{#each platforms}}
+        {{#if this.show }}
+          <div class="col-lg-4 col-md-12 mb-5 {{this.name}}">
+            <div class="card card-image">
+              <div class="text-white text-center pricing-card d-flex align-items-center rgba-{{this.color}}-strong py-3 px-3 rounded">
+                <div class="card-body">
+                  <div class="py-5"><b>Connect {{this.Name}}</b></div>
+                  <div class="py-5"><b>10 <i class="fa fa-globe fa-2x green-text"></i></b></div>
+                  <a class="btn btn-outline-white mt-5" href="/connect/{{this.name}}">Connect</a>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-12 mb-5 instagram">
-        <div class="card card-image">
-          <div class="text-white text-center pricing-card d-flex align-items-center rgba-red-strong py-3 px-3 rounded">
-            <div class="card-body">
-              <div class="py-5"><b>Connect Instagram</b></div>
-              <div class="py-5"><b>10 <i class="fa fa-globe fa-2x green-text"></i></b></div>
-              <a class="btn disabled btn-outline-white mt-5">Coming soon</a>
-            </div>
-          </div>
-        </div>
-      </div>
+        {{/if}}
+      {{/each}}
+      
       <div class="col-lg-4 col-md-12 mb-5 twitter">
         <div class="card card-image">
           <div class="text-white text-center pricing-card d-flex align-items-center rgba-blue-strong py-3 px-3 rounded">
             <div class="card-body">
               <div class="py-5"><b>Share today's post</b></div>
-              <div class="py-5"><b>15 <i class="fa fa-globe fa-2x green-text"></i></b></div>
+              <div class="py-5"><b>5 <i class="fa fa-globe fa-2x green-text"></i></b></div>
               <a class="btn disabled btn-outline-white mt-5" href="#">Coming soon</a>
             </div>
           </div>

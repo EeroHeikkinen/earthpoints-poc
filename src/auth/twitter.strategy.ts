@@ -17,10 +17,12 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
       consumerKey: process.env.TWITTER_KEY,
       consumerSecret: process.env.TWITTER_SECRET,
       callbackURL: process.env.TWITTER_CALLBACK_URL,
+      passReqToCallback: true
     });
   }
 
   async validate(
+    req: any,
     token: string,
     tokenSecret: string,
     profile: any,
@@ -28,26 +30,13 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
   ): Promise<any> {
     const { username, id, displayName } = profile;
 
-    let firstName;
-    if(displayName) {
-      firstName = displayName.split(" ")[0]
-    }
-
-    let credentials = await this.socialCredentialService.findByProfileIdAndPlatform(id, 'twitter');
-    
     let userid: string;
 
-    if(!credentials.length) {
-      // First login for user
-      const Uuid = require('cassandra-driver').types.Uuid;
-      userid = Uuid.random().toString();
+    if(req.user) {
+      /* User already logged in via JWT cookie: we are adding an additional social profile */
+      userid = req.user.userid;
 
-      const newUser = await this.userService.create({
-        userid,
-        firstName
-      });
-
-      credentials = await this.socialCredentialService.create({
+      await this.socialCredentialService.create({
         userid,
         profile_id: id,
         platform: 'twitter',
@@ -56,23 +45,48 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
         auth_expiration: undefined
       })
     } else {
-      userid = credentials[0].userid;
-      
-      // Update new access token (to all tables)
-      credentials = await this.socialCredentialService.update({
-        userid,
-        profile_id: id,
-        platform: 'twitter',
-        auth_token: token,
-        token_secret: tokenSecret,
-        auth_expiration: undefined
-      })
-    }
+      let firstName;
+      if(displayName) {
+        firstName = displayName.split(" ")[0]
+      }
 
-    const user:User = {
-      userid,
-      firstName: firstName
-    };
+      let credentials = await this.socialCredentialService.findByProfileIdAndPlatform(id, 'twitter');
+      
+
+      if(!credentials.length) {
+        // First login for user
+        const Uuid = require('cassandra-driver').types.Uuid;
+        userid = Uuid.random().toString();
+
+        const newUser = await this.userService.create({
+          userid,
+          firstName
+        });
+
+        credentials = await this.socialCredentialService.create({
+          userid,
+          profile_id: id,
+          platform: 'twitter',
+          auth_token: token,
+          token_secret: tokenSecret,
+          auth_expiration: undefined
+        })
+      } else {
+        userid = credentials[0].userid;
+        
+        // Update new access token (to all tables)
+        credentials = await this.socialCredentialService.update({
+          userid,
+          profile_id: id,
+          platform: 'twitter',
+          auth_token: token,
+          token_secret: tokenSecret,
+          auth_expiration: undefined
+        })
+      }
+    } 
+
+    const user:User = {userid};
 
     done(null, user);  
   }
