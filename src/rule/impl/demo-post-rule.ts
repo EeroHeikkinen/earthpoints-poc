@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { emit } from 'process';
-import { FacebookService } from 'src/facebook/facebook.service';
+import { FacebookApiService } from 'src/facebook-api/facebook-api.service';
 import { RuleService } from 'src/rule/rule.service';
 import { IPlatformAdapter } from 'src/interfaces/platform-adapter.interface';
 import { SocialCredential } from 'src/social-credential/entities/social-credential.entity';
@@ -25,7 +25,7 @@ export class DemoPostRule implements IPointRule {
                     hashString: hashString,
                     userid: item.userid,
                     isBurn: false,
-                    icon: 'star',
+                    icon: 'note-sticky',
                     verb: 'posted on',
                     platform: item.platform,
                     points: parseInt(process.env.REWARD_POINTS),
