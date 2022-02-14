@@ -70,3 +70,13 @@ background-color: white !important; }
         background: url("../img/instagram.jpeg") no-repeat center center;
         background-size: cover
 }
+
+.fb-logo {
+  width: 20px;
+  margin-top: -3px;
+  margin-right: 5px;
+}
+
+.text-muted {
+  opacity: 0.5;
+}
