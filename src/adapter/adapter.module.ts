@@ -7,9 +7,10 @@ import { RuleModule } from 'src/rule/rule.module';
 import { FacebookApiModule } from 'src/facebook-api/facebook-api.module';
 import { InstagramAdapter } from './impl/instagram.adapter';
 import { TwitterAdapter } from './impl/twitter.adapter';
+import { InstagramApiModule } from 'src/instagram-api/instagram-api.module';
 
 @Module({ 
-  imports: [RuleModule, FacebookApiModule],
+  imports: [RuleModule, FacebookApiModule, InstagramApiModule],
   providers: [AdapterService, FacebookAdapter, InstagramAdapter, TwitterAdapter],
   exports: [AdapterService]
 })
