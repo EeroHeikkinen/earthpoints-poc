@@ -13,6 +13,7 @@ import { SocialCredentialModule } from './social-credential/social-credential.mo
 import { PointEventModule } from './point-event/point-event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { InstagramApiModule } from './instagram-api/instagram-api.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -26,7 +27,8 @@ import { join } from 'path';
     TemplateModule,
     AdapterModule,
     SocialCredentialModule,
-    PointEventModule
+    PointEventModule,
+    InstagramApiModule
   ], 
   controllers: [AppController],
   providers: [AppService],
