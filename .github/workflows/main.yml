@@ -10,6 +10,10 @@ on:
   #pull_request:
   #  branches: [master]
 
+  # The workarround the limitation of free github account...
+  label:
+    types: [edited]  
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
