@@ -8,7 +8,7 @@ import { response } from 'express';
 dotenv.config();
 
 @Injectable()
-export class FacebookService {
+export class FacebookApiService {
     //private token: string = process.env.FACEBOOK_ACCESS_TOKEN
     private apiUrl: string = 'https://graph.facebook.com/v12.0'
 

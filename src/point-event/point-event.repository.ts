@@ -28,8 +28,8 @@ export class PointEventRepository implements OnModuleInit {
         this.pointEventMapper = this.cassandraService.createMapper(mappingOptions).forModel('PointEvent');
     }
 
-    async addPointEvent(profile: CreatePointEventDto) {
-        return (await this.pointEventMapper.insert(profile)).toArray();
+    async addPointEvent(pointEvent: CreatePointEventDto) {
+        return (await this.pointEventMapper.insert(pointEvent)).toArray();
     }
 
     async findAll() {

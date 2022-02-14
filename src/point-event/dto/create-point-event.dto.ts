@@ -1,6 +1,11 @@
 export class CreatePointEventDto {
-    hash: string;
+    hash?: string;
+    hashString?: string;
     userid: string;
+    icon?: string;
+    verb: string;
+    platform: string;
+    message: string;
     isBurn: boolean;
     points: number;
     timestamp: Date;

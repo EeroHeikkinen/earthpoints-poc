@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
-import { FacebookService } from 'src/facebook/facebook.service';
+import { FacebookApiService } from 'src/facebook-api/facebook-api.service';
 import { RuleService } from 'src/rule/rule.service';
 import { FacebookAdapter } from './impl/facebook.adapter';
 import { AdapterService } from './adapter.service';
 import { RuleModule } from 'src/rule/rule.module';
-import { FacebookModule } from 'src/facebook/facebook.module';
+import { FacebookApiModule } from 'src/facebook-api/facebook-api.module';
 import { InstagramAdapter } from './impl/instagram.adapter';
 import { TwitterAdapter } from './impl/twitter.adapter';
+import { InstagramApiModule } from 'src/instagram-api/instagram-api.module';
 
 @Module({ 
-  imports: [RuleModule, FacebookModule],
+  imports: [RuleModule, FacebookApiModule, InstagramApiModule],
   providers: [AdapterService, FacebookAdapter, InstagramAdapter, TwitterAdapter],
   exports: [AdapterService]
 })

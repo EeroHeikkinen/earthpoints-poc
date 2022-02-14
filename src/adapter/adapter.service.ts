@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FacebookService } from 'src/facebook/facebook.service';
+import { FacebookApiService } from 'src/facebook-api/facebook-api.service';
 import { IPlatformAdapter } from 'src/interfaces/platform-adapter.interface';
 import { RuleService } from 'src/rule/rule.service';
 import { FacebookAdapter } from './impl/facebook.adapter';
