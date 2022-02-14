@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: earthpoints-poc
+  labels:
+    app: earthpoints-poc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: earthpoints-poc
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: earthpoints-poc
+    spec:
+      containers:
+        - name: earthpoints-poc
+          image: <IMAGE>
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 100m
+          envFrom:
+          - secretRef:
+              name: earthpoints-poc-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: earthpoints-poc-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+    - name: https
+      port: 443
+      targetPort: 3000
+  selector:
+    app: earthpoints-poc
