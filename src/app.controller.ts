@@ -44,6 +44,7 @@ export class AppController {
       formattedEvent.platform = event.platform[0].toUpperCase() + event.platform.slice(1);
       formattedEvents.push(formattedEvent)
     }
+    formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
     const summedPoints = events.map((event) => event.points).reduce((previous, current) => previous + current, 0)
 
     const credentials = await this.socialCredentialService.findByUserId(userid);
