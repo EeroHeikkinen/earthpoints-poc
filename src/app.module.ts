@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { CassandraModule } from './cassandra/cassandra.module';
 import { AppService } from './app.service';
-import { FacebookModule } from './facebook/facebook.module';
+import { FacebookApiModule } from './facebook-api/facebook-api.module';
 import { UserModule } from './user/user.module';
 import { RuleModule } from './rule/rule.module';
 import { TemplateModule } from './template/template.module';
@@ -20,7 +20,7 @@ import { join } from 'path';
     }),
     AuthModule,
     CassandraModule,
-    FacebookModule,
+    FacebookApiModule,
     UserModule,
     RuleModule,
     TemplateModule,
