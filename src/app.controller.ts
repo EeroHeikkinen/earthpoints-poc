@@ -144,7 +144,8 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Redirect('/')
   async facebookConnectRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
-    return {msg:'success'};
+    const user = req.user as User;
+    await this.pointEventService.rewardAccountConnected(user.userid, 'facebook')
   }
 
   @Get('/callback/twitter/connect') 
@@ -153,7 +154,8 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Redirect('/')
   async twitterConnectRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
-    return {msg:'success'};
+    const user = req.user as User;
+    await this.pointEventService.rewardAccountConnected(user.userid, 'twitter')
   }
 
   @Get('/callback/instagram/connect') 
@@ -161,8 +163,9 @@ export class AppController {
   @UseGuards(InstagramAuthGuard)
   @UseGuards(JwtAuthGuard)
   @Redirect('/')
-  async instagramConnectRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
-    return {msg:'success'};
+  async instagramConnectRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {  
+    const user = req.user as User;
+    await this.pointEventService.rewardAccountConnected(user.userid, 'instagram')
   }
 
 
@@ -180,6 +183,8 @@ export class AppController {
       access_token,
       refreshToken: '',
     };
+
+    await this.pointEventService.rewardAccountConnected(user.userid, 'instagram')
 
     res.cookie('auth-cookie', secretData, {httpOnly:true,});
 
@@ -200,6 +205,8 @@ export class AppController {
       access_token,
       refreshToken: '',
     }; 
+
+    await this.pointEventService.rewardAccountConnected(user.userid, 'twitter')
  
     res.cookie('auth-cookie', secretData, {httpOnly:true,});
 
@@ -221,6 +228,8 @@ export class AppController {
       access_token,
       refreshToken: '',
     };
+
+    await this.pointEventService.rewardAccountConnected(user.userid, 'facebook')
  
     res.cookie('auth-cookie', secretData, {httpOnly:true,});
 
