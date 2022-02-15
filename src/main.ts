@@ -11,19 +11,20 @@ import cookieParser from 'cookie-parser';
 import { engine } from "express-handlebars";
 
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestApplicationOptions } from '@nestjs/common';
 
 dotenv.config();
 
 async function bootstrap() {
   const fs = require('fs');
-  const keyFile  = fs.readFileSync(process.env.NEST_APP_KEY_PATH);
-  const certFile = fs.readFileSync(process.env.NEST_APP_CERT_PATH);
+  const keyFile = process.env.NEST_APP_KEY_PATH && fs.readFileSync(process.env.NEST_APP_KEY_PATH);
+  const certFile = process.env.NEST_APP_CERT_PATH && fs.readFileSync(process.env.NEST_APP_CERT_PATH);
+  let options: NestApplicationOptions;
+  if(keyFile && certFile)
+    options = {httpsOptions : {key: keyFile, cert: certFile}};
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    httpsOptions: {
-      key: keyFile,
-      cert: certFile,
-    }});
+
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
   const viewsPath = join(__dirname, '../public/views'); 
   app.engine('.hbs', engine({ extname: '.hbs', defaultLayout: 'main' }));
   app.use(cookieParser());
