@@ -46,7 +46,7 @@ jobs:
         run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/earthpoints/earthpoints-poc:'${TAG}'|' $GITHUB_WORKSPACE/kuber.yml
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 a9bf339a-f24e-4eff-a614-8b2a73ffadfe
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ffb1a5d5-e0c7-4553-87d2-db6633465a6d
 
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -f $GITHUB_WORKSPACE/kuber.yml
