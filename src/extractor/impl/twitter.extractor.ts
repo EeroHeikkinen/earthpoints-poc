@@ -2,7 +2,7 @@ import { TwitterApi } from 'twitter-api-v2';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { emit } from 'process';
 import { RuleService } from 'src/rule/rule.service';
-import { IPlatformAdapter } from 'src/interfaces/platform-adapter.interface';
+import { IExtractor } from 'src/interfaces/extractor.interface';
 import { SocialCredential } from 'src/social-credential/entities/social-credential.entity';
 
 import * as dotenv from "dotenv";
@@ -10,12 +10,12 @@ import { response } from 'express';
 dotenv.config();
 
 @Injectable()
-export class TwitterAdapter implements IPlatformAdapter {
+export class TwitterExtractor implements IExtractor {
     constructor(
         private ruleService: RuleService
         ){}
 
-    async syncUser(credential: SocialCredential) {
+    async extractEvents(credential: SocialCredential) {
         const userid = credential.userid;
 
         if(!credential.authToken || !credential.tokenSecret) {

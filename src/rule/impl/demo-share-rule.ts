@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { emit } from 'process';
 import { FacebookApiService } from 'src/facebook-api/facebook-api.service';
 import { RuleService } from 'src/rule/rule.service';
-import { IPlatformAdapter } from 'src/interfaces/platform-adapter.interface';
+import { IExtractor } from 'src/interfaces/extractor.interface';
 import { SocialCredential } from 'src/social-credential/entities/social-credential.entity';
 import { IPointRule } from 'src/interfaces/point-rule.interface';
 import { stringify } from 'querystring';
