@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SocialCredential } from '../social-credential/entities/social-credential.entity';
 import { SocialCredentialRepository } from 'src/social-credential/social-credential.repository';
-import { AdapterService } from 'src/adapter/adapter.service';
+import { ExtractorService } from 'src/extractor/extractor.service';
 import { SocialCredentialService } from 'src/social-credential/social-credential.service';
 import { UserRepository } from './user.repository';
 import { PointEventService } from 'src/point-event/point-event.service';
@@ -11,7 +11,7 @@ import { PointEventService } from 'src/point-event/point-event.service';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly adapterService: AdapterService,
+    private readonly extractorService: ExtractorService,
     private readonly pointEventService: PointEventService,
     private readonly socialCredentialService: SocialCredentialService,
     private readonly userRepository: UserRepository
@@ -42,9 +42,9 @@ export class UserService {
   async syncPoints(userid) {
       const credentials = await this.socialCredentialService.findByUserId(userid);
       for(const credential of credentials) {
-        const adapter = this.adapterService.findOne(credential.platform);  
+        const adapter = this.extractorService.findOne(credential.platform);  
 
-        await adapter.syncUser(credential)
+        await adapter.extractEvents(credential)
       }
       return 1;
   }

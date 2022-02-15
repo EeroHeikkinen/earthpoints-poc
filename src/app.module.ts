@@ -8,7 +8,7 @@ import { FacebookApiModule } from './facebook-api/facebook-api.module';
 import { UserModule } from './user/user.module';
 import { RuleModule } from './rule/rule.module';
 import { TemplateModule } from './template/template.module';
-import { AdapterModule } from './adapter/adapter.module';
+import { ExtractorModule } from './extractor/extractor.module';
 import { SocialCredentialModule } from './social-credential/social-credential.module';
 import { PointEventModule } from './point-event/point-event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -25,7 +25,7 @@ import { InstagramApiModule } from './instagram-api/instagram-api.module';
     UserModule,
     RuleModule,
     TemplateModule,
-    AdapterModule,
+    ExtractorModule,
     SocialCredentialModule,
     PointEventModule,
     InstagramApiModule
