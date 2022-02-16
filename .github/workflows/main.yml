@@ -33,17 +33,20 @@ jobs:
 
       # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
       - name: Build container image
-        run: docker build -t registry.digitalocean.com/earthpoints/earthpoints-poc:$(echo $GITHUB_SHA | head -c7) .
+        run: docker build -t registry.digitalocean.com/earthpoints/earthpoints-poc:$(echo $GITHUB_SHA | head -c7) -t registry.digitalocean.com/earthpoints/earthpoints-poc:latest .
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1200
 
-      - name: Push image to DigitalOcean Container Registry
+      - name: Push image to DigitalOcean Container Registry as versioned
         run: docker push registry.digitalocean.com/earthpoints/earthpoints-poc:$(echo $GITHUB_SHA | head -c7)
 
+      - name: Push image to DigitalOcean Container Registry as lastest
+        run: docker push registry.digitalocean.com/earthpoints/earthpoints-poc:latest
+
       # Deploy to DigitalOCcean Kubernetes.
-      - name: Update deployment file
-        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/earthpoints/earthpoints-poc:'${TAG}'|' $GITHUB_WORKSPACE/kuber.yml
+      # - name: Update deployment file
+      #  run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/earthpoints/earthpoints-poc:'${TAG}'|' $GITHUB_WORKSPACE/kuber.yml
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ffb1a5d5-e0c7-4553-87d2-db6633465a6d

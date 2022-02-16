@@ -46,7 +46,7 @@ spec:
             - mountPath: /var/lib/cassandra
               name: cassandra-volume
         - name: earthpoints-poc
-          image: <IMAGE>
+          image: registry.digitalocean.com/earthpoints/earthpoints-poc:latest
           ports:
             - containerPort: 3000
               protocol: TCP
