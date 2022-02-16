@@ -52,11 +52,12 @@ $ npm run start:dev
 # watch mode on docker
 $ docker-compose up cassandra dev 
 
-# production mode on docker
-$ docker-compose up cassandra prod 
+# for production mode on kubernetes see Makefile
 ```
 
-after that goto https://localhost:3000 (It needs to be secure(https))
+- You may need to install the following command line tools to manage production deployments.
+  - https://docs.digitalocean.com/reference/doctl/how-to/install/
+
 
 ## Test
 
