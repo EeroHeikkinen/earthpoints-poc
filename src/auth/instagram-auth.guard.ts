@@ -14,12 +14,13 @@ export class InstagramAuthGuard extends AuthGuard('instagram') {
   }
 
   getAuthenticateOptions(context: ExecutionContext) {
+    const options:any = {
+      scope: ['user_profile','user_media']
+    }
     const callbackURLs = this.reflector.get<string[]>('callbackURL', context.getHandler());
     if(callbackURLs.length) {
-      return {
-        callbackURL: process.env.BASE_URL + callbackURLs[0]
-      }
+      options.callbackURL = process.env.BASE_URL + callbackURLs[0]
     }
-    return {}
+    return options
   }
 }
