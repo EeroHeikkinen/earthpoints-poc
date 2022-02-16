@@ -40,7 +40,8 @@ export class TwitterExtractor implements IExtractor {
            'user.fields': ['id','name','profile_image_url','url','username'],
            'expansions': ['referenced_tweets.id', 'referenced_tweets.id.author_id', 'entities.mentions.username', 'in_reply_to_user_id', 'attachments.media_keys'],
            'media.fields': ['preview_image_url', 'type', 'url'],
-           exclude: 'replies' 
+           'max_results': 100,
+           'exclude': 'replies' 
         });
        } catch(err) {
            console.log(err);
