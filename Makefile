@@ -24,7 +24,9 @@ POD_NAME=$(shell kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4
 #.PHONY: wipedb
 #wipedb:
 #	kubectl exec -it $(POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 -e "drop keyspace earthpoints"; \
-#    kubectl exec -it $(POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 < src/database/schema/schema.cql;
+#   kubectl exec -it $(POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 < src/database/schema/schema.cql;
+#	some example commands to execute cqlsh to copy-paste
+#	kubectl exec -it $(kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4\}//') -c cassandra -- cqlsh -e "select * from earthpoints.user"
 
 
 .PHONY: log-app
