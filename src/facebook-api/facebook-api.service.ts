@@ -32,16 +32,19 @@ export class FacebookApiService {
         return await lastValueFrom(source$)
     }
 
-    async getFeed(authToken, facebookId) {
+    async getFeed(authToken, facebookId, stopRetrievingAt:Date=new Date('2021-09-01T00:00:00'), maxPages:number=5) {
         var dataBuffer = await this.getQuery(authToken, facebookId + '/feed?fields=status_type,message,description,created_time');
         if (!dataBuffer.data) {
             return null;
         }
         var data = dataBuffer.data.data;
-        var maxPages = 10; 
         var donePages = 1;
 
         while(dataBuffer.data && dataBuffer.data.paging && dataBuffer.data.paging.next && donePages++ < maxPages) {
+            const oldestTimestamp = new Date(data[data.length-1].created_time)
+            if(oldestTimestamp < stopRetrievingAt) {
+                return data;
+            }
             const next = dataBuffer.data.paging.next;
 
             dataBuffer = await this.getUrl(next);
