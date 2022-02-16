@@ -71,6 +71,11 @@ background-color: white !important; }
         background-size: cover
 }
 
+.tutorial .card-image {
+  background: url("../img/tutorial.jpg") no-repeat center center; 
+  background-size: cover;
+}
+
 .fb-logo {
   width: 20px;
   margin-top: -3px;

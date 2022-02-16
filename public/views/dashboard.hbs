@@ -43,7 +43,7 @@
               <div class="text-white text-center pricing-card d-flex align-items-center rgba-{{this.color}}-strong py-3 px-3 rounded">
                 <div class="card-body">
                   <div class="py-5"><h4>Connect {{this.Name}}</h4></div>
-                  <div class="py-5"><b>10 🌎</b></div>
+                  <div class="py-3"><span class="display-4">10 🌎</span></div>
                   <a class="btn btn-outline-white mt-5" href="/connect/{{this.name}}">Connect</a>
                 </div>
               </div>
@@ -52,12 +52,12 @@
         {{/if}}
       {{/each}}
       
-      <div class="col-lg-4 col-md-12 mb-5 twitter">
+      <div class="col-lg-4 col-md-12 mb-5 tutorial">
         <div class="card card-image">
-          <div class="text-white text-center pricing-card d-flex align-items-center rgba-blue-strong py-3 px-3 rounded">
+          <div class="text-white text-center pricing-card d-flex align-items-center rgba-green-strong py-3 px-3 rounded">
             <div class="card-body">
-              <div class="py-5"><h4>Share today's post</h4></div>
-              <div class="py-5"><b>5 🌎</b></div>
+              <div class="py-5"><h4>Complete the tutorial</h4></div>
+              <div class="py-3"><span class="display-4">{{this.points}}3 🌎</span></div>
               <a class="btn disabled btn-outline-white mt-5" href="#">Coming soon</a>
             </div>
           </div>
@@ -75,10 +75,10 @@
     <div class="row wow zoomIn">
       <div class="col-lg-4 col-md-12 mb-5 tree">
         <div class="card card-image">
-          <div class="text-white text-center pricing-card d-flex align-items-center rgba-green-light py-3 px-3 rounded">
+          <div class="text-white text-center pricing-card d-flex align-items-center rgba-green-strong py-3 px-3 rounded">
             <div class="card-body">
               <div class="py-5"><h4>Plant a physical tree</h4></div>
-              <div class="py-5"><b>100 🌎</b></div>
+              <div class="py-3"><span class="display-4">100 🌎</span></div>
               <a class="btn btn-outline-white disabled mt-5">Not enough points</a>
             </div>
           </div>
