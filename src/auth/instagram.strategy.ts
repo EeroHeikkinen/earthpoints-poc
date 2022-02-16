@@ -18,7 +18,7 @@ export class InstagramStrategy extends PassportStrategy(Strategy, 'instagram') {
       clientId: process.env.INSTAGRAM_APP_ID,
       clientSecret: process.env.INSTAGRAM_APP_SECRET,
       callbackUrl: process.env.INSTAGRAM_CALLBACK_URL,
-      scope: ['user_media'],
+      scope: ['user_profile','user_media'],
       scopeSeparator: ',',
       passReqToCallback: true
     });
