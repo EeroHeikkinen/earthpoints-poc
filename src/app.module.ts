@@ -14,6 +14,9 @@ import { PointEventModule } from './point-event/point-event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { InstagramApiModule } from './instagram-api/instagram-api.module';
+import { CronModule } from './cron/cron.module';
+import { ScheduleModule } from '@nestjs/schedule';
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -28,7 +31,9 @@ import { InstagramApiModule } from './instagram-api/instagram-api.module';
     ExtractorModule,
     SocialCredentialModule,
     PointEventModule,
-    InstagramApiModule
+    InstagramApiModule,
+    CronModule,
+    ScheduleModule.forRoot()
   ], 
   controllers: [AppController],
   providers: [AppService],
