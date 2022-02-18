@@ -27,6 +27,12 @@ export class UserService {
     return `This action returns a #${id} user`;
   }
 
+  async findAll() {
+    const users = await this.userRepository.getAll();
+
+    return users;
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }

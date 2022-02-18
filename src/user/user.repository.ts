@@ -40,4 +40,8 @@ export class UserRepository implements OnModuleInit {
     async get(userid: string) {
         return (await this.userMapper.get(({userid: userid})));
     }
+
+    async getAll() {
+        return (await this.userMapper.findAll());
+    }
 }
