@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Subject } from 'rxjs';
 import { CreatePointEventDto } from './dto/create-point-event.dto';
 import { UpdatePointEventDto } from './dto/update-point-event.dto';
 import { PointEventRepository } from './point-event.repository';
@@ -6,6 +7,9 @@ var crypto = require('crypto');
 
 @Injectable()
 export class PointEventService {
+
+  public subject = new Subject();
+
   constructor(
     private pointEventRepository: PointEventRepository,
     ){}
@@ -18,7 +22,11 @@ export class PointEventService {
       createPointEventDto.hash = crypto.createHash('sha256').update(createPointEventDto.hashString).digest('base64');
       delete createPointEventDto.hashString;
     }
-    return await this.pointEventRepository.addPointEvent(createPointEventDto)
+    const retVal = await this.pointEventRepository.addPointEvent(createPointEventDto)
+    this.subject.next({
+      userid: createPointEventDto.userid, retVal
+    });
+    return retVal;
   }
 
   async rewardAccountConnected(userid:string, platform: string) {

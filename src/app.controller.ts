@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters } from '@nestjs/common';
+import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -17,6 +17,9 @@ import { CallbackURL } from './auth/callback-url.decorator';
 import { FacebookAuthGuard } from './auth/facebook-auth.guard';
 import { TwitterAuthGuard } from './auth/twitter-auth.guard';
 import { InstagramAuthGuard } from './auth/instagram-auth.guard';
+import { concatMap, filter, Observable } from 'rxjs';
+
+import handlebars from 'handlebars'
 
 @Controller()
 export class AppController {
@@ -26,17 +29,48 @@ export class AppController {
     private readonly authService: AuthService,
     private readonly pointEventService: PointEventService) {}
 
-  @Get('/')
-  @UseFilters(UnauthorizedExceptionFilter)
-  @Render('dashboard')
+  @Sse('sse')
   @UseGuards(JwtAuthGuard)
-  async dashboard(@Req() req): Promise<any> {
-    const userid = req.user.userid;
+  sse(@Req() req): Observable<MessageEvent> {
+    const user = req.user as User;
+    const renderEvents = handlebars.compile(`
+      {{#each events}}
+        <div class="row mb-12">
+          <div class="offset-2 col-1 mr-1 mt-2"><i class="mt-1 fa fa-{{this.icon}} fa-2x"></i></div>
+          <div class="col-5">
+            <p class="grey-text"></p>
+            You {{this.verb}} {{this.platform}} - {{this.formattedTimestamp}}
+            </p>
+            
+            <h5 class="font-weight-bold">
+              {{this.message}}
+            </h5>
+          </div>
+          <div class="col-2 mt-3"><h5>{{this.points}} 🌎</h5> </div>
+        </div>
+      {{/each}}
+    `)
 
-    await this.userService.syncPoints(userid);
+    return this.pointEventService.subject.pipe(
+      filter((data:any) => {
+        return data.userid.toString() === user.userid.toString()}
+      ), 
+      concatMap(async (event) => { 
+          const events = await this.pointEventService.findAllForUser(user.userid);
+          const {formattedEvents, summedPoints} = this.formatUserEvents(events)
+          return { 
+            data: { 
+              'userid': user.userid, 
+              'eventsHTML': renderEvents({events}),
+              'events': JSON.stringify(events),
+              summedPoints
+            } 
+          } 
+        } 
+      ))
+  }
 
-    const events = await this.pointEventService.findAllForUser(userid);
-
+  formatUserEvents(events) {
     const formattedEvents = []
     for(let event of events) {
       const formattedEvent = event as any
@@ -46,6 +80,20 @@ export class AppController {
     }
     formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
     const summedPoints = events.map((event) => event.points).reduce((previous, current) => previous + current, 0)
+    return {formattedEvents, summedPoints}
+  }
+
+  @Get('/')
+  @UseFilters(UnauthorizedExceptionFilter)
+  @Render('dashboard')
+  @UseGuards(JwtAuthGuard)
+  async dashboard(@Req() req): Promise<any> {
+    const userid = req.user.userid;
+
+    this.userService.syncPoints(userid); 
+
+    const events = await this.pointEventService.findAllForUser(userid);
+    const {formattedEvents, summedPoints} = this.formatUserEvents(events)
 
     const credentials = await this.socialCredentialService.findByUserId(userid);
     const platforms = [
