@@ -1,3 +1,4 @@
+require('dotenv').config()
 import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
@@ -10,7 +11,7 @@ import { AuthService } from './auth/auth.service';
 
 import Utils from 'src/utils';
 import { UserService } from './user/user.service';
-import { SocialCredentialService } from './social-credential/social-credential.service';
+import { PlatformConnectionService } from './platform-connection/platform-connection.service';
 import { User } from './user/entities/user.entity';
 import { PointEventService } from './point-event/point-event.service';
 import { CallbackURL } from './auth/callback-url.decorator';
@@ -21,10 +22,13 @@ import { concatMap, filter, Observable } from 'rxjs';
 
 import handlebars from 'handlebars'
 
+import satelize from 'satelize'
+import { UpdateUserDto } from './user/dto/update-user.dto';
+
 @Controller()
 export class AppController {
   constructor(
-    private readonly socialCredentialService: SocialCredentialService, 
+    private readonly socialCredentialService: PlatformConnectionService, 
     private readonly userService: UserService, 
     private readonly authService: AuthService,
     private readonly pointEventService: PointEventService) {}
@@ -33,6 +37,7 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   sse(@Req() req): Observable<MessageEvent> {
     const user = req.user as User;
+        
     const renderEvents = handlebars.compile(`
       {{#each events}}
         <div class="row mb-12">
@@ -58,6 +63,7 @@ export class AppController {
       concatMap(async (event) => { 
           const events = await this.pointEventService.findAllForUser(user.userid);
           const {formattedEvents, summedPoints} = this.formatUserEvents(events)
+          formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
           return { 
             data: { 
               'userid': user.userid, 
@@ -70,7 +76,8 @@ export class AppController {
       ))
   }
 
-  formatUserEvents(events) {
+  formatUserEvents(events
+    ) {
     const formattedEvents = []
     for(let event of events) {
       const formattedEvent = event as any
@@ -90,12 +97,31 @@ export class AppController {
   async dashboard(@Req() req): Promise<any> {
     const userid = req.user.userid;
 
+    /* If necessary fill in user timezone from ip */
+    if(!req.user.timezone) {
+      let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      if(ip == '::1') {
+        ip = process.env.TEST_IP;
+      }
+      req.user.timezone = await new Promise<string>((resolve, reject) => {
+        satelize.satelize({ip}, (err, payload) => {
+          if(payload && payload.timezone) {
+            this.userService.update(
+              { userid: userid, timezone: payload.timezone 
+            })
+            resolve(payload.timezone);
+          }
+          reject();
+        });
+      });
+    }
+
     this.userService.syncPoints(userid); 
 
-    const events = await this.pointEventService.findAllForUser(userid);
-    const {formattedEvents, summedPoints} = this.formatUserEvents(events)
+    const user = req.user as User;
+    
+    const {formattedEvents} = this.formatUserEvents(user.events)
 
-    const credentials = await this.socialCredentialService.findByUserId(userid);
     const platforms = [
       { 
         name: 'facebook',
@@ -117,16 +143,16 @@ export class AppController {
       }
     ]
     /* Hide already connected */
-    for(let credential of credentials) {
+    for(let connection of user.connections) {
       for(let platform of platforms) {
-        if(platform.name == credential.platform)
+        if(platform.name == connection.platform)
           platform.show = false;
       }
     }
     
     return {
       user: req.user,
-      summedPoints,
+      summedPoints: user.points,
       events: formattedEvents,
       platforms
     }

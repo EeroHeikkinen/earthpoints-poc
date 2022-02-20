@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-facebook';
 
 import * as dotenv from "dotenv";
-import { SocialCredentialService } from 'src/social-credential/social-credential.service';
+import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { JwtStrategy } from './jwt.strategy';
@@ -15,7 +15,7 @@ dotenv.config();
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(
-    private socialCredentialService: SocialCredentialService,
+    private socialCredentialService: PlatformConnectionService,
     private userService: UserService,
     private jwtStrategy: JwtStrategy
     ) {
@@ -24,7 +24,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: process.env.FACEBOOK_CALLBACK_URL,
       scope: ['user_posts'],
-      profileFields: ['name'],
+      profileFields: ['name', 'email'],
       passReqToCallback: true
     });
   }
@@ -44,6 +44,11 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       /* User already logged in via JWT cookie: we are adding an additional social profile */
       userid = req.user.userid;
 
+      if(!req.user.email && emails && emails[0]) {
+        req.user.email = emails[0].value;
+        this.userService.update(req.user)
+      }
+
       await this.socialCredentialService.create({
         userid,
         profile_id: id,
@@ -61,7 +66,8 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
 
         const newUser = await this.userService.create({
           userid,
-          firstName: name.givenName
+          firstName: name.givenName,
+          email: (emails && emails[0])? emails[0].value: undefined
         });
 
         credentials = await this.socialCredentialService.create({

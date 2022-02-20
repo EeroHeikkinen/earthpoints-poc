@@ -1,4 +1,4 @@
-export class CreateSocialCredentialDto {
+export class CreatePlatformConnectionDto {
     userid: string;
     profile_id: string;
     platform: string;

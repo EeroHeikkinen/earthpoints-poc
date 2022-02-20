@@ -3,7 +3,7 @@ import { emit } from 'process';
 import { FacebookApiService } from 'src/facebook-api/facebook-api.service';
 import { RuleService } from 'src/rule/rule.service';
 import { IExtractor } from 'src/interfaces/extractor.interface';
-import { SocialCredential } from 'src/social-credential/entities/social-credential.entity';
+import { PlatformConnection } from 'src/platform-connection/entities/platform-connection.entity';
 
 @Injectable()
 export class FacebookExtractor implements IExtractor {
@@ -12,9 +12,10 @@ export class FacebookExtractor implements IExtractor {
         private ruleService: RuleService
         ){}
 
-    async extractEvents(credential: SocialCredential) {
-        const feedContent = await this.facebookApiService.getFeed(credential.authToken, credential.profileId);
+    async process(credential: PlatformConnection, {from, until}:{from:Date, until:Date}) {
         const userid = credential.userid;
+
+        const {items:feedContent, retrievedFrom, retrievedUntil} = await this.facebookApiService.getFeed(credential.authToken, credential.profileId, { retrieveFrom: from, retrieveUntil: until });
 
         for(var i in feedContent) {
             const item = feedContent[i];
@@ -40,5 +41,7 @@ export class FacebookExtractor implements IExtractor {
                     break;
             }
         }  
+        
+        return { processedUntil: retrievedUntil, processedFrom: retrievedFrom }
     }  
 }

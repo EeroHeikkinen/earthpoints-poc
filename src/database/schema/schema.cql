@@ -1,3 +1,5 @@
+DROP KEYSPACE earthpoints;
+
 CREATE KEYSPACE IF NOT EXISTS earthpoints
   WITH REPLICATION = {
    'class' : 'SimpleStrategy',
@@ -6,23 +8,33 @@ CREATE KEYSPACE IF NOT EXISTS earthpoints
 
 CREATE TABLE earthpoints.user (
    userid uuid PRIMARY KEY,
-   first_name varchar
+   first_name varchar,
+   email varchar,
+   timezone varchar,
+   created_at timestamp
 );
 
-CREATE TABLE earthpoints.social_credential (
+CREATE TABLE earthpoints.sent_email (
+   userid uuid,
+   template varchar,
+   timestamp timestamp,
+   PRIMARY KEY ((userid,template))
+);
+
+CREATE TABLE earthpoints.platform_connection (
    userid uuid,
    profile_id varchar,
    platform varchar,
    auth_token varchar,
    token_secret varchar,
    auth_expiration timestamp,
-   oldest_retrieved timestamp,
-   latest_retrieved timestamp,
+   head timestamp,
+   tail timestamp,
    watched_resources list<varchar>,
    PRIMARY KEY (userid,platform)
 );
 
-CREATE TABLE earthpoints.social_credential_by_profile_id_and_platform (
+CREATE TABLE earthpoints.platform_connection_by_profile_id_and_platform (
    userid uuid,
    profile_id varchar,
    platform varchar,

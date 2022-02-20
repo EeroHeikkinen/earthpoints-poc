@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
+import { PlatformConnectionModule } from 'src/platform-connection/platform-connection.module';
+import { UserModule } from 'src/user/user.module';
 import { CronService } from './cron.service';
 
 @Module({
-  imports: [UserService],
+  imports: [UserModule, PlatformConnectionModule],
   providers: [CronService]
 })
 export class CronModule {}

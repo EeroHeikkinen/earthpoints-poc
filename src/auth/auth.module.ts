@@ -7,8 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { TwitterStrategy } from './twitter.strategy';
 import { UserModule } from 'src/user/user.module';
-import { SocialCredentialService } from 'src/social-credential/social-credential.service';
-import { SocialCredentialModule } from 'src/social-credential/social-credential.module';
+import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
+import { PlatformConnectionModule } from 'src/platform-connection/platform-connection.module';
 import { InstagramStrategy } from './instagram.strategy';
 
 @Module({
@@ -21,7 +21,7 @@ import { InstagramStrategy } from './instagram.strategy';
       signOptions: { expiresIn: '1800s' },
     }),
     UserModule,
-    SocialCredentialModule
+    PlatformConnectionModule
   ],
   providers: [AuthService, FacebookStrategy, InstagramStrategy, TwitterStrategy, JwtStrategy],
   exports: [AuthService],

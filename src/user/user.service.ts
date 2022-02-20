@@ -1,30 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ExtractorService } from 'src/extractor/extractor.service';
-import { SocialCredentialService } from 'src/social-credential/social-credential.service';
+import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
 import { UserRepository } from './user.repository';
+import { EmailTemplateService } from 'src/email-template/email-template.service';
+import { PointEventService } from 'src/point-event/point-event.service';
 
 @Injectable()
 export class UserService {
+
   constructor(
-    private readonly extractorService: ExtractorService,
-    private readonly socialCredentialService: SocialCredentialService,
-    private readonly userRepository: UserRepository
+    private readonly platformConnectionService: PlatformConnectionService,
+    private readonly userRepository: UserRepository,
+    private readonly emailTemplateService: EmailTemplateService,
+    private readonly pointEventService: PointEventService
     ) {}
   
-  async create(createUserDto?: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
+    if(!createUserDto.createdAt) {
+      createUserDto.createdAt = new Date();
+    }
     return await this.userRepository.create(createUserDto);
   }
 
   async findByUserId(userid: string) {
     const user = await this.userRepository.get(userid);
+    if(!user) {
+      throw new Error("User not found");
+    }
+    user.events = await this.pointEventService.findAllForUser(userid);
+    user.connections = await this.platformConnectionService.findByUserId(userid);
+    user.points = user.events.map((event) => event.points).reduce((previous, current) => previous + current, 0)
 
     return user;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
   }
 
   async findAll() {
@@ -33,8 +41,8 @@ export class UserService {
     return users;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    return await this.userRepository.update(updateUserDto);
   }
 
   remove(id: number) {
@@ -42,12 +50,11 @@ export class UserService {
   }
 
   async syncPoints(userid) {
-      const credentials = await this.socialCredentialService.findByUserId(userid);
-      for(const credential of credentials) {
-        const adapter = this.extractorService.findOne(credential.platform);  
+    await this.platformConnectionService.syncAllForUser(userid);
+  }
 
-        await adapter.extractEvents(credential)
-      }
-      return 1;
+  async triggerScheduledEmails(userid: string, currentCallDate: Date) {
+    const user = await this.findByUserId(userid);
+    this.emailTemplateService.processScheduled(user, currentCallDate)
   }
 }
