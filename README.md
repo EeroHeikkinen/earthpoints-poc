@@ -45,12 +45,13 @@ first make sure you have completed .env file from .env.template
 
 ```bash
 
-# development locally
+# development locally (queues may not work properlly)
 $ docker-compose up cassandra
 $ npm run start:dev
 
-# watch mode on docker
+# watch and debug mode on docker
 $ docker-compose up cassandra dev 
+# After executing this command launch "Debug with Docker"
 
 # for production mode on kubernetes see Makefile
 ```

@@ -16,7 +16,7 @@ services:
           context: .
           target: development
           dockerfile: ./Dockerfile
-      command: npm run start:dev
+      command: npm run start:debug
       ports:
           - ${WEB_APP_PORT}:3000
           - 9229:9229
@@ -24,6 +24,9 @@ services:
           - .:/usr/src/app
           - /usr/src/app/node_modules
       restart: unless-stopped
+      environment:
+        - DEBUG=*
+        - NODE_ENV=development
       env_file:
         - .env      
       depends_on:
