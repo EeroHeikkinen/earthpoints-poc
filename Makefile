@@ -38,6 +38,6 @@ log-app:
 log-db:
 	kubectl logs -f $(DB_POD_NAME) -c cassandra
 
-.PHONY: restart
-restart:
+.PHONY: restart-app
+restart-app:
 	kubectl rollout restart deployment/earthpoints-poc	
