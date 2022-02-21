@@ -6,9 +6,10 @@ import { ExtractorModule } from 'src/extractor/extractor.module';
 import { UserRepository } from './user.repository';
 import { CassandraModule } from 'src/cassandra/cassandra.module';
 import { PointEventModule } from 'src/point-event/point-event.module';
+import { QueueModule } from 'src/queue/queue.module';
 
 @Module({
-  imports: [SocialCredentialModule, ExtractorModule, CassandraModule, PointEventModule],
+  imports: [SocialCredentialModule, ExtractorModule, CassandraModule, PointEventModule,QueueModule],
   controllers: [UserController],
   providers: [UserService, UserRepository],
   exports: [UserService]

@@ -14,11 +14,19 @@ import { PointEventModule } from './point-event/point-event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { InstagramApiModule } from './instagram-api/instagram-api.module';
+import { BullModule } from '@nestjs/bull';
+import { QueueModule } from './queue/queue.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'static'),
     }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT),
+      },
+    }),    
     AuthModule,
     CassandraModule,
     FacebookApiModule,
@@ -28,7 +36,8 @@ import { InstagramApiModule } from './instagram-api/instagram-api.module';
     ExtractorModule,
     SocialCredentialModule,
     PointEventModule,
-    InstagramApiModule
+    InstagramApiModule,
+    QueueModule
   ], 
   controllers: [AppController],
   providers: [AppService],

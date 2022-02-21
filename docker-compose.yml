@@ -9,6 +9,10 @@ services:
       - ~/apps/cassandra:/var/lib/cassandra
     environment:
       - CASSANDRA_CLUSTER_NAME=earthpoints
+  redis:
+    image: redis:6.2.6
+    ports:
+      - ${REDIS_PORT}:6379
   dev:
       container_name: nestjs_api_dev
       image: nestjs-api-dev:1.0.0
@@ -31,6 +35,7 @@ services:
         - .env      
       depends_on:
         - cassandra
+        - redis
   prod:
       container_name: nestjs_api_prod
       image: nestjs-api-prod:1.0.0
@@ -51,3 +56,4 @@ services:
         - .env      
       depends_on:
         - cassandra
+        - redis

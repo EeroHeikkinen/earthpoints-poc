@@ -7,6 +7,7 @@ import { ExtractorService } from 'src/extractor/extractor.service';
 import { SocialCredentialService } from 'src/social-credential/social-credential.service';
 import { UserRepository } from './user.repository';
 import { PointEventService } from 'src/point-event/point-event.service';
+import { QueueService } from 'src/queue/queue.service';
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,8 @@ export class UserService {
     private readonly extractorService: ExtractorService,
     private readonly pointEventService: PointEventService,
     private readonly socialCredentialService: SocialCredentialService,
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly queueService: QueueService
     ) {}
   
   async create(createUserDto?: CreateUserDto) {
@@ -46,6 +48,9 @@ export class UserService {
 
         await adapter.extractEvents(credential)
       }
+
+      //TODO: Consider if this is the correct place to add que...
+      this.queueService.addUserIdToQueue(userid);
       return 1;
   }
 }

@@ -33,7 +33,7 @@
 $ npm install 
 
 # to install on docker
-$ docker-compose build --no-cache 
+$ docker-compose down && docker-compose build --no-cache 
 
 # to init DB
 $ docker exec -i earthpoints-poc-cassandra-1 cqlsh < src/database/schema/schema.cql
@@ -45,13 +45,16 @@ first make sure you have completed .env file from .env.template
 
 ```bash
 
-# development locally (queues may not work properlly)
-$ docker-compose up cassandra
+# development locally
+$ docker-compose up cassandra redis
 $ npm run start:dev
 
 # watch and debug mode on docker
-$ docker-compose up cassandra dev 
-# After executing this command launch "Debug with Docker"
+$ docker-compose up cassandra redis dev
+# or 
+$ docker-compose down && docker-compose up --build cassandra dev
+# if you have modified package json and npm install is needed.
+# After executing this command launch "Debug with Docker" in VSCode
 
 # for production mode on kubernetes see Makefile
 ```
