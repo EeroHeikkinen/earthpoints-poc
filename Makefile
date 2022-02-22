@@ -2,7 +2,7 @@ SHELL:=/bin/bash
 
 .PHONY: build
 build:
-	docker build -t registry.digitalocean.com/earthpoints/earthpoints-poc:latest .
+	docker build --no-cache -t registry.digitalocean.com/earthpoints/earthpoints-poc:latest .
 
 .PHONY: login
 login:
@@ -19,24 +19,25 @@ apply:
 	kubectl apply -f kuber.yml; \
 	kubectl rollout status deployment/earthpoints-poc;
 
-POD_NAME=$(shell kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4\}//')
+APP_POD_NAME=$(shell kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4\}//')
+DB_POD_NAME=$(shell kubectl get pods -o=name | grep cassandra- | sed 's/^.\{4\}//')
 
-#.PHONY: wipedb
-#wipedb:
-#	kubectl exec -it $(POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 -e "drop keyspace earthpoints"; \
-#   kubectl exec -it $(POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 < src/database/schema/schema.cql;
+.PHONY: wipedb
+wipedb:
+	kubectl exec -it $(DB_POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 -e "drop keyspace earthpoints"; \
+	kubectl exec -it $(DB_POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 < src/database/schema/schema.cql;
 #	some example commands to execute cqlsh to copy-paste
-#	kubectl exec -it $(kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4\}//') -c cassandra -- cqlsh -e "select * from earthpoints.user"
+#	kubectl exec -it $(kubectl get pods -o=name | grep cassandra- | sed 's/^.\{4\}//') -c cassandra -- cqlsh -e "select * from earthpoints.user"
 
 
 .PHONY: log-app
 log-app:
-	kubectl logs -f $(POD_NAME) -c earthpoints-poc
+	kubectl logs -f $(APP_POD_NAME) -c earthpoints-poc
 
 .PHONY: log-db
 log-db:
-	kubectl logs -f $(POD_NAME) -c cassandra
+	kubectl logs -f $(DB_POD_NAME) -c cassandra
 
-.PHONY: restart
-restart:
+.PHONY: restart-app
+restart-app:
 	kubectl rollout restart deployment/earthpoints-poc	
