@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CassandraModule } from 'src/cassandra/cassandra.module';
 import { PointEventController } from './point-event.controller';
+import { PointEventRepository } from './point-event.repository';
 import { PointEventService } from './point-event.service';
 
 describe('PointEventController', () => {
@@ -7,8 +9,9 @@ describe('PointEventController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      providers: [PointEventService, PointEventRepository],
       controllers: [PointEventController],
-      providers: [PointEventService],
+      imports: [CassandraModule],
     }).compile();
 
     controller = module.get<PointEventController>(PointEventController);
