@@ -3,13 +3,13 @@
       <section class="py-5 grey lighten-4" id="about">
         <div class="container">
           <div class="pt-5 wow fadeIn text-center">
-            <h2 class="h1 pt-5 pb-3">You have <span class="display-2">{{ summedPoints }}</span> <span class="display-3">🌎</span> earth points</h2>
+            <h2 class="h1 pt-5 pb-3">You have <span id="totalPoints" class="display-2">{{ summedPoints }}</span> <span class="display-3">🌎</span> earth points</h2>
           </div>
           <div class="row wow" data-wow-delay=".3s">
       <div class="col-lg-12 pl-lg-5 pb-4">
 
         <div class="pt-5 row wow" data-wow-delay=".3s">
-      <div class="pt-5 col-lg-12 pl-lg-5 pb-4">
+      <div id="events" class="pt-5 col-lg-12 pl-lg-5 pb-4">
 
         {{#each events}}
               <div class="row mb-12">
@@ -107,3 +107,16 @@ Thousands of eminent intellectuals, scientists, celebrities, policy experts and 
   </div>
 </section>
 </div>
+
+<script type="text/javascript">
+  const eventSource = new EventSource('/sse');
+  eventSource.onmessage = ({ data }) => {
+    data = JSON.parse(data);
+    if(data.summedPoints) {
+      jQuery("#totalPoints").text(data.summedPoints);
+    }
+    if(data.eventsHTML) {
+      jQuery("#events").html(data.eventsHTML);
+    }
+  };
+</script>

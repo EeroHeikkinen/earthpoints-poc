@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SocialCredentialService } from './social-credential.service';
+import { PlatformConnectionService } from './platform-connection.service';
 
 describe('SocialCredentialService', () => {
-  let service: SocialCredentialService;
+  let service: PlatformConnectionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SocialCredentialService],
+      providers: [PlatformConnectionService],
     }).compile();
 
-    service = module.get<SocialCredentialService>(SocialCredentialService);
+    service = module.get<PlatformConnectionService>(PlatformConnectionService);
   });
 
   it('should be defined', () => {

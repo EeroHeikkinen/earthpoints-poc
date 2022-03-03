@@ -4,14 +4,14 @@ import Strategy from 'passport-instagram-strategy';
 
 import * as dotenv from "dotenv";
 import { User } from 'src/user/entities/user.entity';
-import { SocialCredentialService } from 'src/social-credential/social-credential.service';
+import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
 import { UserService } from 'src/user/user.service';
 
 dotenv.config();
 
 @Injectable()
 export class InstagramStrategy extends PassportStrategy(Strategy, 'instagram') {
-  constructor(private socialCredentialService: SocialCredentialService,
+  constructor(private socialCredentialService: PlatformConnectionService,
     private userService: UserService) {
     
     super({
