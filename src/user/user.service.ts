@@ -20,7 +20,9 @@ export class UserService {
     ) {}
   
   async create(createUserDto?: CreateUserDto) {
-    return await this.userRepository.create(createUserDto);
+    const createResult = await this.userRepository.create(createUserDto);
+    this.queueService.addUserIdToQueue(createUserDto.userid);
+    return createResult;
   }
 
   async findByUserId(userid: string) {
@@ -50,7 +52,7 @@ export class UserService {
       }
 
       //TODO: Consider if this is the correct place to add que...
-      this.queueService.addUserIdToQueue(userid);
+      //this.queueService.addUserIdToQueue(userid);
       return 1;
   }
 }
