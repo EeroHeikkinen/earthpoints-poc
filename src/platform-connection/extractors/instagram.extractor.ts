@@ -8,22 +8,35 @@ import { InstagramApiService } from 'src/instagram-api/instagram-api.service';
 
 @Injectable()
 export class InstagramExtractor implements IExtractor {
-    constructor(
-        private instagramService: InstagramApiService,
-        private ruleService: RuleService
-        ){}
+  constructor(
+    private instagramService: InstagramApiService,
+    private ruleService: RuleService,
+  ) {}
 
-        async process(credential: PlatformConnection, {from, until}) {
-            const feedContent = await this.instagramService.getFeed(credential.authToken);
-            const userid = credential.userid;
-    
-            for(const item of feedContent) {
-                if(item.timestamp) {
-                    item.timestamp = new Date(item.timestamp)
-                }
-                await this.ruleService.trigger('user.published.post', { 'userid': userid, 'platform': 'instagram', message: item.caption, data: item } );
-            }  
+  async process(credential: PlatformConnection, { from, until }) {
+    const feedContent = await this.instagramService.getFeed(
+      credential.authToken,
+    );
+    const userid = credential.userid;
 
-            return { processedFrom: undefined, processedUntil: undefined }
-        }
+    for (const item of feedContent) {
+      if (item.timestamp) {
+        item.timestamp = new Date(item.timestamp);
+      }
+      await this.ruleService.trigger('user.published.post', {
+        userid: userid,
+        platform: 'instagram',
+        message: item.caption,
+        data: item,
+        imageDownloader: async () => {
+          return await this.instagramService.getMedia(
+            credential.authToken,
+            item.id,
+          );
+        },
+      });
+    }
+
+    return { processedFrom: undefined, processedUntil: undefined };
+  }
 }

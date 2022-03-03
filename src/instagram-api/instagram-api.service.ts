@@ -5,40 +5,49 @@ import { lastValueFrom, Observable } from 'rxjs';
 
 @Injectable()
 export class InstagramApiService {
-    //private token: string = process.env.FACEBOOK_ACCESS_TOKEN
-    private apiUrl: string = 'https://graph.instagram.com'
+  async getMedia(authToken: string, mediaId: string) {
+    const dataBuffer = await this.getQuery(
+      authToken,
+      `${mediaId}?fields=media_url`,
+    );
+    return dataBuffer.data.media_url;
+  }
 
-    constructor(
-        private httpService: HttpService,
-    ) {}
+  //private token: string = process.env.FACEBOOK_ACCESS_TOKEN
+  private apiUrl: string = 'https://graph.instagram.com';
 
-    async getQuery(authToken, query) {
-        if(!query.includes('?')) {
-            query += '?';
-        } else {
-            query += '&'
-        }
-        query += 'access_token=' + authToken;
-        const requestUrl = this.apiUrl + '/' + query;
-        console.log("Requesting IG with: " + requestUrl)
-        const source$ = this.httpService.get(requestUrl)
-        return await lastValueFrom(source$)
+  constructor(private httpService: HttpService) {}
+
+  async getQuery(authToken, query) {
+    if (!query.includes('?')) {
+      query += '?';
+    } else {
+      query += '&';
     }
+    query += 'access_token=' + authToken;
+    const requestUrl = this.apiUrl + '/' + query;
+    console.log('Requesting IG with: ' + requestUrl);
+    const source$ = this.httpService.get(requestUrl);
+    return await lastValueFrom(source$);
+  }
 
-    async getUrl(url) {
-        const source$ = this.httpService.get(url)
-        return await lastValueFrom(source$)
+  async getUrl(url) {
+    const source$ = this.httpService.get(url);
+    return await lastValueFrom(source$);
+  }
+
+  async getFeed(authToken) {
+    var dataBuffer = await this.getQuery(
+      authToken,
+      'me/media?fields=caption,media_type,permalink,media_url,timestamp',
+    );
+    if (!dataBuffer.data) {
+      return null;
     }
+    var data = dataBuffer.data.data;
 
-    async getFeed(authToken) {
-        var dataBuffer = await this.getQuery(authToken, 'me/media?fields=caption,media_type,permalink,media_url,timestamp');
-        if (!dataBuffer.data) {
-            return null;
-        }
-        var data = dataBuffer.data.data;
-
-        return data;
-        /*
+    return data;
+    /*
         var maxPages = 10; 
         var donePages = 1;
 
@@ -54,5 +63,5 @@ export class InstagramApiService {
         }
 
         return data;*/
-    }
+  }
 }
