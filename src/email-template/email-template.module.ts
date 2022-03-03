@@ -33,6 +33,14 @@ import { PointEventModule } from 'src/point-event/point-event.module';
         strict: true,
       },
     },
+    options: {
+      partials: {
+        dir: process.env.PWD+  '/public/mail-templates/partials',
+        options: {
+          strict: true,
+        },
+      },
+    },    
   })],
   providers: [EmailTemplateService, SentEmailRepository, DailyMessageEmailTemplate, FiftyPointsEmailTemplate],
   exports: [EmailTemplateService]
