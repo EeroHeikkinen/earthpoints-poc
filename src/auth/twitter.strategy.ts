@@ -14,9 +14,9 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
   constructor(private socialCredentialService: SocialCredentialService,
     private userService: UserService) {
     super({
-      consumerKey: process.env.TWITTER_KEY,
-      consumerSecret: process.env.TWITTER_SECRET,
-      callbackURL: process.env.TWITTER_CALLBACK_URL,
+      consumerKey: process.env.TWITTER_KEY || 'x',
+      consumerSecret: process.env.TWITTER_SECRET  || 'x',
+      callbackURL: process.env.TWITTER_CALLBACK_URL  || 'x',
       passReqToCallback: true
     });
   }
