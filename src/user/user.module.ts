@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { SocialCredentialModule } from 'src/social-credential/social-credential.module';
@@ -9,7 +9,7 @@ import { PointEventModule } from 'src/point-event/point-event.module';
 import { QueueModule } from 'src/queue/queue.module';
 
 @Module({
-  imports: [SocialCredentialModule, ExtractorModule, CassandraModule, PointEventModule,QueueModule],
+  imports: [SocialCredentialModule, ExtractorModule, CassandraModule, PointEventModule, forwardRef(() => QueueModule),],
   controllers: [UserController],
   providers: [UserService, UserRepository],
   exports: [UserService]
