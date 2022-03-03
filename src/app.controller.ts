@@ -67,8 +67,8 @@ export class AppController {
           return { 
             data: { 
               'userid': user.userid, 
-              'eventsHTML': renderEvents({events}),
-              'events': JSON.stringify(events),
+              'eventsHTML': renderEvents({events: formattedEvents}),
+              'events': JSON.stringify(formattedEvents),
               summedPoints
             } 
           } 
@@ -121,6 +121,7 @@ export class AppController {
     const user = req.user as User;
     
     const {formattedEvents} = this.formatUserEvents(user.events)
+    formattedEvents.sort((a, b) => b.timestamp - a.timestamp);
 
     const platforms = [
       { 
