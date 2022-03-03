@@ -85,3 +85,8 @@ background-color: white !important; }
 .text-muted {
   opacity: 0.5;
 }
+
+.thumbnail {
+  width: 100%;
+  margin-left: -25%;
+}

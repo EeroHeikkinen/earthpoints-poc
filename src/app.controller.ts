@@ -41,7 +41,13 @@ export class AppController {
     const renderEvents = handlebars.compile(`
       {{#each events}}
         <div class="row mb-12">
-          <div class="offset-2 col-1 mr-1 mt-2"><i class="mt-1 fa fa-{{this.icon}} fa-2x"></i></div>
+          <div class="offset-2 col-1 mr-1 mt-2">
+            {{#if this.imageUrl}}
+              <img src={{this.imageUrl}} class="thumbnail"/>
+            {{else}}
+              <i class="mt-1 fa fa-{{this.icon}} fa-2x"></i>
+            {{/if}} 
+          </div>
           <div class="col-5">
             <p class="grey-text"></p>
             You {{this.verb}} {{this.platform}} - {{this.formattedTimestamp}}
@@ -83,6 +89,10 @@ export class AppController {
       const formattedEvent = event as any
       formattedEvent.formattedTimestamp = Utils.getFormattedDate(event.timestamp); 
       formattedEvent.platform = event.platform[0].toUpperCase() + event.platform.slice(1);
+      if (formattedEvent.icon.startsWith('https://')) {
+        formattedEvent.imageUrl = formattedEvent.icon;
+        formattedEvent.icon = undefined;
+      }
       formattedEvents.push(formattedEvent)
     }
     formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
