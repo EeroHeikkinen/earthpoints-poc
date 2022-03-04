@@ -1,22 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FacebookApiModule } from 'src/facebook-api/facebook-api.module';
-import { InstagramApiModule } from 'src/instagram-api/instagram-api.module';
-import { RuleModule } from 'src/rule/rule.module';
-import { ExtractorService } from './extractor.service';
-import { FacebookExtractor } from './impl/facebook.extractor';
-import { InstagramExtractor } from './impl/instagram.extractor';
-import { TwitterExtractor } from './impl/twitter.extractor';
+import { PlatformConnectionModule } from 'src/platform-connection/platform-connection.module';
+import { QueueModule } from 'src/queue/queue.module';
+import { UserModule } from 'src/user/user.module';
+import { CronModule } from './cron.module';
+import { CronService } from './cron.service';
 
-describe('AdapterService', () => {
-  let service: ExtractorService;
+describe('CronService', () => {
+  let service: CronService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [RuleModule, FacebookApiModule, InstagramApiModule],
-      providers: [ExtractorService, FacebookExtractor, InstagramExtractor, TwitterExtractor],
+      imports: [UserModule, PlatformConnectionModule, QueueModule,CronModule],
+      providers: []
     }).compile();
 
-    service = module.get<ExtractorService>(ExtractorService);
+    service = module.get<CronService>(CronService);
   });
 
   it('should be defined', () => {
