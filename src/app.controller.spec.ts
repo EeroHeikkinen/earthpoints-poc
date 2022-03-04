@@ -1,4 +1,3 @@
-import { BullModule } from '@nestjs/bull';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -26,12 +25,6 @@ describe('AppController', () => {
         ServeStaticModule.forRoot({
           rootPath: join(__dirname, '..', 'static'),
         }),
-        BullModule.forRoot({
-          redis: {
-            host: process.env.REDIS_HOST,
-            port: parseInt(process.env.REDIS_PORT),
-          },
-        }),        
         AuthModule,
         CassandraModule,
         FacebookApiModule,
