@@ -13,7 +13,6 @@ import { FacebookApiModule } from './facebook-api/facebook-api.module';
 import { InstagramApiModule } from './instagram-api/instagram-api.module';
 import { PlatformConnectionModule } from './platform-connection/platform-connection.module';
 import { PointEventModule } from './point-event/point-event.module';
-import { QueueModule } from './queue/queue.module';
 import { RuleModule } from './rule/rule.module';
 import { TemplateModule } from './template/template.module';
 import { UserModule } from './user/user.module';
@@ -41,7 +40,6 @@ describe('AppController', () => {
         TemplateModule,
         PointEventModule,
         InstagramApiModule,
-        QueueModule,
         ScheduleModule.forRoot(),
         CronModule,
         EmailTemplateModule,
