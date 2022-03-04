@@ -108,22 +108,29 @@ export class AppController {
     const userid = req.user.userid;
 
     /* If necessary fill in user timezone from ip */
-    if(!req.user.timezone) {
+    if (!req.user.timezone) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-      if(ip == '::1') {
+      if (ip == '::1') {
         ip = process.env.TEST_IP;
       }
-      req.user.timezone = await new Promise<string>((resolve, reject) => {
-        satelize.satelize({ip}, (err, payload) => {
-          if(payload && payload.timezone) {
-            this.userService.update(
-              { userid: userid, timezone: payload.timezone 
-            })
+      try {
+        req.user.timezone = await new Promise<string>((resolve, reject) => {
+          satelize.satelize({ ip }, (err, payload) => {
+            if (err || !payload || !payload.timezone) {
+              reject(err);
+            }
+            this.userService.update({
+              userid: userid,
+              timezone: payload.timezone,
+            });
             resolve(payload.timezone);
-          }
-          reject();
+          });
         });
-      });
+      } catch (err) {
+        console.log(
+          `Failed determining timezone for IP address ${ip}: Error description ${err}`,
+        );
+      }
     }
 
     this.userService.syncPoints(userid); 
