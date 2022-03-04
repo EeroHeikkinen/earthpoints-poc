@@ -1,4 +1,5 @@
-import { Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters } from '@nestjs/common';
+require('dotenv').config()
+import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -10,21 +11,94 @@ import { AuthService } from './auth/auth.service';
 
 import Utils from 'src/utils';
 import { UserService } from './user/user.service';
-import { SocialCredentialService } from './social-credential/social-credential.service';
+import { PlatformConnectionService } from './platform-connection/platform-connection.service';
 import { User } from './user/entities/user.entity';
 import { PointEventService } from './point-event/point-event.service';
 import { CallbackURL } from './auth/callback-url.decorator';
 import { FacebookAuthGuard } from './auth/facebook-auth.guard';
 import { TwitterAuthGuard } from './auth/twitter-auth.guard';
 import { InstagramAuthGuard } from './auth/instagram-auth.guard';
+import { concatMap, filter, Observable } from 'rxjs';
+
+import handlebars from 'handlebars'
+
+import satelize from 'satelize'
+import { UpdateUserDto } from './user/dto/update-user.dto';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly socialCredentialService: SocialCredentialService, 
+    private readonly socialCredentialService: PlatformConnectionService, 
     private readonly userService: UserService, 
     private readonly authService: AuthService,
     private readonly pointEventService: PointEventService) {}
+
+  @Sse('sse')
+  @UseGuards(JwtAuthGuard)
+  sse(@Req() req): Observable<MessageEvent> {
+    const user = req.user as User;
+        
+    const renderEvents = handlebars.compile(`
+      {{#each events}}
+        <div class="row mb-12">
+          <div class="offset-2 col-1 mr-1 mt-2">
+            {{#if this.imageUrl}}
+              <img src={{this.imageUrl}} class="thumbnail"/>
+            {{else}}
+              <i class="mt-1 fa fa-{{this.icon}} fa-2x"></i>
+            {{/if}} 
+          </div>
+          <div class="col-5">
+            <p class="grey-text"></p>
+            You {{this.verb}} {{this.platform}} - {{this.formattedTimestamp}}
+            </p>
+            
+            <h5 class="font-weight-bold">
+              {{this.message}}
+            </h5>
+          </div>
+          <div class="col-2 mt-3"><h5>{{this.points}} 🌎</h5> </div>
+        </div>
+      {{/each}}
+    `)
+
+    return this.pointEventService.subject.pipe(
+      filter((data:any) => {
+        return data.userid.toString() === user.userid.toString()}
+      ), 
+      concatMap(async (event) => { 
+          const events = await this.pointEventService.findAllForUser(user.userid);
+          const {formattedEvents, summedPoints} = this.formatUserEvents(events)
+          formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
+          return { 
+            data: { 
+              'userid': user.userid, 
+              'eventsHTML': renderEvents({events: formattedEvents}),
+              'events': JSON.stringify(formattedEvents),
+              summedPoints
+            } 
+          } 
+        } 
+      ))
+  }
+
+  formatUserEvents(events
+    ) {
+    const formattedEvents = []
+    for(let event of events) {
+      const formattedEvent = event as any
+      formattedEvent.formattedTimestamp = Utils.getFormattedDate(event.timestamp); 
+      formattedEvent.platform = event.platform[0].toUpperCase() + event.platform.slice(1);
+      if (formattedEvent.icon.startsWith('https://')) {
+        formattedEvent.imageUrl = formattedEvent.icon;
+        formattedEvent.icon = undefined;
+      }
+      formattedEvents.push(formattedEvent)
+    }
+    formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
+    const summedPoints = events.map((event) => event.points).reduce((previous, current) => previous + current, 0)
+    return {formattedEvents, summedPoints}
+  }
 
   @Get('/')
   @UseFilters(UnauthorizedExceptionFilter)
@@ -33,21 +107,39 @@ export class AppController {
   async dashboard(@Req() req): Promise<any> {
     const userid = req.user.userid;
 
-    await this.userService.syncPoints(userid);
-
-    const events = await this.pointEventService.findAllForUser(userid);
-
-    const formattedEvents = []
-    for(let event of events) {
-      const formattedEvent = event as any
-      formattedEvent.formattedTimestamp = Utils.getFormattedDate(event.timestamp); 
-      formattedEvent.platform = event.platform[0].toUpperCase() + event.platform.slice(1);
-      formattedEvents.push(formattedEvent)
+    /* If necessary fill in user timezone from ip */
+    if (!req.user.timezone) {
+      let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      if (ip == '::1') {
+        ip = process.env.TEST_IP;
+      }
+      try {
+        req.user.timezone = await new Promise<string>((resolve, reject) => {
+          satelize.satelize({ ip }, (err, payload) => {
+            if (err || !payload || !payload.timezone) {
+              reject(err);
+            }
+            this.userService.update({
+              userid: userid,
+              timezone: payload.timezone,
+            });
+            resolve(payload.timezone);
+          });
+        });
+      } catch (err) {
+        console.log(
+          `Failed determining timezone for IP address ${ip}: Error description ${err}`,
+        );
+      }
     }
-    formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
-    const summedPoints = events.map((event) => event.points).reduce((previous, current) => previous + current, 0)
 
-    const credentials = await this.socialCredentialService.findByUserId(userid);
+    this.userService.syncPoints(userid); 
+
+    const user = req.user as User;
+    
+    const {formattedEvents} = this.formatUserEvents(user.events)
+    formattedEvents.sort((a, b) => b.timestamp - a.timestamp);
+
     const platforms = [
       { 
         name: 'facebook',
@@ -69,16 +161,16 @@ export class AppController {
       }
     ]
     /* Hide already connected */
-    for(let credential of credentials) {
+    for(let connection of user.connections) {
       for(let platform of platforms) {
-        if(platform.name == credential.platform)
+        if(platform.name == connection.platform)
           platform.show = false;
       }
     }
     
     return {
       user: req.user,
-      summedPoints,
+      summedPoints: user.points,
       events: formattedEvents,
       platforms
     }

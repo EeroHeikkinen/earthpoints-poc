@@ -4,16 +4,17 @@ import { Profile, Strategy } from 'passport-twitter';
 
 import * as dotenv from "dotenv";
 import { User } from 'src/user/entities/user.entity';
-import { SocialCredentialService } from 'src/social-credential/social-credential.service';
+import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
 import { UserService } from 'src/user/user.service';
 
 dotenv.config();
 
 @Injectable()
 export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
-  constructor(private socialCredentialService: SocialCredentialService,
+  constructor(private socialCredentialService: PlatformConnectionService,
     private userService: UserService) {
     super({
+      includeEmail: true,
       consumerKey: process.env.TWITTER_KEY || 'x',
       consumerSecret: process.env.TWITTER_SECRET  || 'x',
       callbackURL: process.env.TWITTER_CALLBACK_URL  || 'x',
@@ -28,7 +29,7 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
     profile: any,
     done: (err: any, user: any, info?: any) => void,
   ): Promise<any> {
-    const { username, id, displayName } = profile;
+    const { username, id, displayName, emails } = profile;
 
     let userid: string;
 
@@ -44,6 +45,11 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
         token_secret: tokenSecret,
         auth_expiration: undefined
       })
+
+      // Save email to user if not yet set
+      if(!req.user.email && emails && emails[0]) {
+        this.userService.update({userid, email: emails[0].value})
+      }
     } else {
       let firstName;
       if(displayName) {
@@ -51,7 +57,6 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
       }
 
       let credentials = await this.socialCredentialService.findByProfileIdAndPlatform(id, 'twitter');
-      
 
       if(!credentials.length) {
         // First login for user
@@ -60,7 +65,8 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
 
         const newUser = await this.userService.create({
           userid,
-          firstName
+          firstName,
+          email: (emails && emails[0])? emails[0].value: undefined
         });
 
         credentials = await this.socialCredentialService.create({

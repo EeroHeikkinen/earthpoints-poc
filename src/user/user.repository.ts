@@ -3,9 +3,11 @@ import { mapping } from 'cassandra-driver';
 import { User } from './entities/user.entity';
 import { CassandraService } from 'src/cassandra/cassandra.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserRepository implements OnModuleInit {
+
 
     constructor(private cassandraService: CassandraService) { }
 
@@ -37,7 +39,15 @@ export class UserRepository implements OnModuleInit {
         return (await this.userMapper.insert(user)).toArray();
     }
 
+    async update(updateUserDto: UpdateUserDto) {
+        return await this.userMapper.update(updateUserDto);
+    }
+
     async get(userid: string) {
-        return (await this.userMapper.get(({userid: userid})));
+        return await this.userMapper.get(({userid: userid}));
+    }
+
+    async getAll() {
+        return await this.userMapper.findAll();
     }
 }

@@ -8,27 +8,41 @@ import { FacebookApiModule } from './facebook-api/facebook-api.module';
 import { UserModule } from './user/user.module';
 import { RuleModule } from './rule/rule.module';
 import { TemplateModule } from './template/template.module';
-import { ExtractorModule } from './extractor/extractor.module';
-import { SocialCredentialModule } from './social-credential/social-credential.module';
+import { PlatformConnectionModule } from './platform-connection/platform-connection.module';
 import { PointEventModule } from './point-event/point-event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { InstagramApiModule } from './instagram-api/instagram-api.module';
+import { BullModule } from '@nestjs/bull';
+import { QueueModule } from './queue/queue.module';
+import { CronModule } from './cron/cron.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { EmailTemplateModule } from './email-template/email-template.module';
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'static'),
     }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT) || 6379,
+      },
+    }),    
     AuthModule,
     CassandraModule,
     FacebookApiModule,
     UserModule,
     RuleModule,
     TemplateModule,
-    ExtractorModule,
-    SocialCredentialModule,
+    PlatformConnectionModule,
     PointEventModule,
-    InstagramApiModule
+    InstagramApiModule,
+    QueueModule,
+    ScheduleModule.forRoot(),
+    CronModule,
+    EmailTemplateModule
   ], 
   controllers: [AppController],
   providers: [AppService],

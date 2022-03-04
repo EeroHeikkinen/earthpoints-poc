@@ -1,15 +1,13 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Res } from '@nestjs/common';
-import { AxiosResponse } from 'axios';
-import { lastValueFrom, Observable } from 'rxjs';
+import { Injectable, Logger } from '@nestjs/common';
+import { lastValueFrom } from 'rxjs';
 
 import * as dotenv from "dotenv";
-import { response } from 'express';
 dotenv.config();
 
 @Injectable()
 export class FacebookApiService {
-    //private token: string = process.env.FACEBOOK_ACCESS_TOKEN
+    private readonly logger = new Logger(FacebookApiService.name);
     private apiUrl: string = 'https://graph.facebook.com/v12.0'
 
     constructor(
@@ -17,6 +15,7 @@ export class FacebookApiService {
     ) {}
 
     async getQuery(authToken, query) {
+        this.logger.debug("Retrieving Query: " + query)
         if(!query.includes('?')) {
             query += '?';
         } else {
@@ -28,33 +27,41 @@ export class FacebookApiService {
     }
 
     async getUrl(url) {
+        this.logger.debug("Retrieving URL: " + url)
         const source$ = this.httpService.get(url)
         return await lastValueFrom(source$)
     }
 
-    async getFeed(authToken, facebookId, stopRetrievingAt:Date=new Date('2021-09-01T00:00:00'), maxPages:number=5) {
-        var dataBuffer = await this.getQuery(authToken, facebookId + '/feed?fields=status_type,message,description,created_time');
+    async getFeed(authToken:string, facebookId:string, 
+        { retrieveUntil = new Date(), retrieveFrom = new Date('2021-09-01T00:00:00'), maxPages=5 }: 
+        { retrieveUntil?: Date, retrieveFrom?: Date, maxPages?: number } = {}): Promise<{ items: any, retrievedFrom:Date, retrievedUntil:Date}> {
+        let dateParams = `since=${Math.floor(retrieveFrom.getTime() / 1000)}`
+        if(retrieveUntil) {
+            dateParams += `&until=${Math.floor(retrieveUntil.getTime() / 1000)}`
+        }
+        var dataBuffer = await this.getQuery(authToken, `${facebookId}/feed?${dateParams}&fields=status_type,message,description,created_time`);
         if (!dataBuffer.data) {
             return null;
         }
         var data = dataBuffer.data.data;
         var donePages = 1;
 
-        while(dataBuffer.data && dataBuffer.data.paging && dataBuffer.data.paging.next && donePages++ < maxPages) {
-            const oldestTimestamp = new Date(data[data.length-1].created_time)
-            if(oldestTimestamp < stopRetrievingAt) {
-                return data;
+        while(dataBuffer.data && dataBuffer.data.paging && dataBuffer.data.paging.next) {
+            if(donePages++ >= maxPages) {
+                // hit max page limit
+                const oldestTimestamp = new Date(data[data.length-1].created_time)
+                return { items: data, retrievedFrom: oldestTimestamp, retrievedUntil: retrieveUntil } ;
             }
             const next = dataBuffer.data.paging.next;
 
             dataBuffer = await this.getUrl(next);
-            if (!dataBuffer.data) {
+            if (!dataBuffer.data.length) {
                 break;
             }
 
             data = data.concat(dataBuffer.data.data); 
         }
 
-        return data;
+        return { items: data, retrievedFrom: retrieveFrom, retrievedUntil: retrieveUntil };
     }
 }

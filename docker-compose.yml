@@ -9,6 +9,10 @@ services:
       - ~/apps/cassandra:/var/lib/cassandra
     environment:
       - CASSANDRA_CLUSTER_NAME=earthpoints
+  redis:
+    image: redis:6.2.6
+    ports:
+      - ${REDIS_PORT}:6379
   dev:
       container_name: nestjs_api_dev
       image: nestjs-api-dev:1.0.0
@@ -16,7 +20,7 @@ services:
           context: .
           target: development
           dockerfile: ./Dockerfile
-      command: npm run start:dev
+      command: npm run start:debug
       ports:
           - ${WEB_APP_PORT}:3000
           - 9229:9229
@@ -24,10 +28,14 @@ services:
           - .:/usr/src/app
           - /usr/src/app/node_modules
       restart: unless-stopped
+      environment:
+        - DEBUG=*
+        - NODE_ENV=development
       env_file:
         - .env      
       depends_on:
         - cassandra
+        - redis
   prod:
       container_name: nestjs_api_prod
       image: nestjs-api-prod:1.0.0
@@ -48,3 +56,4 @@ services:
         - .env      
       depends_on:
         - cassandra
+        - redis
