@@ -9,7 +9,8 @@ CREATE KEYSPACE IF NOT EXISTS earthpoints
 CREATE TABLE earthpoints.user (
    userid uuid PRIMARY KEY,
    first_name varchar,
-   email varchar,
+   email varchar, /* will be deprecated */
+   emails set<varchar>,
    timezone varchar,
    created_at timestamp
 );
@@ -25,6 +26,7 @@ CREATE TABLE earthpoints.platform_connection (
    userid uuid,
    profile_id varchar,
    platform varchar,
+   emails set<varchar>,
    auth_token varchar,
    token_secret varchar,
    auth_expiration timestamp,
@@ -38,9 +40,12 @@ CREATE TABLE earthpoints.platform_connection_by_profile_id_and_platform (
    userid uuid,
    profile_id varchar,
    platform varchar,
+   emails set<varchar>,
    auth_token varchar,
+   token_secret varchar,
    auth_expiration timestamp,
-   last_sync timestamp,
+   head timestamp,
+   tail timestamp,
    watched_resources list<varchar>,
    PRIMARY KEY (profile_id,platform)
 );
