@@ -68,7 +68,7 @@ export class AppController {
       ), 
       concatMap(async (event) => { 
           const events = await this.pointEventService.findAllForUser(user.userid);
-          const {formattedEvents, summedPoints} = this.formatUserEvents(events)
+          const {formattedEvents, summedPoints} = this.formatUserEvents(events,user.timezone)
           formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
           return { 
             data: { 
@@ -82,12 +82,12 @@ export class AppController {
       ))
   }
 
-  formatUserEvents(events
+  formatUserEvents(events,timezone
     ) {
     const formattedEvents = []
     for(let event of events) {
       const formattedEvent = event as any
-      formattedEvent.formattedTimestamp = Utils.getFormattedDate(event.timestamp); 
+      formattedEvent.formattedTimestamp = Utils.getFormattedDate(event.timestamp,false,false,timezone); 
       formattedEvent.platform = event.platform[0].toUpperCase() + event.platform.slice(1);
       if (formattedEvent.icon.startsWith('https://')) {
         formattedEvent.imageUrl = formattedEvent.icon;
@@ -110,7 +110,7 @@ export class AppController {
     /* If necessary fill in user timezone from ip */
     if (!req.user.timezone) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-      if (ip == '::1') {
+      if (ip == '::1' || ip.startsWith('::ffff')) {
         ip = process.env.TEST_IP;
       }
       try {
@@ -137,7 +137,7 @@ export class AppController {
 
     const user = req.user as User;
     
-    const {formattedEvents} = this.formatUserEvents(user.events)
+    const {formattedEvents} = this.formatUserEvents(user.events,user.timezone)
     formattedEvents.sort((a, b) => b.timestamp - a.timestamp);
 
     const platforms = [
