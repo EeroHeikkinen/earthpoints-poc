@@ -17,6 +17,9 @@ export default class Utils {
           // Adding leading zero to minutes
         //  minutes = `0${ minutes }`;
         //}
+
+        if(timezone == undefined)
+          timezone = 'UTC';
       
         if (prefomattedDate) {
           // Today at 10:20
