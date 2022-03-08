@@ -23,7 +23,15 @@ export class UserController {
     const users = await (await this.userService.findAll()).toArray();
     for (const user of users) {
       if (user.email == trimmedEmail) {
-        return await this.userService.findByUserId(user.userid);
+        const detailedUser: any = await this.userService.findByUserId(
+          user.userid,
+        );
+        for (const n in detailedUser.connections) {
+          // Ad hoc censor
+          detailedUser.connections[n].authToken = undefined;
+          detailedUser.connections[n].profileId = undefined;
+        }
+        return detailedUser;
       }
     }
     return null;
