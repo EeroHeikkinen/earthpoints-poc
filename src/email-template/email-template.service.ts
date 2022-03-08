@@ -1,3 +1,4 @@
+require('dotenv').config();
 import { Injectable } from '@nestjs/common';
 import { IEmailTemplate } from 'src/interfaces/email-template.interface';
 import { User } from 'src/user/entities/user.entity';
@@ -27,7 +28,7 @@ export class EmailTemplateService {
     }
 
     getFrom() {
-        return 'eero.heikkinen@gmail.com';
+        return process.env.EMAIL_FROM;
     }
 
     async processScheduled(user:User, timestamp:Date) {
