@@ -72,7 +72,8 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
             context: {
                 points:user.points, 
                 pointsEarnedToday, 
-                firstName:user.firstName
+                firstName:user.firstName,
+                footerImage: `${process.env.BASE_URL}/point-badge?point=${pointsEarnedToday}&total=${user.points}`
             }
         }
     }
