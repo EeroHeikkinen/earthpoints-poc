@@ -18,8 +18,6 @@ export class QueueConsumer {
       timestamp: Date;
     };
 
-    await new Promise((r) => setTimeout(r, 30000));
-
     await this.userService.syncPoints(userid);
     const user = await this.userService.findByUserId(userid);
 
