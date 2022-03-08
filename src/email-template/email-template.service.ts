@@ -7,6 +7,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { SentEmailRepository } from './sent-email.repository';
 import { CreatePointEventDto } from 'src/point-event/dto/create-point-event.dto';
 import { FiftyPointsEmailTemplate } from './templates/fifty-points-message.template';
+import { WelcomeMessageEmailTemplate } from './templates/welcome-message.template';
 
 @Injectable()
 export class EmailTemplateService {
@@ -14,11 +15,13 @@ export class EmailTemplateService {
     constructor(
         private dailyMessageEmailTemplate: DailyMessageEmailTemplate,
         private fiftyPointsEmailTemplate: FiftyPointsEmailTemplate,
+        private welcomeMessageEmailTemplate: WelcomeMessageEmailTemplate,
         private sentEmailRepository: SentEmailRepository,
         private readonly mailerService: MailerService
         ) {
         this.templates = new Map<string, IEmailTemplate>(Object.entries({
             'dailyMessage': dailyMessageEmailTemplate,
+            'welcomeMessage': welcomeMessageEmailTemplate
             /*'fiftyPoints': fiftyPointsEmailTemplate*/
         }))
     }
