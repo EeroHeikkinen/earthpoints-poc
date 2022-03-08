@@ -1,3 +1,4 @@
+require('dotenv').config();
 export const jwtConstants = {
-    secret: 'earthpoints',
+    secret: process.env.JWT_SECRET,
 }; 
