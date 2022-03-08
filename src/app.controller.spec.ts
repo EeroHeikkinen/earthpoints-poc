@@ -5,6 +5,7 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CanvasModule } from './canvas/canvas.module';
 import { CassandraModule } from './cassandra/cassandra.module';
 import { CronModule } from './cron/cron.module';
 import { EmailTemplateModule } from './email-template/email-template.module';
@@ -36,7 +37,8 @@ describe('AppController', () => {
         ScheduleModule.forRoot(),
         CronModule,
         EmailTemplateModule,
-        PlatformConnectionModule
+        PlatformConnectionModule,
+        CanvasModule
       ],
       controllers: [AppController],
       providers: [AppService],
