@@ -31,7 +31,7 @@ export class EmailTemplateService {
     }
 
     getFrom() {
-        return process.env.EMAIL_FROM;
+        return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
     }
 
     async processScheduled(user:User, timestamp:Date) {
