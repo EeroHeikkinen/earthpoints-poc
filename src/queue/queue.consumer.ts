@@ -1,20 +1,29 @@
 import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
+import { EmailTemplateService } from 'src/email-template/email-template.service';
 import { UserService } from 'src/user/user.service';
 
 @Processor('sync')
 export class QueueConsumer {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private emailTemplateService: EmailTemplateService,
+  ) {}
 
   @Process('syncUser')
   async syncUser(job: Job<unknown>) {
     //TODO: Consumer to implement
-    const { userid } = job.data as { userid: string };
+    const { userid, timestamp } = job.data as {
+      userid: string;
+      timestamp: Date;
+    };
 
     await new Promise((r) => setTimeout(r, 30000));
 
     await this.userService.syncPoints(userid);
     const user = await this.userService.findByUserId(userid);
+
+    this.emailTemplateService.processScheduled(user, new Date(timestamp));
 
     console.log(
       `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!User is synced with number of points: ${user.points}`,
