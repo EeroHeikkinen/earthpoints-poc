@@ -333,7 +333,11 @@ export class AppController {
 
   @Get('point-badge')
   //@UseGuards(JwtAuthGuard)
-  async pointBadge(@Query('point') point, @Res() response): Promise<any> {
-    return (await this.canvasService.createBadge(point,150,45)).pipe(response);
+  async pointBadge(
+    @Query('point') point,
+    @Query('total') total,
+    @Query('streak') streak,
+    @Res() response): Promise<any> {
+    return (await this.canvasService.createBadge(point,total,streak)).pipe(response);
   }
 }
