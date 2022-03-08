@@ -19,7 +19,7 @@ export class EmailTemplateService {
         ) {
         this.templates = new Map<string, IEmailTemplate>(Object.entries({
             'dailyMessage': dailyMessageEmailTemplate,
-            'fiftyPoints': fiftyPointsEmailTemplate
+            /*'fiftyPoints': fiftyPointsEmailTemplate*/
         }))
     }
 
