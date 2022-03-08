@@ -18,6 +18,7 @@ import { QueueModule } from './queue/queue.module';
 import { CronModule } from './cron/cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
+import { CanvasModule } from './canvas/canvas.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { EmailTemplateModule } from './email-template/email-template.module';
     QueueModule,
     ScheduleModule.forRoot(),
     CronModule,
-    EmailTemplateModule
+    EmailTemplateModule,
+    CanvasModule
   ], 
   controllers: [AppController],
   providers: [AppService],

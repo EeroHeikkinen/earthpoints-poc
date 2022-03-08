@@ -1,4 +1,7 @@
-FROM node:17.4.0-alpine3.15 AS development
+FROM node:17.4.0 AS development
+
+RUN apt-get update
+RUN apt-get -y install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
 WORKDIR /usr/src/app
 
@@ -12,7 +15,10 @@ COPY . .
 
 RUN npm run build
 
-FROM node:17.4.0-alpine3.15 as production
+FROM node:17.4.0 as production
+
+RUN apt-get update
+RUN apt-get -y install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}

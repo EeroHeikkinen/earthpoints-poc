@@ -1,5 +1,5 @@
 require('dotenv').config()
-import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse } from '@nestjs/common';
+import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -24,6 +24,7 @@ import handlebars from 'handlebars'
 
 import satelize from 'satelize'
 import { UpdateUserDto } from './user/dto/update-user.dto';
+import { CanvasService } from './canvas/canvas.service';
 
 @Controller()
 export class AppController {
@@ -31,7 +32,8 @@ export class AppController {
     private readonly socialCredentialService: PlatformConnectionService, 
     private readonly userService: UserService, 
     private readonly authService: AuthService,
-    private readonly pointEventService: PointEventService) {}
+    private readonly pointEventService: PointEventService,
+    private readonly canvasService: CanvasService) {}
 
   @Sse('sse')
   @UseGuards(JwtAuthGuard)
@@ -327,5 +329,11 @@ export class AppController {
     res.cookie('auth-cookie', secretData, {httpOnly:true,});
 
     return {msg:'success'};
+  }
+
+  @Get('point-badge')
+  //@UseGuards(JwtAuthGuard)
+  async pointBadge(@Query('point') point, @Res() response): Promise<any> {
+    return (await this.canvasService.createBadge(point,150,45)).pipe(response);
   }
 }
