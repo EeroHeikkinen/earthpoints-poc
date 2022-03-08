@@ -60,7 +60,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
             // Percentile of people
         }*/
 
-        if(hourInUserTimeZone != 16
+        if(hourInUserTimeZone != 12
              ) {
             console.log("Wrong local time to send daily msg")
             return false;
@@ -72,7 +72,8 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
             context: {
                 points:user.points, 
                 pointsEarnedToday, 
-                firstName:user.firstName
+                firstName:user.firstName,
+                footerImage: `${process.env.BASE_URL}/point-badge?point=${pointsEarnedToday}&total=${user.points}`
             }
         }
     }

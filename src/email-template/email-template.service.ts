@@ -1,3 +1,4 @@
+require('dotenv').config();
 import { Injectable } from '@nestjs/common';
 import { IEmailTemplate } from 'src/interfaces/email-template.interface';
 import { User } from 'src/user/entities/user.entity';
@@ -6,6 +7,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { SentEmailRepository } from './sent-email.repository';
 import { CreatePointEventDto } from 'src/point-event/dto/create-point-event.dto';
 import { FiftyPointsEmailTemplate } from './templates/fifty-points-message.template';
+import { WelcomeMessageEmailTemplate } from './templates/welcome-message.template';
 
 @Injectable()
 export class EmailTemplateService {
@@ -13,12 +15,14 @@ export class EmailTemplateService {
     constructor(
         private dailyMessageEmailTemplate: DailyMessageEmailTemplate,
         private fiftyPointsEmailTemplate: FiftyPointsEmailTemplate,
+        private welcomeMessageEmailTemplate: WelcomeMessageEmailTemplate,
         private sentEmailRepository: SentEmailRepository,
         private readonly mailerService: MailerService
         ) {
         this.templates = new Map<string, IEmailTemplate>(Object.entries({
             'dailyMessage': dailyMessageEmailTemplate,
-            'fiftyPoints': fiftyPointsEmailTemplate
+            'welcomeMessage': welcomeMessageEmailTemplate
+            /*'fiftyPoints': fiftyPointsEmailTemplate*/
         }))
     }
 
@@ -27,7 +31,7 @@ export class EmailTemplateService {
     }
 
     getFrom() {
-        return 'eero.heikkinen@gmail.com';
+        return process.env.EMAIL_FROM;
     }
 
     async processScheduled(user:User, timestamp:Date) {

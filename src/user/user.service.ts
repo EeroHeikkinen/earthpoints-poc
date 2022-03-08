@@ -23,7 +23,7 @@ export class UserService {
       createUserDto.createdAt = new Date();
     }
     const createdUser = await this.userRepository.create(createUserDto);
-    this.queueService.addUserIdToQueue(createUserDto.userid);
+    this.queueService.addUserIdToQueue(createUserDto.userid, new Date());
     return createdUser;
   }
 

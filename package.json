@@ -38,6 +38,7 @@
     "@types/passport-instagram": "^1.0.2",
     "axios": "^0.25.0",
     "bull": "^4.6.1",
+    "canvas": "^2.9.0",
     "cassandra-driver": "^4.6.3",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
