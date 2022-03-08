@@ -60,7 +60,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
             // Percentile of people
         }*/
 
-        if(hourInUserTimeZone != 16
+        if(hourInUserTimeZone != 12
              ) {
             console.log("Wrong local time to send daily msg")
             return false;
