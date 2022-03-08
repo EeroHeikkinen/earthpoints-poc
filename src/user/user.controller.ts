@@ -17,6 +17,18 @@ export class UserController {
     return this.userService.findByUserId(id);
   }
 
+  @Get('byEmail/:email')
+  async findOneByEmail(@Param('email') email: string) {
+    const trimmedEmail = email.trim();
+    const users = await (await this.userService.findAll()).toArray();
+    for (const user of users) {
+      if (user.email == trimmedEmail) {
+        return await this.userService.findByUserId(user.userid);
+      }
+    }
+    return null;
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(updateUserDto);
