@@ -14,25 +14,27 @@ import { UpdateEmailContentTemplateDto } from './dto/update-email-content-templa
 
 @Injectable()
 export class EmailTemplateService {
-    templates: Map<string, IEmailTemplate>;
-    constructor(
-        private dailyMessageEmailTemplate: DailyMessageEmailTemplate,
-        private fiftyPointsEmailTemplate: FiftyPointsEmailTemplate,
-        private welcomeMessageEmailTemplate: WelcomeMessageEmailTemplate,
-        private sentEmailRepository: SentEmailRepository,
-        private emailContentTemplateRepository: EmailContentTemplateRepository,
-        private readonly mailerService: MailerService
-        ) {
-        this.templates = new Map<string, IEmailTemplate>(Object.entries({
-            'dailyMessage': dailyMessageEmailTemplate,
-            'welcomeMessage': welcomeMessageEmailTemplate
-            /*'fiftyPoints': fiftyPointsEmailTemplate*/
-        }))
-    }
+  templates: Map<string, IEmailTemplate>;
+  constructor(
+    private dailyMessageEmailTemplate: DailyMessageEmailTemplate,
+    private fiftyPointsEmailTemplate: FiftyPointsEmailTemplate,
+    private welcomeMessageEmailTemplate: WelcomeMessageEmailTemplate,
+    private sentEmailRepository: SentEmailRepository,
+    private emailContentTemplateRepository: EmailContentTemplateRepository,
+    private readonly mailerService: MailerService,
+  ) {
+    this.templates = new Map<string, IEmailTemplate>(
+      Object.entries({
+        dailyMessage: dailyMessageEmailTemplate,
+        welcomeMessage: welcomeMessageEmailTemplate,
+        /*'fiftyPoints': fiftyPointsEmailTemplate*/
+      }),
+    );
+  }
 
-    async findAll() {
-        return this.templates;
-    }
+  async findAll() {
+    return this.templates;
+  }
 
   async addEmailContentTemplate(
     createEmailContentTemplateDto: CreateEmailContentTemplateDto,
@@ -56,57 +58,66 @@ export class EmailTemplateService {
     );
   }
 
-    getFrom() {
-        return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
+  getFrom() {
+    return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
+  }
+
+  async processScheduled(user: User, timestamp: Date) {
+    /* Let's get the current time in user's local timezone */
+    const timezone = user.timezone || 'Asia/Kolkata';
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      hour12: false,
+      hour: 'numeric',
+      minute: 'numeric',
+      timeZone: timezone,
+    });
+    const parts = formatter.formatToParts(timestamp);
+    let hourInUserTimeZone: number, minutesInUserTimeZone: number;
+    for (const part of parts) {
+      if (part.type == 'hour') {
+        hourInUserTimeZone = parseInt(part.value);
+      }
+      if (part.type == 'minute') {
+        minutesInUserTimeZone = parseInt(part.value);
+      }
     }
 
-    async processScheduled(user:User, timestamp:Date) {
-        /* Let's get the current time in user's local timezone */
-        const timezone = user.timezone || 'Asia/Kolkata';
-        let formatter = new Intl.DateTimeFormat('en-US', { hour12: false, hour: 'numeric', minute: 'numeric', timeZone: timezone });   
-        const parts = formatter.formatToParts(timestamp)
-        let hourInUserTimeZone:number, minutesInUserTimeZone:number;
-        for(const part of parts) {
-            if(part.type == 'hour') {
-                hourInUserTimeZone = parseInt(part.value);
-            }
-            if(part.type == 'minute') {
-                minutesInUserTimeZone = parseInt(part.value);
-            }
-        }
+    for (const template of this.templates.values()) {
+      const templateName = template.getName();
+      const lastSent =
+        await this.sentEmailRepository.getSentEmailByUserAndTemplateName(
+          user.userid,
+          templateName,
+        );
 
-        for(const template of this.templates.values()) {
-            const templateName = template.getName();
-            const lastSent = await this.sentEmailRepository.getSentEmailByUserAndTemplateName(user.userid, templateName);
-            
-            const renderParams = await template.render(user, { 
-                hourInUserTimeZone, 
-                minutesInUserTimeZone, 
-                contextTimestamp: timestamp, 
-                lastSent: (lastSent && lastSent.length) ? lastSent[0].timestamp: undefined
-            });
+      const renderParams = await template.render(user, {
+        hourInUserTimeZone,
+        minutesInUserTimeZone,
+        contextTimestamp: timestamp,
+        lastSent:
+          lastSent && lastSent.length ? lastSent[0].timestamp : undefined,
+      });
 
-            if(renderParams) {
-                await this
-                    .mailerService
-                    .sendMail({
-                        to: user.email,
-                        from: this.getFrom(),
-                        ...renderParams
-                    })
-                    .then((success) => {
-                        console.log(success)
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    });
+      if (renderParams) {
+        await this.mailerService
+          .sendMail({
+            to: user.email,
+            from: this.getFrom(),
+            ...renderParams,
+          })
+          .then((success) => {
+            console.log(success);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
 
-                await this.sentEmailRepository.addSentEmail({
-                    userid: user.userid,
-                    template: templateName,
-                    timestamp: new Date()
-                })
-            }
-        }
+        await this.sentEmailRepository.addSentEmail({
+          userid: user.userid,
+          template: templateName,
+          timestamp: new Date(),
+        });
+      }
     }
+  }
 }

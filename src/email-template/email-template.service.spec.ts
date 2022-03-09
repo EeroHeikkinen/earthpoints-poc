@@ -13,8 +13,17 @@ describe('EmailTemplateService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SentEmailRepository,DailyMessageEmailTemplate,FiftyPointsEmailTemplate],
-      imports: [PointEventModule,CassandraModule,MailerModule,EmailTemplateModule]
+      providers: [
+        SentEmailRepository,
+        DailyMessageEmailTemplate,
+        FiftyPointsEmailTemplate,
+      ],
+      imports: [
+        PointEventModule,
+        CassandraModule,
+        MailerModule,
+        EmailTemplateModule,
+      ],
     }).compile();
 
     service = module.get<EmailTemplateService>(EmailTemplateService);
