@@ -27,7 +27,7 @@ export class EmailContentTemplateRepository implements OnModuleInit {
   }
 
   async getEmailContentTemplateByKey(key: string) {
-    return (await this.mapper.find({ key })).toArray();
+    return (await this.mapper.find({ key })).toArray()[0];
   }
 
   async updateEmailContentTemplate(
@@ -39,6 +39,8 @@ export class EmailContentTemplateRepository implements OnModuleInit {
   async addEmailContentTemplate(
     createEmailContentTemplateDto: CreateEmailContentTemplateDto,
   ) {
-    return (await this.mapper.insert(createEmailContentTemplateDto)).toArray();
+    return (
+      await this.mapper.insert(createEmailContentTemplateDto)
+    ).toArray()[0];
   }
 }
