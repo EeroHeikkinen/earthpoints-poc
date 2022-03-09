@@ -22,7 +22,7 @@ CREATE TABLE earthpoints.sent_email (
    PRIMARY KEY ((userid,template))
 );
 
-CREATE TABLE earthpoints.email_template (
+CREATE TABLE earthpoints.email_content_template (
    key varchar,
    content varchar,
    PRIMARY KEY (key)
