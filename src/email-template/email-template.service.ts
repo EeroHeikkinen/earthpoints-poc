@@ -11,6 +11,7 @@ import { WelcomeMessageEmailTemplate } from './templates/welcome-message.templat
 import { EmailContentTemplateRepository } from './email-content-template.repository';
 import { CreateEmailContentTemplateDto } from './dto/email-content-template.dto';
 import { UpdateEmailContentTemplateDto } from './dto/update-email-content-template.dto';
+import handlebars from 'handlebars';
 
 @Injectable()
 export class EmailTemplateService {
@@ -99,6 +100,20 @@ export class EmailTemplateService {
       });
 
       if (renderParams) {
+        if (renderParams.databaseTemplate) {
+          const key = renderParams.databaseTemplate;
+          const databaseTemplate =
+            await this.emailContentTemplateRepository.getEmailContentTemplateByKey(
+              key,
+            );
+          if (databaseTemplate && databaseTemplate.content) {
+            delete renderParams.template;
+            renderParams.html = handlebars.compile(databaseTemplate.content)(
+              renderParams.context,
+            );
+          }
+        }
+
         await this.mailerService
           .sendMail({
             to: user.email,

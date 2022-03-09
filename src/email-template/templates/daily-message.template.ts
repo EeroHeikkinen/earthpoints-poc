@@ -65,8 +65,11 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
             console.log("Wrong local time to send daily msg")
             return false;
         }
-        
+
+    const databaseTemplate = `daily-${contextTimestamp.getFullYear()}-${contextTimestamp.getMonth() + 1}-${contextTimestamp.getDate()}`;
+
         return {
+            databaseTemplate: databaseTemplate,
             template: 'daily-message',
             subject: 'Earth Points Dashboard: you have ' + user.points + " Earth Points!",
             context: {
