@@ -9,6 +9,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { CassandraModule } from 'src/cassandra/cassandra.module';
 import { PointEventModule } from 'src/point-event/point-event.module';
 import { WelcomeMessageEmailTemplate } from './templates/welcome-message.template';
+import { EmailTemplateController } from './email-template.controller';
+import { EmailContentTemplateRepository } from './email-content-template.repository';
 
 @Module({
   imports: [
@@ -43,7 +45,15 @@ import { WelcomeMessageEmailTemplate } from './templates/welcome-message.templat
       },
     },    
   })],
-  providers: [EmailTemplateService, SentEmailRepository, DailyMessageEmailTemplate, FiftyPointsEmailTemplate, WelcomeMessageEmailTemplate],
-  exports: [EmailTemplateService]
+  providers: [
+    EmailContentTemplateRepository,
+    EmailTemplateService,
+    SentEmailRepository,
+    DailyMessageEmailTemplate,
+    FiftyPointsEmailTemplate,
+    WelcomeMessageEmailTemplate,
+  ],
+  exports: [EmailTemplateService],
+  controllers: [EmailTemplateController]
 })
 export class EmailTemplateModule {}

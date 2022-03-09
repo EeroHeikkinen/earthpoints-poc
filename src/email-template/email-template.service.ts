@@ -8,6 +8,9 @@ import { SentEmailRepository } from './sent-email.repository';
 import { CreatePointEventDto } from 'src/point-event/dto/create-point-event.dto';
 import { FiftyPointsEmailTemplate } from './templates/fifty-points-message.template';
 import { WelcomeMessageEmailTemplate } from './templates/welcome-message.template';
+import { EmailContentTemplateRepository } from './email-content-template.repository';
+import { CreateEmailContentTemplateDto } from './dto/email-content-template.dto';
+import { UpdateEmailContentTemplateDto } from './dto/update-email-content-template.dto';
 
 @Injectable()
 export class EmailTemplateService {
@@ -17,6 +20,7 @@ export class EmailTemplateService {
         private fiftyPointsEmailTemplate: FiftyPointsEmailTemplate,
         private welcomeMessageEmailTemplate: WelcomeMessageEmailTemplate,
         private sentEmailRepository: SentEmailRepository,
+        private emailContentTemplateRepository: EmailContentTemplateRepository,
         private readonly mailerService: MailerService
         ) {
         this.templates = new Map<string, IEmailTemplate>(Object.entries({
@@ -29,6 +33,28 @@ export class EmailTemplateService {
     async findAll() {
         return this.templates;
     }
+
+  async addEmailContentTemplate(
+    createEmailContentTemplateDto: CreateEmailContentTemplateDto,
+  ) {
+    return await this.emailContentTemplateRepository.addEmailContentTemplate(
+      createEmailContentTemplateDto,
+    );
+  }
+
+  async updateEmailContentTemplate(
+    updateEmailContentTemplateDto: UpdateEmailContentTemplateDto,
+  ) {
+    return await this.emailContentTemplateRepository.updateEmailContentTemplate(
+      updateEmailContentTemplateDto,
+    );
+  }
+
+  async getEmailContentTemplate(key: string) {
+    return await this.emailContentTemplateRepository.getEmailContentTemplateByKey(
+      key,
+    );
+  }
 
     getFrom() {
         return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
