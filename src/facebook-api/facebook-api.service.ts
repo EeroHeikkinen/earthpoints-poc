@@ -22,8 +22,12 @@ export class FacebookApiService {
             query += '&'
         }
         query += 'access_token=' + authToken;
-        const source$ = this.httpService.get(this.apiUrl + '/' + query)
-        return await lastValueFrom(source$)
+        try {
+            const source$ = this.httpService.get(this.apiUrl + '/' + query)
+            return await lastValueFrom(source$)
+        } catch(err) {
+            console.log(`Failed while retrieving query: ${query}: ${err}`)
+        }
     }
 
     async getUrl(url) {

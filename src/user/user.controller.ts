@@ -17,6 +17,26 @@ export class UserController {
     return this.userService.findByUserId(id);
   }
 
+  @Get('byEmail/:email')
+  async findOneByEmail(@Param('email') email: string) {
+    const trimmedEmail = email.trim();
+    const users = await (await this.userService.findAll()).toArray();
+    for (const user of users) {
+      if (user.email == trimmedEmail) {
+        const detailedUser: any = await this.userService.findByUserId(
+          user.userid,
+        );
+        for (const n in detailedUser.connections) {
+          // Ad hoc censor
+          detailedUser.connections[n].authToken = undefined;
+          detailedUser.connections[n].profileId = undefined;
+        }
+        return detailedUser;
+      }
+    }
+    return null;
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(updateUserDto);

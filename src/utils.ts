@@ -1,37 +1,45 @@
+const moment = require('moment');
+
 export default class Utils {
       static MONTH_NAMES = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
       ];
       
-      static getFormattedDate(date, prefomattedDate:Boolean|string = false, hideYear = false) {
-        const day = date.getDate();
-        const month = Utils.MONTH_NAMES[date.getMonth()];
-        const year = date.getFullYear();
-        const hours = date.getHours();
-        let minutes = date.getMinutes();
-      
-        if (minutes < 10) {
+      static getFormattedDate(date, prefomattedDate:Boolean|string = false, hideYear = false, timezone = 'UTC') {
+        //const day = date.getDate();
+        //const month = Utils.MONTH_NAMES[date.getMonth()];
+        //const year = date.getFullYear();
+        //const hours = date.getHours();
+        //let minutes = date.getMinutes();
+
+        //if (minutes < 10) {
           // Adding leading zero to minutes
-          minutes = `0${ minutes }`;
-        }
+        //  minutes = `0${ minutes }`;
+        //}
+
+        if(timezone == undefined)
+          timezone = 'UTC';
       
         if (prefomattedDate) {
           // Today at 10:20
           // Yesterday at 10:20
-          return `${ prefomattedDate } at ${ hours }:${ minutes }`;
+          return moment(date).tz(timezone).format(`[${ prefomattedDate }] [a]t H:mm`);
+          //return `${ prefomattedDate } at ${ hours }:${ minutes }`;
         }
       
         if (hideYear) {
           // 10. January at 10:20
-          return `${ day }. ${ month } at ${ hours }:${ minutes }`;
+          return moment(date).tz(timezone).format('D. MMMM [a]t H:mm');
+          //return `${ day }. ${ month } at ${ hours }:${ minutes }`;
         }
       
         // 10. January 2017. at 10:20
-        return `${ day }. ${ month } ${ year }. at ${ hours }:${ minutes }`;
+        return moment(date).tz(timezone).format('D. MMMM YYYY. [a]t H:mm');
+        //return `${ day }. ${ month } ${ year }. at ${ hours }:${ minutes }`;
       }
       
-      static timeAgo(dateParam) {
+      static timeAgo(dateParam, timezone = 'UTC') {
         if (!dateParam) {
           return null;
         }
@@ -56,13 +64,13 @@ export default class Utils {
         } else if (minutes < 60) {
           return `${ minutes } minutes ago`;
         } else if (isToday) {
-          return Utils.getFormattedDate(date, 'Today'); // Today at 10:20
+          return Utils.getFormattedDate(date, 'Today',false, timezone); // Today at 10:20
         } else if (isYesterday) {
-          return Utils.getFormattedDate(date, 'Yesterday'); // Yesterday at 10:20
+          return Utils.getFormattedDate(date, 'Yesterday',false, timezone); // Yesterday at 10:20
         } else if (isThisYear) {
-          return Utils.getFormattedDate(date, false, true); // 10. January at 10:20
+          return Utils.getFormattedDate(date, false, true, timezone); // 10. January at 10:20
         }
       
-        return Utils.getFormattedDate(date); // 10. January 2017. at 10:20
+        return Utils.getFormattedDate(date, false, false, timezone); // 10. January 2017. at 10:20
       }
 }
