@@ -66,7 +66,12 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
             return false;
         }
 
-    const databaseTemplate = `daily-${contextTimestamp.getFullYear()}-${contextTimestamp.getMonth() + 1}-${contextTimestamp.getDate()}`;
+        if(!user.points || user.points == 0 || !pointsEarnedToday || pointsEarnedToday == 0){
+            console.log(`Either earned today: ${pointsEarnedToday} or total:${user.points} points are zero. No daily message`);
+            return false;
+        }
+
+        const databaseTemplate = `daily-${contextTimestamp.getFullYear()}-${contextTimestamp.getMonth() + 1}-${contextTimestamp.getDate()}`;
 
         return {
             databaseTemplate: databaseTemplate,
@@ -76,7 +81,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
                 points:user.points, 
                 pointsEarnedToday, 
                 firstName:user.firstName,
-                footerImage: `${process.env.BASE_URL}/point-badge?point=${pointsEarnedToday}&total=${user.points}`
+                footerImage: `${process.env.BASE_URL}/point-badge?point=${pointsEarnedToday}&total=${user.points}&confetti=2&theme=bluered_bottom`
             }
         }
     }
