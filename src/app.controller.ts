@@ -1,5 +1,5 @@
 require('dotenv').config()
-import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query } from '@nestjs/common';
+import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query, Body, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -23,7 +23,6 @@ import { concatMap, filter, Observable } from 'rxjs';
 import handlebars from 'handlebars'
 
 import satelize from 'satelize'
-import { UpdateUserDto } from './user/dto/update-user.dto';
 import { CanvasService } from './canvas/canvas.service';
 
 @Controller()
@@ -329,6 +328,34 @@ export class AppController {
     res.cookie('auth-cookie', secretData, {httpOnly:true,});
 
     return {msg:'success'};
+  }
+
+  @Post('/oauth/token')
+  async loginWithClientCredentials(
+    @Body() body: any,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<any> {
+    const { client_id: clientId, client_secret: clientSecret } = body;
+
+    await this.authService.validateClientCredentials(clientId, clientSecret);
+
+    const apiUserId = '00000000-0000-0000-0000-000000000000';
+    let apiUser = await this.userService.findByUserId(apiUserId);
+    if (!apiUser) {
+      this.userService.create({
+        userid: apiUserId,
+        firstName: 'APIUser',
+      });
+      apiUser = await this.userService.findByUserId(apiUserId);
+    }
+    const { access_token } = await this.authService.login(apiUser, 'api');
+
+    return {
+      access_token: access_token,
+      token_type: 'Bearer',
+      expires_in: 86400,
+    };
   }
 
   @Get('point-badge')
