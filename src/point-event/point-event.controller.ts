@@ -42,6 +42,7 @@ export class PointEventController {
       if (!eventUser) {
         await this.userService.create({
           email,
+          emails: [email],
           createdAt: new Date(),
         });
         eventUser = await this.userService.findByEmail(email);
