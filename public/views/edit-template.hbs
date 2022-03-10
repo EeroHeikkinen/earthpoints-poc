@@ -1,0 +1,43 @@
+<br>
+			<h1 class="mt-5">Earth Points Template Editor</h1>
+			<br>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<div class="form-label">Choose date</div>
+						<input type="text" class="form-control m-datepicker" placeholder="Click here to open datepicker">
+					</div>
+				</div>
+			</div>
+
+			{{#if requestKey}}
+			<h2 class="mt-5">Editing {{requestKey}}</h2>
+			<div>
+					<form method="POST" action="/email-template/{{requestKey}}">
+						<input type="hidden" value="{{requestKey}}" name="key"/>
+						{{#if template}}<textarea name="content">{{template.content}}</textarea>{{else}}<textarea name="content"></textarea>{{/if}}
+						<button type="submit" class="btn btn-primary" >Update</button>
+					</form>
+			</div>
+			{{#if previewHTML}}
+				<h2 class="mt-5">Preview</h2>
+				<div><iframe class="preview" srcdoc="{{previewHTML}}"></iframe></div>
+			{{/if}}
+			{{/if}}
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.m-datepicker').datepicker({
+	    todayHighlight: true,
+	    autoclose: true
+	}).on('changeDate', function(e,x) {
+		if (!e || !e.dates || !e.dates[0]) {
+			return;
+		}
+		const date = e.dates[0];
+		const key = "daily-" + date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+		location.href = "/email-template/" + key;
+    });
+});
+</script>

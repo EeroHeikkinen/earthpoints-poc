@@ -22,6 +22,12 @@ CREATE TABLE earthpoints.sent_email (
    PRIMARY KEY ((userid,template))
 );
 
+CREATE TABLE earthpoints.email_content_template (
+   key varchar,
+   content varchar,
+   PRIMARY KEY (key)
+);
+
 CREATE TABLE earthpoints.platform_connection (
    userid uuid,
    profile_id varchar,

@@ -13,6 +13,8 @@ import { engine } from "express-handlebars";
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestApplicationOptions } from '@nestjs/common';
 
+import basicAuth from 'express-basic-auth';
+
 dotenv.config();
 
 async function bootstrap() {
@@ -53,6 +55,14 @@ async function bootstrap() {
   //app.use(passport.session());
   //app.use(flash());
 
-  await app.listen(3000);  
+  app.use(
+    '/email-template/*',
+    basicAuth({
+      challenge: true,
+      users: { [process.env.ADMIN_USER]: process.env.ADMIN_PASS },
+    }),
+  );
+
+  await app.listen(3000);
 }
 bootstrap();

@@ -8,79 +8,131 @@ import { SentEmailRepository } from './sent-email.repository';
 import { CreatePointEventDto } from 'src/point-event/dto/create-point-event.dto';
 import { FiftyPointsEmailTemplate } from './templates/fifty-points-message.template';
 import { WelcomeMessageEmailTemplate } from './templates/welcome-message.template';
+import { EmailContentTemplateRepository } from './email-content-template.repository';
+import { CreateEmailContentTemplateDto } from './dto/email-content-template.dto';
+import { UpdateEmailContentTemplateDto } from './dto/update-email-content-template.dto';
+import handlebars from 'handlebars';
 
 @Injectable()
 export class EmailTemplateService {
-    templates: Map<string, IEmailTemplate>;
-    constructor(
-        private dailyMessageEmailTemplate: DailyMessageEmailTemplate,
-        private fiftyPointsEmailTemplate: FiftyPointsEmailTemplate,
-        private welcomeMessageEmailTemplate: WelcomeMessageEmailTemplate,
-        private sentEmailRepository: SentEmailRepository,
-        private readonly mailerService: MailerService
-        ) {
-        this.templates = new Map<string, IEmailTemplate>(Object.entries({
-            'dailyMessage': dailyMessageEmailTemplate,
-            'welcomeMessage': welcomeMessageEmailTemplate
-            /*'fiftyPoints': fiftyPointsEmailTemplate*/
-        }))
+  templates: Map<string, IEmailTemplate>;
+  constructor(
+    private dailyMessageEmailTemplate: DailyMessageEmailTemplate,
+    private fiftyPointsEmailTemplate: FiftyPointsEmailTemplate,
+    private welcomeMessageEmailTemplate: WelcomeMessageEmailTemplate,
+    private sentEmailRepository: SentEmailRepository,
+    private emailContentTemplateRepository: EmailContentTemplateRepository,
+    private readonly mailerService: MailerService,
+  ) {
+    this.templates = new Map<string, IEmailTemplate>(
+      Object.entries({
+        dailyMessage: dailyMessageEmailTemplate,
+        welcomeMessage: welcomeMessageEmailTemplate,
+        /*'fiftyPoints': fiftyPointsEmailTemplate*/
+      }),
+    );
+  }
+
+  async findAll() {
+    return this.templates;
+  }
+
+  async addEmailContentTemplate(
+    createEmailContentTemplateDto: CreateEmailContentTemplateDto,
+  ) {
+    return await this.emailContentTemplateRepository.addEmailContentTemplate(
+      createEmailContentTemplateDto,
+    );
+  }
+
+  async updateEmailContentTemplate(
+    updateEmailContentTemplateDto: UpdateEmailContentTemplateDto,
+  ) {
+    return await this.emailContentTemplateRepository.updateEmailContentTemplate(
+      updateEmailContentTemplateDto,
+    );
+  }
+
+  async getEmailContentTemplate(key: string) {
+    return await this.emailContentTemplateRepository.getEmailContentTemplateByKey(
+      key,
+    );
+  }
+
+  getFrom() {
+    return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
+  }
+
+  async processScheduled(user: User, timestamp: Date) {
+    /* Let's get the current time in user's local timezone */
+    const timezone = user.timezone || 'Asia/Kolkata';
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      hour12: false,
+      hour: 'numeric',
+      minute: 'numeric',
+      timeZone: timezone,
+    });
+    const parts = formatter.formatToParts(timestamp);
+    let hourInUserTimeZone: number, minutesInUserTimeZone: number;
+    for (const part of parts) {
+      if (part.type == 'hour') {
+        hourInUserTimeZone = parseInt(part.value);
+      }
+      if (part.type == 'minute') {
+        minutesInUserTimeZone = parseInt(part.value);
+      }
     }
 
-    async findAll() {
-        return this.templates;
-    }
+    for (const template of this.templates.values()) {
+      const templateName = template.getName();
+      const lastSent =
+        await this.sentEmailRepository.getSentEmailByUserAndTemplateName(
+          user.userid,
+          templateName,
+        );
 
-    getFrom() {
-        return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
-    }
+      const renderParams = await template.render(user, {
+        hourInUserTimeZone,
+        minutesInUserTimeZone,
+        contextTimestamp: timestamp,
+        lastSent:
+          lastSent && lastSent.length ? lastSent[0].timestamp : undefined,
+      });
 
-    async processScheduled(user:User, timestamp:Date) {
-        /* Let's get the current time in user's local timezone */
-        const timezone = user.timezone || 'Asia/Kolkata';
-        let formatter = new Intl.DateTimeFormat('en-US', { hour12: false, hour: 'numeric', minute: 'numeric', timeZone: timezone });   
-        const parts = formatter.formatToParts(timestamp)
-        let hourInUserTimeZone:number, minutesInUserTimeZone:number;
-        for(const part of parts) {
-            if(part.type == 'hour') {
-                hourInUserTimeZone = parseInt(part.value);
-            }
-            if(part.type == 'minute') {
-                minutesInUserTimeZone = parseInt(part.value);
-            }
+      if (renderParams) {
+        if (renderParams.databaseTemplate) {
+          const key = renderParams.databaseTemplate;
+          const databaseTemplate =
+            await this.emailContentTemplateRepository.getEmailContentTemplateByKey(
+              key,
+            );
+          if (databaseTemplate && databaseTemplate.content) {
+            delete renderParams.template;
+            renderParams.html = handlebars.compile(databaseTemplate.content)(
+              renderParams.context,
+            );
+          }
         }
 
-        for(const template of this.templates.values()) {
-            const templateName = template.getName();
-            const lastSent = await this.sentEmailRepository.getSentEmailByUserAndTemplateName(user.userid, templateName);
-            
-            const renderParams = await template.render(user, { 
-                hourInUserTimeZone, 
-                minutesInUserTimeZone, 
-                contextTimestamp: timestamp, 
-                lastSent: (lastSent && lastSent.length) ? lastSent[0].timestamp: undefined
-            });
+        await this.mailerService
+          .sendMail({
+            to: user.email,
+            from: this.getFrom(),
+            ...renderParams,
+          })
+          .then((success) => {
+            console.log(success);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
 
-            if(renderParams) {
-                await this
-                    .mailerService
-                    .sendMail({
-                        to: user.email,
-                        from: this.getFrom(),
-                        ...renderParams
-                    })
-                    .then((success) => {
-                        console.log(success)
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    });
-
-                await this.sentEmailRepository.addSentEmail({
-                    userid: user.userid,
-                    template: templateName,
-                    timestamp: new Date()
-                })
-            }
-        }
+        await this.sentEmailRepository.addSentEmail({
+          userid: user.userid,
+          template: templateName,
+          timestamp: new Date(),
+        });
+      }
     }
+  }
 }

@@ -30,21 +30,12 @@ export class WelcomeMessageEmailTemplate implements IEmailTemplate {
             return false;
         }
 
-        const oneDayAgo=now.subtract(1,"day").toDate()
-        const events = await this.pointEventService.findAllForUser(user.userid);
-        const highestDay = 5;
-        const pointsEarnedToday = user.events
-            .filter((event)=>{ return event.timestamp > oneDayAgo })
-            .map((event) => event.points)
-            .reduce((previous, current) => previous + current, 0)
-
-        
         return {
             template: 'welcome-message',
             subject: 'Welcome to Earth Points dashboard!',
             context: {
                 firstName:user.firstName,
-                footerImage: `${process.env.BASE_URL}/point-badge?point=${pointsEarnedToday}&total=${user.points}`
+                footerImage: `${process.env.BASE_URL}/point-badge?point=${process.env.CONNECT_PLATFORM_POINTS}`
             }
         }
     }
