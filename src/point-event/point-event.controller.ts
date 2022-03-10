@@ -58,11 +58,16 @@ export class PointEventController {
         .update(createPointEventDto.hashString)
         .digest('base64');
 
+    const userTotalPoints = userEvents
+      .map((event) => event.points)
+      .reduce((previous, current) => previous + current, 0);
+
     for (const event of userEvents) {
       if (event.hash == hash) {
         return {
           msg: 'Successfully created point event',
           event,
+          userTotalPoints,
         };
       }
     }
