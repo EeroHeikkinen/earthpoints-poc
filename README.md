@@ -30,6 +30,7 @@
 
 ```bash
 # to install local
+$ brew install pkg-config cairo pango libpng jpeg giflib librsvg #for canvas module: check note below.
 $ npm install 
 
 # to install on docker
@@ -38,6 +39,8 @@ $ docker-compose down && docker-compose build --no-cache
 # to init DB
 $ docker exec -i earthpoints-poc-cassandra-1 cqlsh < src/database/schema/schema.cql
 ```
+
+Note: If you want to execute on your locally canvas dependencies has to be installed. Refer to [here](https://www.npmjs.com/package/canvas) for more detail.
 
 ## Running the app
 

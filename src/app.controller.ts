@@ -337,7 +337,12 @@ export class AppController {
     @Query('point') point,
     @Query('total') total,
     @Query('streak') streak,
+    @Query('theme') theme,
+    @Query('confetti') confetti,
     @Res() response): Promise<any> {
-    return (await this.canvasService.createBadge(point,total,streak)).pipe(response);
+      if(total){
+        return (await this.canvasService.createStatusBadge(point,total,streak,theme,confetti)).pipe(response);    
+      }
+      return (await this.canvasService.createPointBadge(point,theme,confetti)).pipe(response);
   }
 }
