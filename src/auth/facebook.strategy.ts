@@ -37,59 +37,33 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     profile: Profile,
     done: (err: any, user: any, info?: any) => void,
   ): Promise<any> {
-    const { name, emails, id, displayName } = profile;
+    const { name, emails, id } = profile;
+    const firstName = name.givenName;
 
     let userid: string;
 
     if (req.user) {
       /* User already logged in via JWT cookie: we are adding an additional social profile */
-      userid = req.user.userid;
-
-      if (!req.user.email && emails && emails[0]) {
-        req.user.email = emails[0].value;
-        this.userService.update(req.user);
-      }
+      const user = req.user as User;
+      userid = user.userid;
+      this.userService.addEmailsToUser(userid, emails);
     } else {
-      // User logging in with Facebook
-      const email = emails && emails[0] ? emails[0].value : undefined;
-      const existingCredentials =
-        await this.socialCredentialService.findByProfileIdAndPlatform(
-          id,
-          'facebook',
-        );
-
-      if (existingCredentials.length) {
-        // Found an existing user with this profile ID
-        userid = existingCredentials[0].userid;
-      } else {
-        if (email) {
-          // Check out if we already have user with the same email
-          const existingUser = await this.userService.findByEmail(email);
-          userid = existingUser.userid;
-        }
-        if (!userid) {
-          // First login for user
-
-          // Create new user
-          const Uuid = types.Uuid;
-          userid = Uuid.random().toString();
-
-          await this.userService.create({
-            userid,
-            firstName: name.givenName,
-            email: emails && emails[0] ? emails[0].value : undefined,
-          });
-        }
-      }
-
-      await this.socialCredentialService.create({
-        userid,
-        profile_id: id,
-        platform: 'facebook',
-        auth_token: accessToken,
-        auth_expiration: undefined,
+      userid = await this.userService.findOrCreateUserByEmailOrPlatform({
+        emails,
+        profileId: id,
+        firstName,
       });
     }
+
+    await this.socialCredentialService.create({
+      userid,
+      profile_id: id,
+      platform: 'facebook',
+      auth_token: accessToken,
+      auth_expiration: undefined,
+      emails:
+        emails && emails.length ? emails.flatMap((v) => v.value) : undefined,
+    });
 
     const user: User = {
       userid,

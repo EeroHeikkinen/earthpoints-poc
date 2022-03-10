@@ -5,6 +5,7 @@ export class User {
     userid: string;
     firstName?: string;
     email?: string;
+    emails?: string[];
     timezone?: string;
     createdAt?: Date;
     events?: PointEvent[];
