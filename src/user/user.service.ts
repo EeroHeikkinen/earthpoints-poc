@@ -27,10 +27,22 @@ export class UserService {
     return createdUser;
   }
 
+  async findByEmail(email: string) {
+    const trimmedEmail = email.trim();
+    const users = await (await this.findAll()).toArray();
+    for (const user of users) {
+      if (user.email == trimmedEmail) {
+        const detailedUser: any = await this.findByUserId(user.userid);
+        return detailedUser;
+      }
+    }
+    return null;
+  }
+
   async findByUserId(userid: string) {
     const user = await this.userRepository.get(userid);
-    if(!user) {
-      throw new Error("User not found");
+    if (!user) {
+      return undefined;
     }
     user.events = await this.pointEventService.findAllForUser(userid);
     user.connections = await this.platformConnectionService.findByUserId(userid);
