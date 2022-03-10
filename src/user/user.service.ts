@@ -135,7 +135,10 @@ export class UserService {
     const trimmedEmail = email.trim().toLowerCase();
     const users = await (await this.findAll()).toArray();
     for (const user of users) {
-      if (user.email == trimmedEmail || user.emails.includes(trimmedEmail)) {
+      if (
+        user.email == trimmedEmail ||
+        (user.email && user.emails.includes(trimmedEmail))
+      ) {
         const detailedUser: any = await this.findByUserId(user.userid);
         return detailedUser;
       }
