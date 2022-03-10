@@ -343,7 +343,7 @@ export class AppController {
     const apiUserId = '00000000-0000-0000-0000-000000000000';
     let apiUser = await this.userService.findByUserId(apiUserId);
     if (!apiUser) {
-      this.userService.create({
+      await this.userService.create({
         userid: apiUserId,
         firstName: 'APIUser',
       });
