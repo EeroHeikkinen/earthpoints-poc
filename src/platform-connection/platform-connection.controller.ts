@@ -10,36 +10,36 @@ export class PlatformConnectionController {
   constructor(private readonly platformConnectionService: PlatformConnectionService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   create(@Body() createSocialCredentialDto: CreatePlatformConnectionDto) {
     return this.platformConnectionService.create(createSocialCredentialDto);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.platformConnectionService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.platformConnectionService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   update(@Body() updatePlatformConnectionDto: UpdatePlatformConnectionDto) {
     return this.platformConnectionService.update(updatePlatformConnectionDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.platformConnectionService.remove(+id);
   }

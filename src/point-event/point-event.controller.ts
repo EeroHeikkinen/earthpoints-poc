@@ -30,8 +30,8 @@ export class PointEventController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   async create(
     @Req() req: Request,
     @Body() createPointEventDto: CreatePointEventDto,
@@ -73,22 +73,22 @@ export class PointEventController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.pointEventService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.pointEventService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   update(
     @Param('id') id: string,
     @Body() updatePointEventDto: UpdatePointEventDto,
@@ -97,8 +97,8 @@ export class PointEventController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.pointEventService.remove(+id);
   }

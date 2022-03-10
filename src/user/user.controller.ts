@@ -10,22 +10,22 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findByUserId(id);
   }
 
   @Get('byEmail/:email')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   async findOneByEmail(@Param('email') email: string) {
     const user = await this.userService.findByEmail(email.trim());
 
@@ -40,15 +40,15 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(updateUserDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
