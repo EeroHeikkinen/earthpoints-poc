@@ -30,8 +30,46 @@ export class PointEventController {
   ) {}
 
   @Post()
-  create(@Body() createPointEventDto: CreatePointEventDto) {
-    return this.pointEventService.create(createPointEventDto);
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminOnlyGuard)
+  async create(
+    @Req() req: Request,
+    @Body() createPointEventDto: CreatePointEventDto,
+  ) {
+    if (!createPointEventDto.userid && createPointEventDto.email) {
+      const { email } = createPointEventDto;
+      const eventUser = await this.userService.findByEmail(email);
+      if (!eventUser) {
+        throw new BadRequestException(
+          'Could not find user with email ' + email,
+        );
+      }
+      createPointEventDto.userid = eventUser.userid;
+    }
+
+    await this.pointEventService.create(createPointEventDto);
+    const userEvents = await this.pointEventService.findAllForUser(
+      createPointEventDto.userid,
+    );
+    const hash =
+      createPointEventDto.hash ||
+      crypto
+        .createHash('sha256')
+        .update(createPointEventDto.hashString)
+        .digest('base64');
+
+    for (const event of userEvents) {
+      if (event.hash == hash) {
+        return {
+          msg: 'Successfully created point event',
+          event,
+        };
+      }
+    }
+
+    return {
+      msg: 'Error retrieving created point event',
+    };
   }
 
   @Get()
