@@ -38,11 +38,13 @@ export class PointEventController {
   ) {
     if (!createPointEventDto.userid && createPointEventDto.email) {
       const { email } = createPointEventDto;
-      const eventUser = await this.userService.findByEmail(email);
+      let eventUser = await this.userService.findByEmail(email);
       if (!eventUser) {
-        throw new BadRequestException(
-          'Could not find user with email ' + email,
-        );
+        await this.userService.create({
+          email,
+          createdAt: new Date(),
+        });
+        eventUser = await this.userService.findByEmail(email);
       }
       createPointEventDto.userid = eventUser.userid;
     }
