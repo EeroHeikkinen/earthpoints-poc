@@ -6,6 +6,7 @@ import { UserRepository } from './user.repository';
 import { EmailTemplateService } from 'src/email-template/email-template.service';
 import { PointEventService } from 'src/point-event/point-event.service';
 import { QueueService } from 'src/queue/queue.service';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -27,7 +28,7 @@ export class UserService {
     return createdUser;
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<User | null> {
     const trimmedEmail = email.trim();
     const users = await (await this.findAll()).toArray();
     for (const user of users) {
