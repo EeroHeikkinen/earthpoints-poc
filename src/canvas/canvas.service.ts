@@ -149,6 +149,7 @@ export class CanvasService {
   async drawConfetti(ctx,confetti) {
     let confetti_image;
     switch(confetti){
+      case '7':
       case '6':
       case '5':
       case '4':

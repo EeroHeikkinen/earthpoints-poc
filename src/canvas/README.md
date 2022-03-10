@@ -27,7 +27,7 @@ With the following query string parameters there can be created many different s
         - blue_top
         - greenblue_top
         - green_top (default value)
-- **confetti**: This parameter execpts numerical value from 1 to 6. Each decorates the badge with different confetti effects. In any badge a confetti is always shown. If it is invalid or omitted the default value is 1 for this parameter.
+- **confetti**: This parameter execpts numerical value from 1 to 7. Each decorates the badge with different confetti effects. In any badge a confetti is always shown. If it is invalid or omitted the default value is 1 for this parameter.
 
 
 ## Point Themes
@@ -43,7 +43,7 @@ Second option is the status themes. Can be activated when a total parameter is g
 
 ## Some Examples
 
-- https://epoints.savesoil.cc/point-badge?point=20&total=560&streak=100&theme=blue_bottom&confetti=2
+- https://epoints.savesoil.cc/point-badge?point=20&total=560&streak=100&theme=blue_bottom&confetti=7
 - https://epoints.savesoil.cc/point-badge?point=10&total=560&streak=100&theme=bluegreen_top&confetti=4
 - https://epoints.savesoil.cc/point-badge?point=5&total=560&streak=100&theme=greenred_bottom&confetti=4
 - https://epoints.savesoil.cc/point-badge?point=5&total=560&streak=100&theme=greenred_bottom&confetti=4
