@@ -174,7 +174,8 @@ export class AppController {
       user: req.user,
       summedPoints: user.points,
       events: formattedEvents,
-      platforms
+      platforms,
+      environment: process.env.ENVIRONMENT
     }
   }
 

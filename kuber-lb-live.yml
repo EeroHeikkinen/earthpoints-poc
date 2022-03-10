@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: earthpoints
+  name: earthpoints-poc-service
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-name: "earthpoints-poc-service"
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "20f424dd-149c-494a-92f6-f71683af0b47"
+    service.beta.kubernetes.io/do-loadbalancer-disable-lets-encrypt-dns-records: "false"
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 3000
+  selector:
+    app: earthpoints-poc

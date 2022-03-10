@@ -11,28 +11,39 @@ login:
 
 .PHONY: savesecrets
 savesecrets:
-	kubectl delete secret earthpoints-poc-secret; \
-	kubectl create secret generic earthpoints-poc-secret --from-env-file=secrets/.env.prod;
+	kubectl delete secret -n=default earthpoints-poc-secret; \
+	kubectl create secret generic earthpoints-poc-secret -n=default --from-env-file=secrets/.env.prod;
+
+.PHONY: savesecrets-uat
+savesecrets-uat:
+	kubectl delete secret -n=uat earthpoints-poc-secret; \
+	kubectl create secret generic earthpoints-poc-secret -n=uat --from-env-file=secrets/.env.uat;
+
 
 .PHONY: apply
 apply:
-	kubectl apply -f kuber.yml; \
-	kubectl rollout status deployment/earthpoints-poc;
+	kubectl apply -n=default -f kuber.yml; \
+	kubectl rollout status -n=default deployment/earthpoints-poc;
 
-APP_POD_NAME=$(shell kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4\}//')
+.PHONY: apply-uat
+apply-uat:
+	kubectl apply -n=uat -f kuber.yml; \
+	kubectl rollout status -n=uat deployment/earthpoints-poc;
+
+#APP_POD_NAME=$(shell kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4\}//')
 DB_POD_NAME=$(shell kubectl get pods -o=name | grep cassandra- | sed 's/^.\{4\}//')
 
-.PHONY: wipedb
-wipedb:
-	kubectl exec -it $(DB_POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 -e "drop keyspace earthpoints"; \
-	kubectl exec -it $(DB_POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 < src/database/schema/schema.cql;
+#.PHONY: wipedb
+#wipedb:
+#	kubectl exec -it $(DB_POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 -e "drop keyspace earthpoints"; \
+#	kubectl exec -it $(DB_POD_NAME) -c cassandra -- cqlsh --request-timeout=3600 < src/database/schema/schema.cql;
 #	some example commands to execute cqlsh to copy-paste
 #	kubectl exec -it $(kubectl get pods -o=name | grep cassandra- | sed 's/^.\{4\}//') -c cassandra -- cqlsh -e "select * from earthpoints.user"
 
 
-.PHONY: log-app
-log-app:
-	kubectl logs -f $(APP_POD_NAME) -c earthpoints-poc
+#.PHONY: log-app
+#log-app:
+#	kubectl logs -f $(APP_POD_NAME) -c earthpoints-poc
 
 .PHONY: log-db
 log-db:
@@ -41,3 +52,7 @@ log-db:
 .PHONY: restart-app
 restart-app:
 	kubectl rollout restart deployment/earthpoints-poc	
+
+.PHONY: restart-app-uat
+restart-app-uat:
+	kubectl rollout restart -n=uat deployment/earthpoints-poc	
