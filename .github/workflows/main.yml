@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to run tests against'
+        description: 'Environment to deploy'
         type: environment
         required: true     
 
@@ -60,7 +60,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ffb1a5d5-e0c7-4553-87d2-db6633465a6d
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl apply -f $GITHUB_WORKSPACE/kuber.yml
+        run: kubectl apply -f -n=${{ github.event.inputs.environment }} $GITHUB_WORKSPACE/kuber.yml
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/earthpoints-poc
+        run: kubectl rollout status -n=${{ github.event.inputs.environment }} deployment/earthpoints-poc
