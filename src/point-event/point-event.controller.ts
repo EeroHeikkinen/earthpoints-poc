@@ -15,70 +15,14 @@ import { CreatePointEventDto } from './dto/create-point-event.dto';
 import { UpdatePointEventDto } from './dto/update-point-event.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { User } from 'src/user/entities/user.entity';
-import { Request } from 'express';
-import { AuthService } from 'src/auth/auth.service';
+import { Request } from 'express'
 import { UserService } from 'src/user/user.service';
 import { AdminOnlyGuard } from 'src/auth/admin-only.guard';
 import crypto from 'crypto';
 
 @Controller('point-event')
 export class PointEventController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly pointEventService: PointEventService,
-    private readonly userService: UserService,
-  ) {}
-
-  @Post()
-  @UseGuards(AdminOnlyGuard)
-  @UseGuards(JwtAuthGuard)
-  async create(
-    @Req() req: Request,
-    @Body() createPointEventDto: CreatePointEventDto,
-  ) {
-    if (!createPointEventDto.userid && createPointEventDto.email) {
-      const { email } = createPointEventDto;
-      let eventUser = await this.userService.findByEmail(email);
-      if (!eventUser) {
-        await this.userService.create({
-          email,
-          emails: [email],
-          createdAt: new Date(),
-        });
-        eventUser = await this.userService.findByEmail(email);
-      }
-      createPointEventDto.userid = eventUser.userid;
-    }
-
-    await this.pointEventService.create(createPointEventDto);
-    const userEvents = await this.pointEventService.findAllForUser(
-      createPointEventDto.userid,
-    );
-    const hash =
-      createPointEventDto.hash ||
-      crypto
-        .createHash('sha256')
-        .update(createPointEventDto.hashString)
-        .digest('base64');
-
-    const userTotalPoints = userEvents
-      .map((event) => event.points)
-      .reduce((previous, current) => previous + current, 0);
-
-    for (const event of userEvents) {
-      if (event.hash == hash) {
-        return {
-          msg: 'Successfully created point event',
-          event,
-          userTotalPoints,
-        };
-      }
-    }
-
-    return {
-      msg: 'Error retrieving created point event',
-    };
-  }
+  constructor(private readonly pointEventService: PointEventService) {}
 
   @Get()
   @UseGuards(AdminOnlyGuard)

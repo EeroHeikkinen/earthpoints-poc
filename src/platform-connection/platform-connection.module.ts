@@ -13,7 +13,7 @@ import { RuleModule } from 'src/rule/rule.module';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [CassandraModule, FacebookApiModule, InstagramApiModule, RuleModule, forwardRef(() => AuthModule)],
+  imports: [CassandraModule, FacebookApiModule, InstagramApiModule, RuleModule],
   controllers: [PlatformConnectionController],
   providers: [PlatformConnectionService, PlatformConnectionRepository, FacebookExtractor, InstagramExtractor, TwitterExtractor],
   exports: [PlatformConnectionService]

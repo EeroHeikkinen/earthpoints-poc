@@ -24,6 +24,10 @@ import handlebars from 'handlebars'
 
 import satelize from 'satelize'
 import { CanvasService } from './canvas/canvas.service';
+import { AdminOnlyGuard } from './auth/admin-only.guard';
+import { CreatePointEventDto } from './point-event/dto/create-point-event.dto';
+
+import crypto from 'crypto';
 
 @Controller()
 export class AppController {
@@ -372,4 +376,56 @@ export class AppController {
       }
       return (await this.canvasService.createPointBadge(point,theme,confetti)).pipe(response);
   }
+
+  @Post('point-event')
+  @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
+  async create(
+    @Req() req: Request,
+    @Body() createPointEventDto: CreatePointEventDto,
+  ) {
+    if (!createPointEventDto.userid && createPointEventDto.email) {
+      const { email } = createPointEventDto;
+      let eventUser = await this.userService.findByEmail(email);
+      if (!eventUser) {
+        await this.userService.create({
+          email,
+          emails: [email],
+          createdAt: new Date(),
+        });
+        eventUser = await this.userService.findByEmail(email);
+      }
+      createPointEventDto.userid = eventUser.userid;
+    }
+
+    await this.pointEventService.create(createPointEventDto);
+    const userEvents = await this.pointEventService.findAllForUser(
+      createPointEventDto.userid,
+    );
+    const hash =
+      createPointEventDto.hash ||
+      crypto
+        .createHash('sha256')
+        .update(createPointEventDto.hashString)
+        .digest('base64');
+
+    const userTotalPoints = userEvents
+      .map((event) => event.points)
+      .reduce((previous, current) => previous + current, 0);
+
+    for (const event of userEvents) {
+      if (event.hash == hash) {
+        return {
+          msg: 'Successfully created point event',
+          event,
+          userTotalPoints,
+        };
+      }
+    }
+
+    return {
+      msg: 'Error retrieving created point event',
+    };
+  }
+
 }
