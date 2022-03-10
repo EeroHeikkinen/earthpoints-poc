@@ -31,9 +31,12 @@ export class AuthService {
   }
 
   isUserAdmin(user: User) {
-    if (user.userid !== '00000000-0000-0000-0000-000000000000') {
-      return false;
+    if (
+      user &&
+      user.userid.toString() === '00000000-0000-0000-0000-000000000000'
+    ) {
+      return true;
     }
-    return true;
+    return false;
   }
 }
