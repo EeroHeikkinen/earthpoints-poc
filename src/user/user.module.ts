@@ -7,6 +7,7 @@ import { CassandraModule } from 'src/cassandra/cassandra.module';
 import { PointEventModule } from 'src/point-event/point-event.module';
 import { QueueModule } from 'src/queue/queue.module';
 import { EmailTemplateModule } from 'src/email-template/email-template.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { EmailTemplateModule } from 'src/email-template/email-template.module';
     PointEventModule,
     EmailTemplateModule,
     forwardRef(() => QueueModule),
+    forwardRef(() => AuthModule),
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository],

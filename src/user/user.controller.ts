@@ -1,48 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AdminOnlyGuard } from 'src/auth/admin-only.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminOnlyGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminOnlyGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findByUserId(id);
   }
 
   @Get('byEmail/:email')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminOnlyGuard)
   async findOneByEmail(@Param('email') email: string) {
-    const trimmedEmail = email.trim();
-    const users = await (await this.userService.findAll()).toArray();
-    for (const user of users) {
-      if (user.email == trimmedEmail) {
-        const detailedUser: any = await this.userService.findByUserId(
-          user.userid,
-        );
-        for (const n in detailedUser.connections) {
-          // Ad hoc censor
-          detailedUser.connections[n].authToken = undefined;
-          detailedUser.connections[n].profileId = undefined;
-        }
-        return detailedUser;
+    const user = await this.userService.findByEmail(email.trim());
+
+    if (user) {
+      for (const n in user.connections) {
+        // Ad hoc censor
+        user.connections[n].authToken = undefined;
+        user.connections[n].profileId = undefined;
       }
     }
     return null;
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminOnlyGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(updateUserDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminOnlyGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
