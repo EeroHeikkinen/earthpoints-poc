@@ -120,9 +120,12 @@ export class UserService {
     }
 
     for (const user of users) {
-      const userEmailsIncludeSearched = trimmedEmails.every((v) =>
-        user.emails.includes(v),
-      );
+      let userEmailsIncludeSearched;
+      if (user.emails) {
+        userEmailsIncludeSearched = trimmedEmails.every((v) =>
+          user.emails.includes(v),
+        );
+      }
       if (user.email == trimmedEmails[0] || userEmailsIncludeSearched) {
         const detailedUser: any = await this.findByUserId(user.userid);
         foundUsers.push(detailedUser);
