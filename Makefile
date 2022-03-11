@@ -12,7 +12,7 @@ login:
 .PHONY: savesecrets
 savesecrets:
 	kubectl delete secret -n=default earthpoints-poc-secret; \
-	kubectl create secret generic earthpoints-poc-secret -n=default --from-env-file=secrets/.env.prod;
+	kubectl create secret generic earthpoints-poc-secret -n=default --from-env-file=secrets/.env.production;
 
 .PHONY: savesecrets-uat
 savesecrets-uat:
