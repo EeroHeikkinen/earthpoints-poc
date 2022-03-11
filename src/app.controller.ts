@@ -28,6 +28,7 @@ import { AdminOnlyGuard } from './auth/admin-only.guard';
 import { CreatePointEventDto } from './point-event/dto/create-point-event.dto';
 
 import crypto from 'crypto';
+import { ApiOAuth2 } from '@nestjs/swagger';
 
 @Controller()
 export class AppController {
@@ -392,6 +393,7 @@ export class AppController {
   @Post('point-event')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   async create(
     @Req() req: Request,
     @Body() createPointEventDto: CreatePointEventDto,

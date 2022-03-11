@@ -47,6 +47,17 @@ async function bootstrap() {
     .setDescription('Earthpoints API description')
     .setVersion('0.1')
     .addTag('earthpoints')
+    .addOAuth2({
+      type: 'oauth2',
+      bearerFormat: 'JWT',
+      scheme: 'bearer',
+      flows: {
+        clientCredentials: {
+          tokenUrl: `${process.env.BASE_URL}/oauth/token`,
+          scopes: [],
+        },
+      },
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
