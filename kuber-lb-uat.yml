@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: earthpoints-poc-service
+  namespace: uat
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-name: "earthpoints-poc-service-uat"
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"

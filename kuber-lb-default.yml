@@ -4,6 +4,7 @@ metadata:
   labels:
     app: earthpoints
   name: earthpoints-poc-service
+  namespace: default
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-name: "earthpoints-poc-service"
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"

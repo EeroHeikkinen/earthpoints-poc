@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: earthpoints-poc
+  namespace: default
+  labels:
+    app: earthpoints-poc
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: earthpoints-poc
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: earthpoints-poc
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: doks.digitalocean.com/node-pool
+                operator: In
+                values:
+                - earthpoints-poc
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: earthpoints-poc
+          image: registry.digitalocean.com/earthpoints/earthpoints-poc:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 100m
+          env:
+          - name: KUBE_CONFIG_APPLY_DATE
+            value: '<DATE>'              
+          envFrom:
+          - secretRef:
+              name: earthpoints-poc-secret
+          startupProbe:
+            tcpSocket:
+              port: 3000
+            failureThreshold: 30
+            periodSeconds: 10
