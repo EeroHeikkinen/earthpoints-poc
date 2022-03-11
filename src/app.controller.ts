@@ -387,7 +387,7 @@ export class AppController {
     @Query('confetti') confetti,
     @Query('share') share,
     @Res() response: Response): Promise<any> {
-      if(['twitter','facebook','instagram'].includes(share)){
+      if(['twitter','facebook'].includes(share)){
         const content = fs.readFileSync(`public/point-badge/share/${share}.hbs`, 'utf-8');
         const template = handlebars.compile(content);
         response.send(
