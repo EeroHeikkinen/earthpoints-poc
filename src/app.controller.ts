@@ -29,6 +29,7 @@ import { CreatePointEventDto } from './point-event/dto/create-point-event.dto';
 
 import crypto from 'crypto';
 import { ApiOAuth2 } from '@nestjs/swagger';
+import { ClientCredentialsDto } from './auth/dto/client-credentials.dto';
 
 @Controller()
 export class AppController {
@@ -341,7 +342,7 @@ export class AppController {
 
   @Post('/oauth/token')
   async loginWithClientCredentials(
-    @Body() body: any,
+    @Body() body: ClientCredentialsDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<any> {
