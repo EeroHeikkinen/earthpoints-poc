@@ -344,7 +344,15 @@ export class AppController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<any> {
-    const { client_id: clientId, client_secret: clientSecret } = body;
+    let { client_id: clientId, client_secret: clientSecret } = body;
+
+    if (!clientId || !clientSecret) {
+      // parse client id and secret from Basic auth header
+      const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+      [clientId, clientSecret] = Buffer.from(b64auth, 'base64')
+        .toString()
+        .split(':');
+    }
 
     await this.authService.validateClientCredentials(clientId, clientSecret);
 
