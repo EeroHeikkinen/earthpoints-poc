@@ -182,6 +182,9 @@ export class AppController {
   @Get('landing')
   @Render('landing')
   async landing(@Req() req): Promise<any> {
+    return {
+      environment: process.env.ENVIRONMENT
+    }    
   }
 
   @Get('/logout') 
