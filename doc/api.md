@@ -61,7 +61,7 @@ To create points for user now we can call the [Create Point Event endpoint](http
 
 ```
 curl --request POST \                        
-  --url https://uat.epoints.hakanonal.com/oauth/token \  
+  --url https://uat.epoints.hakanonal.com/point-event \  
   --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJpYXQiOjE2NDcwMDQ5MjUsImV4cCI6MTY0NzA5MTMyNX0.ZFKNvG5H2nMoDnA-Sx8jF4nSkdIg908fatBJOOl7p-Y' \
   --header 'content-type: application/json' --data '{ "hashString": "created-pledge-page-1234567", "email": "my.user@gmail.com", "icon": "star", "verb": "created a", "platform": "pledge-page", "message": "You created a pledge page.", "isBurn": false, "points": 5, "timestamp": "2022-03-11T14:20:20.546Z"}' -k | json_pp
 ```
