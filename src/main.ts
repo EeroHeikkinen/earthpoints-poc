@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 import { engine } from "express-handlebars";
 
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { NestApplicationOptions } from '@nestjs/common';
+import { NestApplicationOptions, ValidationPipe } from '@nestjs/common';
 
 import basicAuth from 'express-basic-auth';
 
@@ -62,6 +62,8 @@ async function bootstrap() {
       users: { [process.env.ADMIN_USER]: process.env.ADMIN_PASS },
     }),
   );
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(3000);
 }

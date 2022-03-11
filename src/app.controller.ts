@@ -1,5 +1,5 @@
 require('dotenv').config()
-import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query } from '@nestjs/common';
+import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query, Body, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -23,8 +23,11 @@ import { concatMap, filter, Observable } from 'rxjs';
 import handlebars from 'handlebars'
 
 import satelize from 'satelize'
-import { UpdateUserDto } from './user/dto/update-user.dto';
 import { CanvasService } from './canvas/canvas.service';
+import { AdminOnlyGuard } from './auth/admin-only.guard';
+import { CreatePointEventDto } from './point-event/dto/create-point-event.dto';
+
+import crypto from 'crypto';
 
 @Controller()
 export class AppController {
@@ -335,6 +338,34 @@ export class AppController {
     return {msg:'success'};
   }
 
+  @Post('/oauth/token')
+  async loginWithClientCredentials(
+    @Body() body: any,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<any> {
+    const { client_id: clientId, client_secret: clientSecret } = body;
+
+    await this.authService.validateClientCredentials(clientId, clientSecret);
+
+    const apiUserId = '00000000-0000-0000-0000-000000000000';
+    let apiUser = await this.userService.findByUserId(apiUserId);
+    if (!apiUser) {
+      await this.userService.create({
+        userid: apiUserId,
+        firstName: 'APIUser',
+      });
+      apiUser = await this.userService.findByUserId(apiUserId);
+    }
+    const { access_token } = await this.authService.login(apiUser, 'api');
+
+    return {
+      access_token: access_token,
+      token_type: 'Bearer',
+      expires_in: 86400,
+    };
+  }
+
   @Get('point-badge')
   //@UseGuards(JwtAuthGuard)
   async pointBadge(
@@ -349,4 +380,56 @@ export class AppController {
       }
       return (await this.canvasService.createPointBadge(point,theme,confetti)).pipe(response);
   }
+
+  @Post('point-event')
+  @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
+  async create(
+    @Req() req: Request,
+    @Body() createPointEventDto: CreatePointEventDto,
+  ) {
+    if (!createPointEventDto.userid && createPointEventDto.email) {
+      const { email } = createPointEventDto;
+      let eventUser = await this.userService.findByEmail(email);
+      if (!eventUser) {
+        await this.userService.create({
+          email,
+          emails: [email],
+          createdAt: new Date(),
+        });
+        eventUser = await this.userService.findByEmail(email);
+      }
+      createPointEventDto.userid = eventUser.userid;
+    }
+
+    await this.pointEventService.create(createPointEventDto);
+    const userEvents = await this.pointEventService.findAllForUser(
+      createPointEventDto.userid,
+    );
+    const hash =
+      createPointEventDto.hash ||
+      crypto
+        .createHash('sha256')
+        .update(createPointEventDto.hashString)
+        .digest('base64');
+
+    const userTotalPoints = userEvents
+      .map((event) => event.points)
+      .reduce((previous, current) => previous + current, 0);
+
+    for (const event of userEvents) {
+      if (event.hash == hash) {
+        return {
+          msg: 'Successfully created point event',
+          event,
+          userTotalPoints,
+        };
+      }
+    }
+
+    return {
+      msg: 'Error retrieving created point event',
+    };
+  }
+
 }
