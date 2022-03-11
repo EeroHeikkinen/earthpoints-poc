@@ -140,7 +140,7 @@ export class UserService {
     for (const user of users) {
       if (
         user.email == trimmedEmail ||
-        (user.email && user.emails.includes(trimmedEmail))
+        (user.emails && user.emails.includes(trimmedEmail))
       ) {
         const detailedUser: any = await this.findByUserId(user.userid);
         return detailedUser;

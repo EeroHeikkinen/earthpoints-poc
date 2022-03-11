@@ -10,6 +10,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
         (request: Request) => {
           const data = request?.cookies['auth-cookie'];
           if (!data) {
@@ -18,7 +19,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
           return data.access_token;
         },
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
       secretOrKey: jwtConstants.secret,

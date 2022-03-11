@@ -28,6 +28,8 @@ import { AdminOnlyGuard } from './auth/admin-only.guard';
 import { CreatePointEventDto } from './point-event/dto/create-point-event.dto';
 
 import crypto from 'crypto';
+import { ApiOAuth2 } from '@nestjs/swagger';
+import { ClientCredentialsDto } from './auth/dto/client-credentials.dto';
 
 @Controller()
 export class AppController {
@@ -340,11 +342,19 @@ export class AppController {
 
   @Post('/oauth/token')
   async loginWithClientCredentials(
-    @Body() body: any,
+    @Body() body: ClientCredentialsDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<any> {
-    const { client_id: clientId, client_secret: clientSecret } = body;
+    let { client_id: clientId, client_secret: clientSecret } = body;
+
+    if (!clientId || !clientSecret) {
+      // parse client id and secret from Basic auth header
+      const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+      [clientId, clientSecret] = Buffer.from(b64auth, 'base64')
+        .toString()
+        .split(':');
+    }
 
     await this.authService.validateClientCredentials(clientId, clientSecret);
 
@@ -384,6 +394,7 @@ export class AppController {
   @Post('point-event')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   async create(
     @Req() req: Request,
     @Body() createPointEventDto: CreatePointEventDto,
