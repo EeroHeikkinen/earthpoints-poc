@@ -177,13 +177,17 @@ export class AppController {
       user: req.user,
       summedPoints: user.points,
       events: formattedEvents,
-      platforms
+      platforms,
+      environment: process.env.ENVIRONMENT
     }
   }
 
   @Get('landing')
   @Render('landing')
   async landing(@Req() req): Promise<any> {
+    return {
+      environment: process.env.ENVIRONMENT
+    }    
   }
 
   @Get('/logout') 
