@@ -30,6 +30,7 @@ import { CreatePointEventDto } from './point-event/dto/create-point-event.dto';
 import crypto from 'crypto';
 import { ApiOAuth2 } from '@nestjs/swagger';
 import { ClientCredentialsDto } from './auth/dto/client-credentials.dto';
+import fs from 'fs';
 
 @Controller()
 export class AppController {
@@ -384,7 +385,23 @@ export class AppController {
     @Query('streak') streak,
     @Query('theme') theme,
     @Query('confetti') confetti,
-    @Res() response): Promise<any> {
+    @Query('share') share,
+    @Res() response: Response): Promise<any> {
+      if(['twitter','facebook','instagram'].includes(share)){
+        const content = fs.readFileSync(`public/point-badge/share/${share}.hbs`, 'utf-8');
+        const template = handlebars.compile(content);
+        response.send(
+          template({
+            base_url: process.env.BASE_URL,
+            point: point,
+            total: total,
+            streak: streak,
+            theme: theme,
+            confetti: confetti
+          })
+        );
+        return;
+      }
       if(total){
         return (await this.canvasService.createStatusBadge(point,total,streak,theme,confetti)).pipe(response);    
       }
