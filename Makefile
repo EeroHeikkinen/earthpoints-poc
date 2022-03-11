@@ -23,11 +23,13 @@ savesecrets-uat:
 .PHONY: apply
 apply:
 	kubectl apply -n=default -f kuber.yml; \
+	kubectl apply -n=default -f kuber-app-default.yml; \
 	kubectl rollout status -n=default deployment/earthpoints-poc;
 
 .PHONY: apply-uat
 apply-uat:
 	kubectl apply -n=uat -f kuber.yml; \
+	kubectl apply -n=uat -f kuber-app-uat.yml; \
 	kubectl rollout status -n=uat deployment/earthpoints-poc;
 
 #APP_POD_NAME=$(shell kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4\}//')

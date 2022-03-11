@@ -38,7 +38,7 @@ jobs:
 
       # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
       - name: Build container image
-        run: docker build --no-cache -t registry.digitalocean.com/earthpoints/earthpoints-poc:$(echo $GITHUB_SHA | head -c7) -t registry.digitalocean.com/earthpoints/earthpoints-poc:latest .
+        run: docker build --no-cache -t registry.digitalocean.com/earthpoints/earthpoints-poc:$(echo $GITHUB_SHA | head -c7) -t registry.digitalocean.com/earthpoints/earthpoints-poc:latest-${{ github.event.inputs.environment }} .
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1200
@@ -47,14 +47,11 @@ jobs:
         run: docker push registry.digitalocean.com/earthpoints/earthpoints-poc:$(echo $GITHUB_SHA | head -c7)
 
       - name: Push image to DigitalOcean Container Registry as lastest
-        run: docker push registry.digitalocean.com/earthpoints/earthpoints-poc:latest
-
-      - name: Push image to DigitalOcean Container Registry as the environment
-        run: docker push registry.digitalocean.com/earthpoints/earthpoints-poc:${{ github.event.inputs.environment }}
+        run: docker push registry.digitalocean.com/earthpoints/earthpoints-poc:latest-${{ github.event.inputs.environment }}
 
       # Deploy to DigitalOCcean Kubernetes.
       - name: Update deployment file
-        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|:latest|:'${TAG}'|' $GITHUB_WORKSPACE/kuber-app-${{ github.event.inputs.environment }}.yml
+        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|:latest-${{ github.event.inputs.environment }}|:'${TAG}'|' $GITHUB_WORKSPACE/kuber-app-${{ github.event.inputs.environment }}.yml
 
       - name: Update deployment file
         run: sed -ie "s/<DATE>/$(date)/g" $GITHUB_WORKSPACE/kuber-app-${{ github.event.inputs.environment }}.yml

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: earthpoints-poc
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: earthpoints-poc
@@ -32,7 +32,7 @@ spec:
       terminationGracePeriodSeconds: 120
       containers:
         - name: earthpoints-poc
-          image: registry.digitalocean.com/earthpoints/earthpoints-poc:latest
+          image: registry.digitalocean.com/earthpoints/earthpoints-poc:latest-uat
           imagePullPolicy: "Always"
           ports:
             - containerPort: 3000
