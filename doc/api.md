@@ -4,7 +4,7 @@ OpenAPI specification can be found at: https://epoints.savesoil.cc/api
 
 For UAT environment you can test with: https://uat.epoints.hakanonal.com/api
 
-## Quickstart example for creating point events
+# Quickstart example for creating point events
 
 The Earth Points API uses the OAuth2 client credentials flow. 
 
@@ -12,7 +12,7 @@ To authenticate,
 1) retrieve an access token using a client id and client secret 
 2) supply that token in the Bearer authentication header to access restricted endpoints.
 
-### 1. Obtain access token
+## 1. Obtain access token
 
 To obtain an access token, use the [/oauth/token endpoint](https://epoints.savesoil.cc/api/#/default/AppController_loginWithClientCredentials)
 
