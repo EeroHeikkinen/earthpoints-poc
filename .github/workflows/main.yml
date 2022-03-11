@@ -49,6 +49,9 @@ jobs:
       - name: Push image to DigitalOcean Container Registry as lastest
         run: docker push registry.digitalocean.com/earthpoints/earthpoints-poc:latest
 
+      - name: Push image to DigitalOcean Container Registry as the environment
+        run: docker push registry.digitalocean.com/earthpoints/earthpoints-poc:${{ github.event.inputs.environment }}
+
       # Deploy to DigitalOCcean Kubernetes.
       - name: Update deployment file
         run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|:latest|:'${TAG}'|' $GITHUB_WORKSPACE/kuber-app-${{ github.event.inputs.environment }}.yml
