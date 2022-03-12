@@ -7,13 +7,60 @@ import { AdminOnlyGuard } from 'src/auth/admin-only.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly platformConnectionService: PlatformConnectionService,
+  ) {}
 
   @Post()
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
+  }
+
+  @Post('fromExternalPlatformData')
+  @UseGuards(AdminOnlyGuard)
+  @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
+  @ApiResponse({
+    status: 200,
+    type: User,
+  })
+  async userFromExternalPlatformData(
+    @Body() body: UserFromExternalPlatformDataDto,
+  ): Promise<User> {
+    // Normalise emails to array
+    const { emails, profile_id: profileId, platform } = body;
+
+    let emailsArray = emails;
+    if (!Array.isArray(emails)) {
+      if (emails) {
+        emailsArray = [emails as unknown as string];
+      } else {
+        emailsArray = [];
+      }
+    }
+
+    const userid = await this.userService.findOrCreateUserByEmailOrPlatform({
+      emails: emailsArray,
+      profileId,
+      platform,
+      firstName: null,
+    });
+
+    await this.platformConnectionService.create({
+      userid,
+      profile_id: profileId,
+      platform: platform,
+      auth_token: body.auth_token,
+      auth_expiration: body.auth_expiration,
+      emails,
+    });
+
+    const user = await this.userService.findByUserId(userid);
+
+    return user;
   }
 
   @Get(':id')
