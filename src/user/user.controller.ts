@@ -1,9 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AdminOnlyGuard } from 'src/auth/admin-only.guard';
+import { EmailContentTemplate } from 'src/email-template/entities/email-content-template.entity';
+import { ApiOAuth2, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { User } from './entities/user.entity';
+import { PartialType } from '@nestjs/mapped-types';
+import { platform } from 'os';
+import { CreatePlatformConnectionDto } from 'src/platform-connection/dto/create-platform-connection.dto';
+import { UserFromExternalPlatformDataDto } from './dto/from-external-platform-data.dto';
+import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
 
 @Controller('user')
 export class UserController {
