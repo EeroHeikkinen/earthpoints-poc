@@ -13,14 +13,19 @@ import { types } from 'cassandra-driver';
 
 @Injectable()
 export class UserService {
-  async findOrCreateUserByEmailOrPlatform({ emails, profileId, firstName }) {
+  async findOrCreateUserByEmailOrPlatform({
+    emails,
+    profileId,
+    firstName,
+    platform,
+  }) {
     const emailValues = emails.map((v: any) => v.value.trim().toLowerCase());
 
     let userid;
     const existingCredentials =
       await this.platformConnectionService.findByProfileIdAndPlatform(
         profileId,
-        'twitter',
+        platform,
       );
 
     if (existingCredentials.length) {

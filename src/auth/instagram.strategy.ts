@@ -45,6 +45,7 @@ export class InstagramStrategy extends PassportStrategy(Strategy, 'instagram') {
         emails: [],
         profileId: id,
         firstName: username,
+        platform: 'instagram',
       });
     }
 

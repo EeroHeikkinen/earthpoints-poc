@@ -51,6 +51,7 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
         emails,
         profileId: id,
         firstName,
+        platform: 'twitter',
       });
     }
 
