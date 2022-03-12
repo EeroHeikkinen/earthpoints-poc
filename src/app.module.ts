@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
 import { AuthModule } from './auth/auth.module';
@@ -22,6 +22,7 @@ import { CanvasModule } from './canvas/canvas.module';
 
 @Module({
   imports: [
+    CacheModule.register(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'static'),
     }),
@@ -30,7 +31,7 @@ import { CanvasModule } from './canvas/canvas.module';
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT) || 6379,
       },
-    }),    
+    }),
     AuthModule,
     CassandraModule,
     FacebookApiModule,
