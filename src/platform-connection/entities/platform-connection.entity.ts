@@ -1,12 +1,33 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class PlatformConnection {
-    userid: string;
-    profileId: string;
-    platform: string;
-    emails: string[];
-    authToken: string;
-    tokenSecret?: string;
-    authExpiration: Date;
-    head: Date;
-    tail: Date;
-    watchedResources: string[];
+  @ApiProperty()
+  userid: string;
+
+  @ApiProperty()
+  profileId: string;
+
+  @ApiProperty()
+  platform: string;
+
+  @ApiProperty()
+  emails: string[];
+
+  @ApiProperty()
+  authToken: string;
+
+  @ApiProperty()
+  tokenSecret?: string;
+
+  @ApiProperty()
+  authExpiration: Date;
+
+  @ApiProperty()
+  head: Date;
+
+  @ApiProperty()
+  tail: Date;
+
+  @ApiProperty()
+  watchedResources: string[];
 }

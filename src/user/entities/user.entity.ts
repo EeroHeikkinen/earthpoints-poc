@@ -1,15 +1,35 @@
-import { PlatformConnection } from "src/platform-connection/entities/platform-connection.entity";
-import { PointEvent } from "src/point-event/entities/point-event.entity";
+import { ApiProperty } from '@nestjs/swagger';
+import { PlatformConnection } from 'src/platform-connection/entities/platform-connection.entity';
+import { PointEvent } from 'src/point-event/entities/point-event.entity';
 
 export class User {
-    userid: string;
-    firstName?: string;
-    email?: string;
-    emails?: string[];
-    timezone?: string;
-    createdAt?: Date;
-    events?: PointEvent[];
-    connections?: PlatformConnection[];
-    points?: number;
-    lastEmailed?: Date;
+  @ApiProperty()
+  userid: string;
+
+  @ApiProperty()
+  firstName?: string;
+
+  @ApiProperty()
+  email?: string;
+
+  @ApiProperty()
+  emails?: string[];
+
+  @ApiProperty()
+  timezone?: string;
+
+  @ApiProperty()
+  createdAt?: Date;
+
+  @ApiProperty()
+  events?: PointEvent[];
+
+  @ApiProperty()
+  connections?: PlatformConnection[];
+
+  @ApiProperty()
+  points?: number;
+
+  @ApiProperty()
+  lastEmailed?: Date;
 }

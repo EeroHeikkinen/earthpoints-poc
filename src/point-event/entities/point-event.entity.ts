@@ -1,12 +1,33 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class PointEvent {
-    hash: string;
-    userid: string;
-    isBurn: boolean;
-    points: number;
-    message: string;
-    verb?: string;
-    platform?: string;
-    icon?: string;
-    timestamp: Date;
-    metadata: Map<string, string>;
+  @ApiProperty()
+  hash: string;
+
+  @ApiProperty()
+  userid: string;
+
+  @ApiProperty()
+  isBurn: boolean;
+
+  @ApiProperty()
+  points: number;
+
+  @ApiProperty()
+  message: string;
+
+  @ApiProperty()
+  verb?: string;
+
+  @ApiProperty()
+  platform?: string;
+
+  @ApiProperty()
+  icon?: string;
+
+  @ApiProperty()
+  timestamp: Date;
+
+  @ApiProperty()
+  metadata: Map<string, string>;
 }
