@@ -54,7 +54,7 @@ async function bootstrap() {
       flows: {
         clientCredentials: {
           tokenUrl: `${process.env.BASE_URL}/oauth/token`,
-          scopes: [],
+          scopes: {},
         },
       },
     })
