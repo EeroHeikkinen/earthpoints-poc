@@ -1,5 +1,5 @@
 require('dotenv').config()
-import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query, Body, Post } from '@nestjs/common';
+import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query, Body, Post, HttpCode } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -28,9 +28,12 @@ import { AdminOnlyGuard } from './auth/admin-only.guard';
 import { CreatePointEventDto } from './point-event/dto/create-point-event.dto';
 
 import crypto from 'crypto';
-import { ApiOAuth2 } from '@nestjs/swagger';
+import { ApiOAuth2, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { ClientCredentialsDto } from './auth/dto/client-credentials.dto';
 import fs from 'fs';
+
+import { ClientCredentialsResponseDto } from './auth/dto/client-credentials-response.dto';
+import { CreatePointEventResponseDto } from './point-event/dto/create-point-event-response.dto';
 
 @Controller()
 export class AppController {
@@ -342,6 +345,10 @@ export class AppController {
   }
 
   @Post('/oauth/token')
+  @ApiResponse({
+    status: 201,
+    type: ClientCredentialsResponseDto,
+  })
   async loginWithClientCredentials(
     @Body() body: ClientCredentialsDto,
     @Req() req: Request,
@@ -412,6 +419,10 @@ export class AppController {
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
   @ApiOAuth2([])
+  @ApiResponse({
+    status: 201,
+    type: CreatePointEventResponseDto,
+  })
   async create(
     @Req() req: Request,
     @Body() createPointEventDto: CreatePointEventDto,
