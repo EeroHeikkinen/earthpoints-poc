@@ -59,7 +59,7 @@ export class PlatformConnectionService {
       try {
         const extractor = this.extractors[credential.platform] as IExtractor;
         if(!extractor) {
-            throw new Error('Could not find extractor for platform: ' + credential.platform)
+            continue;
         }
 
         const oldestToProcess = new Date(process.env.OLDEST_TO_RETRIEVE);

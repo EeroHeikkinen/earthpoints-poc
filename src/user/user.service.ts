@@ -19,7 +19,10 @@ export class UserService {
     firstName,
     platform,
   }) {
-    const emailValues = emails.map((v: any) => v.value.trim().toLowerCase());
+    let emailValues = emails;
+    if (emails[0] && emails[0].value) {
+      emailValues = emails.map((v: any) => v.value.trim().toLowerCase());
+    }
 
     let userid;
     const existingCredentials =

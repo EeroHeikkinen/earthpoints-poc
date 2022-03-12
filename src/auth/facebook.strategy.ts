@@ -16,7 +16,7 @@ dotenv.config();
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(
-    private socialCredentialService: PlatformConnectionService,
+    private platformConnectionService: PlatformConnectionService,
     private userService: UserService,
     private jwtStrategy: JwtStrategy,
   ) {
@@ -56,7 +56,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       });
     }
 
-    await this.socialCredentialService.create({
+    await this.platformConnectionService.create({
       userid,
       profile_id: id,
       platform: 'facebook',

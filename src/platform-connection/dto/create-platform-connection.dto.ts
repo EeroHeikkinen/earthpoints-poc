@@ -1,24 +1,39 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail } from 'class-validator';
 
 export class CreatePlatformConnectionDto {
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   userid: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: true,
+  })
   profile_id: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: true,
+  })
   platform: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   emails?: string[];
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   auth_token: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   token_secret?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   auth_expiration: Date;
 }
