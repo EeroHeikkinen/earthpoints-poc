@@ -52,6 +52,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
         emails,
         profileId: id,
         firstName,
+        platform: 'facebook',
       });
     }
 
