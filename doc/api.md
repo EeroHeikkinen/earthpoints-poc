@@ -139,7 +139,7 @@ Example response:
    "msg" : "Successfully created point event",
    "userTotalPoints" : 5
 }
-
+```
 
 ### Schema for creating point events
 
