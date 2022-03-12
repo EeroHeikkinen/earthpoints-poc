@@ -31,12 +31,11 @@ export class UserController {
 
     if (user) {
       for (const n in user.connections) {
-        // Ad hoc censor
+        // censor auth tokens
         user.connections[n].authToken = undefined;
-        user.connections[n].profileId = undefined;
       }
     }
-    return null;
+    return user;
   }
 
   @Patch(':id')
