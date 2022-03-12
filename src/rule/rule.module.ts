@@ -9,6 +9,6 @@ import { RuleService } from './rule.service';
 @Module({
   imports: [CassandraModule, PointEventModule],
   providers: [RuleRepository, RuleService, DemoShareRule, DemoPostRule],
-  exports: [RuleService]
+  exports: [RuleService],
 })
 export class RuleModule {}
