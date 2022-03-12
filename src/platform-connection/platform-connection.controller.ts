@@ -33,7 +33,10 @@ export class PlatformConnectionController {
   @Patch(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
-  update(@Body() updatePlatformConnectionDto: UpdatePlatformConnectionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updatePlatformConnectionDto: UpdatePlatformConnectionDto,
+  ) {
     return this.platformConnectionService.update(updatePlatformConnectionDto);
   }
 
