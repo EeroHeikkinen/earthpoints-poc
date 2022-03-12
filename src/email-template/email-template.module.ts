@@ -32,7 +32,7 @@ import { EmailContentTemplateRepository } from './email-content-template.reposit
       },
       template: {
         dir: process.cwd() + '/public/mail-templates/',
-        adapter: new HandlebarsAdapter({'encodeURI': function(s: string){return encodeURI(s)}}), // or new PugAdapter()
+        adapter: new HandlebarsAdapter({'encodeURIComponent': function(s: string){return encodeURIComponent(s)}}), // or new PugAdapter()
         options: {
           strict: true,
         },
