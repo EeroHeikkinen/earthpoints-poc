@@ -1,21 +1,32 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CreatePlatformConnectionDto } from 'src/platform-connection/dto/create-platform-connection.dto';
+import { PlatformConnection } from 'src/platform-connection/entities/platform-connection.entity';
 
 export class CreateUserDto {
-  @ApiProperty()
   userid?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   firstName?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   email?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   emails?: string[];
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   timezone?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   createdAt?: Date;
 }
