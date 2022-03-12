@@ -4,7 +4,7 @@ OpenAPI specification can be found at: https://epoints.savesoil.cc/api
 
 For UAT environment you can test with: https://uat.epoints.hakanonal.com/api
 
-# Quickstart example for creating point events
+# Example for creating point events
 
 The Earth Points API uses the OAuth2 client credentials flow. 
 
