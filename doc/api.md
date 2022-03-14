@@ -141,6 +141,40 @@ Example response:
 }
 ```
 
+## Alternative to 2 and 3: directly lookup and reward user
+
+Alternatively, you can directly provide the externalPlatformUserData field in the call to the create point event endpoint.
+This will lookup or create the appropriate user and reward the points in the same call.
+
+```
+curl -X 'POST' \
+  'https://uat.epoints.hakanonal.com/point-event' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJpYXQiOjE2NDcyOTA0OTEsImV4cCI6MTY0NzM3Njg5MX0.60un7JLY4AVOc4OlVcX8rnDV-W6gZcks192SmE1mFHg' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "hashString": "created-pledge-page-1234567",
+  "externalPlatformUserData": [
+    {
+      "profile_id": "123",
+      "platform": "pledge-page",
+      "emails": [
+        "my.user@gmail.com"
+      ]
+    }
+  ],
+  "icon": "star",
+  "verb": "created a",
+  "platform": "pledge-page",
+  "message": "You created a pledge page.",
+  "isBurn": false,
+  "points": 5,
+  "timestamp": "2022-03-11T14:20:20.546Z",
+  "metadata": {}
+}'
+```
+
+
 ### Schema for creating point events
 
 | Name | Type | Description | Required |
