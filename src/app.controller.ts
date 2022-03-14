@@ -42,6 +42,7 @@ export class AppController {
     private readonly userService: UserService, 
     private readonly authService: AuthService,
     private readonly pointEventService: PointEventService,
+    private readonly platformConnectionService: PlatformConnectionService,
     private readonly canvasService: CanvasService) {}
 
   @Sse('sse')
@@ -427,6 +428,49 @@ export class AppController {
     @Req() req: Request,
     @Body() createPointEventDto: CreatePointEventDto,
   ) {
+    if (
+      !createPointEventDto.userid &&
+      createPointEventDto.externalPlatformUserData
+    ) {
+      for (const externalPlatformData of createPointEventDto.externalPlatformUserData) {
+        const {
+          emails,
+          profile_id: profileId,
+          platform,
+          auth_token,
+          auth_expiration,
+        } = externalPlatformData;
+
+        let emailsArray = emails;
+        if (!Array.isArray(emails)) {
+          if (emails) {
+            emailsArray = [emails as unknown as string];
+          } else {
+            emailsArray = [];
+          }
+        }
+
+        createPointEventDto.userid =
+          await this.userService.findOrCreateUserByEmailOrPlatform({
+            emails: emailsArray,
+            profileId,
+            platform,
+            firstName: null,
+          });
+
+        await this.platformConnectionService.create({
+          userid: createPointEventDto.userid,
+          profile_id: profileId,
+          platform,
+          auth_token,
+          auth_expiration,
+          emails,
+        });
+
+        break;
+      }
+    }
+
     if (!createPointEventDto.userid && createPointEventDto.email) {
       const { email } = createPointEventDto;
       let eventUser = await this.userService.findByEmail(email);
