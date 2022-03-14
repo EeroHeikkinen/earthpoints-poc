@@ -411,9 +411,9 @@ export class AppController {
         return;
       }
       if(total){
-        return (await this.canvasService.createStatusBadge(point,total,streak,theme,confetti)).pipe(response);    
+        return (await this.canvasService.createStatusBadgeCached(point,total,streak,theme,confetti)).pipe(response);    
       }
-      return (await this.canvasService.createPointBadge(point,theme,confetti)).pipe(response);
+      return (await this.canvasService.createPointBadgeCached(point,theme,confetti)).pipe(response);
   }
 
   @Post('point-event')

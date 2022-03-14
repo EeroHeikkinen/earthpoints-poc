@@ -1,9 +1,36 @@
 import { createCanvas, loadImage, PNGStream, registerFont } from 'canvas';
 import { Injectable } from '@nestjs/common';
+import { Readable } from 'typeorm/platform/PlatformTools';
+import fs from 'fs';
+
 
 @Injectable()
 export class CanvasService {
   constructor() {}
+
+  async getFileName(params: string[]): Promise<string> {
+    params.unshift('static/img/point-badge/PB');
+    params.push('.png');
+    return params.join('_');
+  }
+
+  async createStatusBadgeCached(point, total, streak, theme,confetti): Promise<Readable> {
+    const fname = await this.getFileName([point,total,streak,theme,confetti]);
+    if(!fs.existsSync(fname)){
+      const ws = fs.createWriteStream(fname);
+      await (await this.createStatusBadge(point, total, streak, theme,confetti)).pipe(ws);
+    }
+    return fs.createReadStream(fname);  
+  }
+
+  async createPointBadgeCached(point,theme,confetti): Promise<Readable> {
+    const fname = await this.getFileName([point,theme,confetti]);
+    if(!fs.existsSync(fname)){
+      const ws = fs.createWriteStream(fname);
+      await (await this.createPointBadge(point,theme,confetti)).pipe(ws);
+    }
+    return fs.createReadStream(fname);  
+  }
 
   async createStatusBadge(point, total, streak, theme,confetti): Promise<PNGStream> {
 
