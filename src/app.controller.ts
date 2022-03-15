@@ -405,15 +405,16 @@ export class AppController {
             total: total,
             streak: streak,
             theme: theme,
-            confetti: confetti
+            confetti: confetti,
+            random: Math.floor(Math.random() * 2147483646)
           })
         );
         return;
       }
       if(total){
-        return (await this.canvasService.createStatusBadge(point,total,streak,theme,confetti)).pipe(response);    
+        return (await this.canvasService.createStatusBadgeCached(point,total,streak,theme,confetti)).pipe(response);    
       }
-      return (await this.canvasService.createPointBadge(point,theme,confetti)).pipe(response);
+      return (await this.canvasService.createPointBadgeCached(point,theme,confetti)).pipe(response);
   }
 
   @Post('point-event')
