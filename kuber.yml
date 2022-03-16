@@ -131,7 +131,7 @@ spec:
               - key: doks.digitalocean.com/node-pool
                 operator: In
                 values:
-                - earthpoints-db
+                - kafka
       terminationGracePeriodSeconds: 120
       initContainers:
       - name: kafka-data-permission-fix
