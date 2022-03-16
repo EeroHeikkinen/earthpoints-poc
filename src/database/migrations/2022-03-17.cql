@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS earthpoints.point_event_by_created_at;
-
+ALTER TABLE earthpoints.point_event ADD created_at timestamp;
+ALTER TABLE earthpoints.point_event_by_userid ADD created_at timestamp;
 CREATE TABLE earthpoints.point_event_by_created_at (
    hash varchar,
    userid uuid,
