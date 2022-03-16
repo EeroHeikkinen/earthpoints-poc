@@ -19,6 +19,7 @@ import { CronModule } from './cron/cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
+import { KafkaModule } from './kafka/kafka.module';
 
 @Module({
   imports: [
@@ -44,7 +45,8 @@ import { CanvasModule } from './canvas/canvas.module';
     ScheduleModule.forRoot(),
     CronModule,
     EmailTemplateModule,
-    CanvasModule
+    CanvasModule,
+    KafkaModule
   ], 
   controllers: [AppController],
   providers: [AppService],

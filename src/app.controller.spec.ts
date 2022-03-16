@@ -11,6 +11,7 @@ import { CronModule } from './cron/cron.module';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { FacebookApiModule } from './facebook-api/facebook-api.module';
 import { InstagramApiModule } from './instagram-api/instagram-api.module';
+import { KafkaModule } from './kafka/kafka.module';
 import { PlatformConnectionModule } from './platform-connection/platform-connection.module';
 import { PointEventModule } from './point-event/point-event.module';
 import { RuleModule } from './rule/rule.module';
@@ -38,7 +39,8 @@ describe('AppController', () => {
         CronModule,
         EmailTemplateModule,
         PlatformConnectionModule,
-        CanvasModule
+        CanvasModule,
+        KafkaModule
       ],
       controllers: [AppController],
       providers: [AppService],

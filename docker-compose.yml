@@ -13,6 +13,36 @@ services:
     image: redis:6.2.6
     ports:
       - ${REDIS_PORT}:6379
+  zookeeper:
+    image: bitnami/zookeeper:3.7
+    ports:
+      - 2181:2181
+    volumes:
+      - zookeeper_data:/bitnami
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: bitnami/kafka:3.1.0
+    ports:
+      - ${KAFKA_PORT}:9092
+    volumes:
+      - kafka_data:/bitnami
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:${KAFKA_PORT}
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://${KAFKA_HOST}:${KAFKA_PORT}      
+    depends_on:
+      - zookeeper
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    ports:
+      - 8080:8080
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=${KAFKA_HOST}:${KAFKA_PORT}
+    depends_on:
+      - kafka
   dev:
       container_name: nestjs_api_dev
       image: nestjs-api-dev:1.0.0
@@ -36,6 +66,7 @@ services:
       depends_on:
         - cassandra
         - redis
+        - kafka
   prod:
       container_name: nestjs_api_prod
       image: nestjs-api-prod:1.0.0
@@ -57,3 +88,7 @@ services:
       depends_on:
         - cassandra
         - redis
+        - kafka
+volumes:
+  kafka_data:
+  zookeeper_data:

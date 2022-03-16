@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CassandraModule } from 'src/cassandra/cassandra.module';
+import { KafkaModule } from 'src/kafka/kafka.module';
 import { PointEventRepository } from './point-event.repository';
 import { PointEventService } from './point-event.service';
 
@@ -9,7 +10,7 @@ describe('PointEventService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [PointEventService, PointEventRepository],
-      imports: [CassandraModule]
+      imports: [CassandraModule,KafkaModule]
     }).compile();
 
     service = module.get<PointEventService>(PointEventService);

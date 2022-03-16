@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Subject } from 'rxjs';
+import { KafkaService } from 'src/kafka/kafka.service';
 import { CreatePointEventDto } from './dto/create-point-event.dto';
 import { UpdatePointEventDto } from './dto/update-point-event.dto';
 import { PointEventRepository } from './point-event.repository';
@@ -12,6 +13,7 @@ export class PointEventService {
 
   constructor(
     private pointEventRepository: PointEventRepository,
+    private kafkaService: KafkaService,
     ){}
 
   async create(createPointEventDto: CreatePointEventDto) {
@@ -23,9 +25,9 @@ export class PointEventService {
       delete createPointEventDto.hashString;
     }
     const retVal = await this.pointEventRepository.addPointEvent(createPointEventDto)
-    this.subject.next({
-      userid: createPointEventDto.userid, retVal
-    });
+    this.kafkaService.send({topic: 'earthpoints.point.create', messages: [{value: 
+      createPointEventDto.userid.toString(), key: 'userid'
+    }]});//*/
     return retVal;
   }
 

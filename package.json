@@ -49,6 +49,8 @@
     "express-handlebars": "^6.0.2",
     "express-session": "^1.17.2",
     "handlebars": "^4.7.7",
+    "kafka-observable": "^0.0.3",
+    "kafkajs": "^1.16.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
     "mongodb": "^3.7.3",

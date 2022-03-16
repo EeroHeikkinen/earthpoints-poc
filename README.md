@@ -49,14 +49,15 @@ first make sure you have completed .env file from .env.template
 ```bash
 
 # development locally
-$ docker-compose up cassandra redis
+$ docker-compose up cassandra redis zookeeper kafka
 $ npm run start:dev
 
 # watch and debug mode on docker
-$ docker-compose up cassandra redis dev
+$ docker-compose up cassandra redis zookeeper kafka dev
 # or 
-$ docker-compose down && docker-compose up --build cassandra dev
+$ docker-compose down && docker-compose up --build cassandra redis zookeeper kafka dev
 # if you have modified package json and npm install is needed.
+# Remove node_modules and dist folders before building.
 # After executing this command launch "Debug with Docker" in VSCode
 
 # for production mode on kubernetes see Makefile

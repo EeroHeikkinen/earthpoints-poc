@@ -34,6 +34,7 @@ import fs from 'fs';
 
 import { ClientCredentialsResponseDto } from './auth/dto/client-credentials-response.dto';
 import { CreatePointEventResponseDto } from './point-event/dto/create-point-event-response.dto';
+import { KafkaService } from './kafka/kafka.service';
 
 @Controller()
 export class AppController {
@@ -43,7 +44,8 @@ export class AppController {
     private readonly authService: AuthService,
     private readonly pointEventService: PointEventService,
     private readonly platformConnectionService: PlatformConnectionService,
-    private readonly canvasService: CanvasService) {}
+    private readonly canvasService: CanvasService,
+    private readonly kafkaService: KafkaService) {}
 
   @Sse('sse')
   @UseGuards(JwtAuthGuard)
@@ -74,9 +76,9 @@ export class AppController {
       {{/each}}
     `)
 
-    return this.pointEventService.subject.pipe(
+    return this.kafkaService.observable.fromTopic('earthpoints.point.create').pipe(
       filter((data:any) => {
-        return data.userid.toString() === user.userid.toString()}
+        return data.message.value.toString() === user.userid.toString()}
       ), 
       concatMap(async (event) => { 
           const events = await this.pointEventService.findAllForUser(user.userid);
