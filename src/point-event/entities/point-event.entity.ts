@@ -29,5 +29,8 @@ export class PointEvent {
   timestamp: Date;
 
   @ApiProperty()
+  created_at: Date;
+
+  @ApiProperty()
   metadata: Map<string, string>;
 }

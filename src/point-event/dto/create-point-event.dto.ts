@@ -111,6 +111,8 @@ export class CreatePointEventDto {
   })
   timestamp: Date;
 
+  createdAt?: Date;
+
   @ApiProperty({
     type: 'object',
     description: 'Any custom metadata',

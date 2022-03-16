@@ -61,8 +61,9 @@ CREATE TABLE earthpoints.point_event (
    userid uuid,
    is_burn boolean,
    points double,
-   timestamp timestamp,  
-   platform varchar, 
+   timestamp timestamp,
+   created_at timestamp,
+   platform varchar,
    verb varchar,
    message varchar,
    icon varchar,
@@ -76,6 +77,7 @@ CREATE TABLE earthpoints.point_event_by_userid (
    is_burn boolean,
    points double,
    timestamp timestamp,  
+   created_at timestamp,
    platform varchar, 
    verb varchar,
    message varchar,
@@ -83,6 +85,21 @@ CREATE TABLE earthpoints.point_event_by_userid (
    metadata map<varchar, varchar>,
    PRIMARY KEY (userid,hash)
 );
+
+CREATE TABLE earthpoints.point_event_by_created_at (
+   hash varchar,
+   userid uuid,
+   is_burn boolean,
+   points double,
+   timestamp timestamp,  
+   created_at timestamp,
+   platform varchar,
+   verb varchar,
+   message varchar,
+   icon varchar,
+   metadata map<varchar, varchar>,
+   PRIMARY KEY ((userid), created_at)
+) WITH CLUSTERING ORDER BY (created_at DESC);
 
 /*CREATE TABLE computation_rule (
    id uuid PRIMARY KEY,

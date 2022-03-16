@@ -22,6 +22,9 @@ export class PointEventService {
       createPointEventDto.hash = crypto.createHash('sha256').update(createPointEventDto.hashString).digest('base64');
       delete createPointEventDto.hashString;
     }
+
+    createPointEventDto.createdAt = new Date();
+
     const retVal = await this.pointEventRepository.addPointEvent(createPointEventDto)
     this.subject.next({
       userid: createPointEventDto.userid, retVal
@@ -47,6 +50,21 @@ export class PointEventService {
 
   async findAll() {
     return await this.pointEventRepository.findAll();
+  }
+
+  notifyFromAllCreatedAfter(after: Date) {
+    const subject = this.subject;
+    this.pointEventRepository
+      .streamAllCreatedAfter(after)
+      .on('readable', function () {
+        // 'readable' is emitted as soon a row is received and parsed
+        let row;
+        while ((row = this.read())) {
+          subject.next({
+            row,
+          });
+        }
+      });
   }
 
   async findAllForUser(userid: string) {

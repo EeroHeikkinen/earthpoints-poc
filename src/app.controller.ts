@@ -76,8 +76,8 @@ export class AppController {
 
     return this.pointEventService.subject.pipe(
       filter((data:any) => {
-        return data.userid.toString() === user.userid.toString()}
-      ), 
+        return data.row.userid.toString() === user.userid.toString()}
+      ),
       concatMap(async (event) => { 
           const events = await this.pointEventService.findAllForUser(user.userid);
           const {formattedEvents, summedPoints} = this.formatUserEvents(events,user.timezone)

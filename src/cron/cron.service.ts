@@ -2,6 +2,7 @@ import { ConsoleLogger, Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
 import { getMaxListeners } from 'process';
 import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
+import { PointEventService } from 'src/point-event/point-event.service';
 import { QueueService } from 'src/queue/queue.service';
 import { UserService } from 'src/user/user.service';
 
@@ -10,9 +11,19 @@ export class CronService {
   private readonly logger = new Logger(CronService.name);
   constructor(
     private userService: UserService,
+    private pointEventService: PointEventService,
     private platformConnectionService: PlatformConnectionService,
     private queueService: QueueService,
   ) {}
+
+  private lastCall = new Date();
+
+  @Cron(process.env.CRON || '*/2 * * * * *') // Every 3 seconds
+  async pollForNewPointEvents() {
+    const date = new Date();
+    this.pointEventService.notifyFromAllCreatedAfter(this.lastCall);
+    this.lastCall = date;
+  }
 
   @Cron(process.env.CRON || '*/30 * * * *') // Every 30 minutes
   async handleCron() {
