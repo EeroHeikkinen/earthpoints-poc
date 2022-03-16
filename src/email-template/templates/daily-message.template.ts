@@ -56,6 +56,9 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
             .map((event) => event.points)
             .reduce((previous, current) => previous + current, 0)
 
+        if (!(pointsEarnedToday > 0)) {
+            return false;
+        }
         /*if(pointsEarnedToday > highestDay) {            
             // Percentile of people
         }*/
