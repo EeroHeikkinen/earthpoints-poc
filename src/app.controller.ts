@@ -117,6 +117,7 @@ export class AppController {
   @Render('dashboard')
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req): Promise<any> {
+    req.app.locals.layout = 'main';
     const userid = req.user.userid;
 
     /* If necessary fill in user timezone from ip */
@@ -192,6 +193,7 @@ export class AppController {
   @Get('landing')
   @Render('landing')
   async landing(@Req() req): Promise<any> {
+    req.app.locals.layout = 'main';
     return {
       environment: process.env.ENVIRONMENT
     }    
