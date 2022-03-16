@@ -76,6 +76,106 @@ spec:
             claimName: cassandra-claim0
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kafka-claim0
+  name: kafka-claim0
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kafka
+  name: kafka
+spec:
+  clusterIP: None
+  ports:
+  - port: 9092
+  selector:
+    app: kafka
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  labels:
+    app: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: doks.digitalocean.com/node-pool
+                operator: In
+                values:
+                - earthpoints-db
+      terminationGracePeriodSeconds: 120
+      initContainers:
+      - name: kafka-data-permission-fix
+        image: busybox
+        command: ["/bin/chmod","-R","777", "/bitnami"]
+        volumeMounts:
+        - name: kafka-volume
+          mountPath: /bitnami
+      containers:
+        - name: zookeeper
+          image: bitnami/zookeeper:3.7
+          env:
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: 'yes'
+          ports:
+            - containerPort: 2181
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /bitnami/zookeeper
+              name: kafka-volume
+        - name: kafka
+          image: bitnami/kafka:3.1.0
+          env:
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: localhost:2181
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: 'yes'
+            - name: KAFKA_CFG_LISTENERS
+              value: PLAINTEXT://:9092
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: PLAINTEXT://kafka:9092
+          ports:
+            - containerPort: 9092
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /bitnami/kafka
+              name: kafka-volume
+      volumes:
+        - name: kafka-volume
+          persistentVolumeClaim:
+            claimName: kafka-claim0
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   labels:
