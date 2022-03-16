@@ -64,6 +64,10 @@ export class EmailTemplateService {
   }
 
   async processScheduled(user: User, timestamp: Date) {
+    if(process.env.EMAIL_ENABLED !== '1') {
+      console.log('E-Mails are disabled!'); 
+      return;
+    }
     /* Let's get the current time in user's local timezone */
     const timezone = user.timezone || 'Asia/Kolkata';
     const formatter = new Intl.DateTimeFormat('en-US', {
