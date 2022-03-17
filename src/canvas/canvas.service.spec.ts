@@ -19,7 +19,7 @@ describe('CanvasService', () => {
 
   it('should generate badges for a large number of requests', () => {
     expect(service).toBeDefined();
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 1; i++) {
       service.createStatusBadgeCached(
         Math.floor(Math.random() * 100),
         Math.floor(Math.random() * 1000),
