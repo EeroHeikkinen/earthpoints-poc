@@ -59,6 +59,10 @@ export class EmailTemplateService {
     );
   }
 
+  async getAllEmailContentTemplates() {
+    return await this.emailContentTemplateRepository.getAllEmailContentTemplates();
+  }
+
   getFrom() {
     return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
   }

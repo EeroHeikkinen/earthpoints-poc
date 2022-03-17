@@ -1,0 +1,67 @@
+<br>
+			<h1 class="mt-5">Earth Points Template Editor</h1>
+			<br>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<div class="form-label">Choose date</div>
+						<input type="text" class="form-control m-datepicker" placeholder="Click here to open datepicker" value="{{day}}">
+					</div>
+				</div>
+			</div>
+
+			{{#if day}}
+				<ul class="list-group col-sm-8 col-md-6">
+					{{#each templateTypes}}
+						<a href="/email-template/{{@root/day}}?type={{this.id}}" class="list-group-item{{#if this.active}} active{{/if}}">{{this.displayName}}</a>
+					{{/each}}
+				</ul>
+			
+
+				<h2 class="mt-5">Editing {{key}}</h2>
+				<div>
+						<form method="POST" action="/email-template/{{day}}?type={{type}}">
+							<input type="hidden" value="{{key}}" name="key"/>
+							{{#if template}}<textarea style="height: 350px" name="content">{{template.content}}</textarea>{{else}}<textarea name="content"></textarea>{{/if}}
+							<button type="submit" class="btn btn-primary" >Update</button>
+						</form>
+				</div>
+				{{#if previewHTML}}
+					<h2 class="mt-5">Preview</h2>
+					<div><iframe class="preview" srcdoc="{{previewHTML}}"></iframe></div>
+				{{/if}}
+			{{/if}}
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script type="text/javascript">
+const dayData = {{{dayData}}}
+$(document).ready(function(){
+	$('.m-datepicker').datepicker({
+	    todayHighlight: true,
+	    autoclose: true,
+		format: 'yyyy-mm-dd',
+		beforeShowDay: function(e,x) {
+			const day = e.getFullYear() + "-" + (e.getMonth()+1) + "-" + e.getDate();
+			const count = dayData[day];
+			if(count) {
+				if(count == 1) {
+					return 'count-1';
+				}
+				if(count == 2) {
+					return 'count-2'
+				}
+				if(count > 2) {
+					return 'count-many'
+				}
+			}
+		}
+	}).on('changeDate', function(e,x) {
+		if (!e || !e.dates || !e.dates[0]) {
+			return;
+		}
+		const date = e.dates[0];
+		const day = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+		location.href = "/email-template/" + day;
+    })
+});
+</script>

@@ -79,3 +79,30 @@ iframe.preview {
   background: #6b70ff !important;
 }
 
+.count-1:before {
+  content: '\25CF';
+  font-size: 14px;
+  position: absolute;
+  margin-top: 15px;
+  margin-left: 5px;
+  color: rgb(255, 208, 0);
+  opacity: 0.5;
+  }
+.count-2:before {
+  content: '\25CF';
+  font-size: 14px;
+  position: absolute;
+  margin-top: 15px;
+  margin-left: 5px;
+  color: rgb(157, 255, 0);
+  opacity: 1;
+  }
+.count-many:before {
+  content: '\25CF';
+  font-size: 14px;
+  position: absolute;
+  margin-top: 15px;
+  margin-left: 5px;
+  color: rgb(157, 255, 0);
+  opacity: 1;
+  }
