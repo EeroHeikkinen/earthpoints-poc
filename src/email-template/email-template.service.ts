@@ -118,6 +118,10 @@ export class EmailTemplateService {
           }
         }
 
+        if (!renderParams.template) {
+          continue;
+        }
+
         await this.mailerService
           .sendMail({
             to: user.email,
