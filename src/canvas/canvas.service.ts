@@ -18,7 +18,9 @@ export class CanvasService {
     const fname = await this.getFileName([point,total,streak,theme,confetti]);
     if(!fs.existsSync(fname)){
       const ws = fs.createWriteStream(fname);
-      await (await this.createStatusBadge(point, total, streak, theme,confetti)).pipe(ws);
+      const badge = await this.createStatusBadge(point, total, streak, theme,confetti);
+      badge.pipe(ws);
+      await new Promise(fulfill => ws.on("finish", fulfill));
     }
     return fs.createReadStream(fname);  
   }
@@ -27,7 +29,9 @@ export class CanvasService {
     const fname = await this.getFileName([point,theme,confetti]);
     if(!fs.existsSync(fname)){
       const ws = fs.createWriteStream(fname);
-      await (await this.createPointBadge(point,theme,confetti)).pipe(ws);
+      const badge = await this.createPointBadge(point,theme,confetti);
+      badge.pipe(ws);
+      await new Promise(fulfill => ws.on("finish", fulfill));
     }
     return fs.createReadStream(fname);  
   }
