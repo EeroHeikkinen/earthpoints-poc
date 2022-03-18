@@ -14,7 +14,7 @@ export class CronService {
     private queueService: QueueService,
   ) {}
 
-  @Cron(process.env.CRON || '*/30 * * * *') // Every 30 minutes
+  //@Cron(process.env.CRON || '*/30 * * * *') // Every 30 minutes
   async handleCron() {
     // Take a snapshot of time which will be the same for all items in this batch
     // to make sure we don't process any actions twice for a certain same time period in case of delays
