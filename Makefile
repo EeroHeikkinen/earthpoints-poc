@@ -72,3 +72,13 @@ connect-db:
 .PHONY: connect-db-uat
 connect-db-uat:
 	kubectl exec -n=uat -it $(DB_POD_NAME_UAT) -- bash
+
+## We have executed these commands once. No need to execute again. 
+## They are here for future references...
+#.PHONY: backup
+#backup:
+#	kubectl create -f kuber-snapshot.yml
+
+#.PHONY: backup-uat
+#backup-uat:
+#	kubectl create -n=uat -f kuber-snapshot.yml
