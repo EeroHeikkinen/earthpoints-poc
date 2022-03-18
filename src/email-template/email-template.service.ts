@@ -123,6 +123,7 @@ export class EmailTemplateService {
         }
 
         if (!renderParams.template && !renderParams.html) {
+          console.log(`No template found for ${renderParams.subject}`);
           continue;
         }
 
