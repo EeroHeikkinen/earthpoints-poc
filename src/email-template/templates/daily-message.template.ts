@@ -35,7 +35,6 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
 
       // Don't send a daily message within N hours of registration
       if (
-        false &&
         durationSinceRegistered.asHours() <
           parseInt(process.env.HOURS_UNTIL_FIRST_DAILY_EMAIL)
       ) {
@@ -47,7 +46,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
       const last = moment(lastSent);
       const durationSinceLastEmail = moment.duration(now.diff(last));
       // Don't send new emails if less than 12 hours has passed since last
-      if (false && durationSinceLastEmail.asHours() < 12) {
+      if (durationSinceLastEmail.asHours() < 12) {
         console.log('Already sent daily email less than 12 hours ago');
         return false;
       }
