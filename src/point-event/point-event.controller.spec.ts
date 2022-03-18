@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bull';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CassandraModule } from 'src/cassandra/cassandra.module';
 import { PointEventController } from './point-event.controller';
@@ -11,7 +12,12 @@ describe('PointEventController', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [PointEventService, PointEventRepository],
       controllers: [PointEventController],
-      imports: [CassandraModule],
+      imports: [
+        CassandraModule,
+        BullModule.registerQueue({
+          name: 'sse',
+        }),
+      ]
     }).compile();
 
     controller = module.get<PointEventController>(PointEventController);
