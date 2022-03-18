@@ -12,6 +12,11 @@ export class QueueConsumer {
 
   @Process('syncUser')
   async syncUser(job: Job<unknown>) {
+    if(process.env.POD_NAME != 'earthpoints-que-0')
+    {
+      console.log('syncUser is not allowed in this pod');
+      return;
+    }
     //TODO: Consumer to implement
     const { userid, timestamp } = job.data as {
       userid: string;

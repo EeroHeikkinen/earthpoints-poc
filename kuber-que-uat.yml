@@ -1,24 +1,22 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: earthpoints-poc
-  namespace: default
+  name: earthpoints-que
+  namespace: uat
   labels:
-    app: earthpoints-poc
+    app: earthpoints-que
 spec:
-  replicas: 5
+  serviceName: earthpoints-que
+  replicas: 1
   selector:
     matchLabels:
-      app: earthpoints-poc
+      app: earthpoints-que
   strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
   minReadySeconds: 5
   template:
     metadata:
       labels:
-        app: earthpoints-poc
+        app: earthpoints-que
     spec:
       affinity:
         nodeAffinity:
@@ -31,8 +29,8 @@ spec:
                 - earthpoints-poc
       terminationGracePeriodSeconds: 120
       containers:
-        - name: earthpoints-poc
-          image: registry.digitalocean.com/earthpoints/earthpoints-poc:latest-default
+        - name: earthpoints-que
+          image: registry.digitalocean.com/earthpoints/earthpoints-poc:latest-uat
           imagePullPolicy: "Always"
           ports:
             - containerPort: 3000
@@ -45,6 +43,10 @@ spec:
           env:
           - name: KUBE_CONFIG_APPLY_DATE
             value: '<DATE>'              
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           envFrom:
           - secretRef:
               name: earthpoints-poc-secret
