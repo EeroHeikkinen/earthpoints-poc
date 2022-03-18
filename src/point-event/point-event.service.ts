@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Subject } from 'rxjs';
+import { RedisService } from 'src/redis/redis.service';
 import { CreatePointEventDto } from './dto/create-point-event.dto';
 import { UpdatePointEventDto } from './dto/update-point-event.dto';
 import { PointEventRepository } from './point-event.repository';
@@ -12,6 +13,7 @@ export class PointEventService {
 
   constructor(
     private pointEventRepository: PointEventRepository,
+    private redisService: RedisService,
     ){}
 
   async create(createPointEventDto: CreatePointEventDto) {
@@ -23,7 +25,7 @@ export class PointEventService {
       delete createPointEventDto.hashString;
     }
     const retVal = await this.pointEventRepository.addPointEvent(createPointEventDto)
-    this.subject.next({
+    this.redisService.emit('point.event.create',{
       userid: createPointEventDto.userid, retVal
     });
     return retVal;

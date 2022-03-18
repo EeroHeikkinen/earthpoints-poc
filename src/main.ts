@@ -13,7 +13,10 @@ import { engine } from "express-handlebars";
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestApplicationOptions, ValidationPipe } from '@nestjs/common';
 
+import {MicroserviceOptions, Transport} from '@nestjs/microservices';
+
 import basicAuth from 'express-basic-auth';
+import { RedisMicroModule } from './redis/redis-micro.module';
 
 dotenv.config();
 
@@ -77,5 +80,14 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(3000);
+
+  const redis = await NestFactory.createMicroservice<MicroserviceOptions>(RedisMicroModule, {
+    transport: Transport.REDIS,
+    options: {
+      url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT || 6379}`,
+    },
+  });
+  await redis.listen();
+  
 }
 bootstrap();
