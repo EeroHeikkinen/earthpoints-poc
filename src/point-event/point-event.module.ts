@@ -4,9 +4,15 @@ import { PointEventController } from './point-event.controller';
 import { PointEventRepository } from './point-event.repository';
 import { CassandraModule } from 'src/cassandra/cassandra.module';
 import { UserModule } from 'src/user/user.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
-  imports: [CassandraModule],
+  imports: [
+    CassandraModule,
+    BullModule.registerQueue({
+      name: 'sse',
+    }),
+  ],
   controllers: [PointEventController],
   providers: [PointEventService, PointEventRepository],
   exports: [PointEventService]
