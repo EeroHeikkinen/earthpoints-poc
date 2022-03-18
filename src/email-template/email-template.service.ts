@@ -59,6 +59,10 @@ export class EmailTemplateService {
     );
   }
 
+  async getAllEmailContentTemplates() {
+    return await this.emailContentTemplateRepository.getAllEmailContentTemplates();
+  }
+
   getFrom() {
     return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
   }
@@ -116,6 +120,11 @@ export class EmailTemplateService {
               renderParams.context,
             );
           }
+        }
+
+        if (!renderParams.template && !renderParams.html) {
+          console.log(`No template found for ${renderParams.subject}`);
+          continue;
         }
 
         await this.mailerService

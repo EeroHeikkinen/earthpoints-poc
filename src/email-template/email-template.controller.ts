@@ -3,22 +3,15 @@ import {
   Controller,
   Get,
   Param,
-  Patch,
   Post,
+  Query,
   Render,
   Req,
-  SetMetadata,
-  UseFilters,
-  UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { CreateEmailContentTemplateDto } from './dto/email-content-template.dto';
-import { UpdateEmailContentTemplateDto } from './dto/update-email-content-template.dto';
 import { EmailTemplateService } from './email-template.service';
 import handlebars from 'handlebars';
-import { AuthGuard } from '@nestjs/passport';
-import { UnauthorizedExceptionFilter } from 'src/auth/unauthorized-exception.filter';
-
 @Controller('email-template')
 export class EmailTemplateController {
   constructor(private emailTemplateService: EmailTemplateService) {}
@@ -30,53 +23,66 @@ export class EmailTemplateController {
     footerImage: `${process.env.BASE_URL}/point-badge?point=20&total=100`,
   };
 
-
-  @Get('/login')
-  async loginForm(@Req() request: Request) {
-    request.app.locals.layout = 'admin';
-  }
-
-  @Post('/')
-  async processLogin(@Req() request: Request) {
-    request.app.locals.layout = 'admin';
-  }
-
   @Get('/')
-  @Render('edit-template')
-  index(@Req() request: Request) {
+  @Render('edit-templates-by-day')
+  async index(@Req() request: Request) {
     request.app.locals.layout = 'admin';
+    return {
+      dayData: await this.buildListOfDaysWithData(),
+    };
   }
 
-  @Render('edit-template')
-  @Post(':key')
+  @Render('edit-templates-by-day')
+  @Post(':day')
   async create(
     @Req() request: Request,
-    @Param('key') key: string,
+    @Param('day') day: string,
+    @Query('type') type: string,
     @Body() createEmailContentTemplateDto: CreateEmailContentTemplateDto,
   ) {
     await this.emailTemplateService.addEmailContentTemplate(
       createEmailContentTemplateDto,
     );
 
-    const emailContentTemplate =
-      await this.emailTemplateService.getEmailContentTemplate(key);
-
-    request.app.locals.layout = 'admin';
-    const previewHTML = handlebars.compile(emailContentTemplate.content)(
-      this.previewContext,
-    );
-
-    return {
-      requestKey: createEmailContentTemplateDto.key,
-      template: emailContentTemplate,
-      previewHTML,
-    };
+    return this.getContextForDayAndType(day, type);
   }
 
-  @Render('edit-template')
-  @Get(':key')
-  async findOne(@Req() request: Request, @Param('key') key: string) {
+  @Render('edit-templates-by-day')
+  @Get(':day')
+  async editByDay(
+    @Req() request: Request,
+    @Param('day') day: string,
+    @Query('type') type: string,
+  ) {
     request.app.locals.layout = 'admin';
+
+    if (!type) {
+      type = 'daily';
+    }
+
+    return await this.getContextForDayAndType(day, type);
+  }
+
+  async buildListOfDaysWithData() {
+    const allTemplates =
+      await this.emailTemplateService.getAllEmailContentTemplates();
+    const days = allTemplates.map((template) =>
+      template.key.split('-').slice(-3).join('-'),
+    );
+    const count = {};
+    for (const day of days) {
+      if (count[day]) {
+        count[day] += 1;
+      } else {
+        count[day] = 1;
+      }
+    }
+    return JSON.stringify(count);
+  }
+
+  async getContextForDayAndType(day, type) {
+    const key = type + '-' + day;
+
     const emailContentTemplate =
       await this.emailTemplateService.getEmailContentTemplate(key);
 
@@ -87,10 +93,37 @@ export class EmailTemplateController {
       );
     }
 
+    let templateTypes = [
+      {
+        displayName: 'Daily Email (Points gained)',
+        id: 'daily',
+      },
+      {
+        displayName: 'Daily Email (No points gained)',
+        id: 'no-points-daily',
+      },
+    ];
+    templateTypes = templateTypes.map((templateType) => {
+      return {
+        ...templateType,
+        active: templateType.id == type,
+      };
+    });
+
+    const [_year, _month, _day] = day.split('-');
+    const reversedDay = _day + '/' + _month + '/' + _year;
+
+    const dayData = await this.buildListOfDaysWithData();
+
     return {
-      requestKey: key,
+      day,
+      reversedDay,
+      type,
+      key,
       template: emailContentTemplate,
+      templateTypes,
       previewHTML,
+      dayData,
     };
   }
 }
