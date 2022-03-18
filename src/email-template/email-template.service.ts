@@ -122,7 +122,7 @@ export class EmailTemplateService {
           }
         }
 
-        if (!renderParams.template) {
+        if (!renderParams.template && !renderParams.html) {
           continue;
         }
 
