@@ -1,4 +1,4 @@
-import { InjectQueue, Process, Processor } from '@nestjs/bull';
+import { InjectQueue, OnGlobalQueueCompleted, Process, Processor } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Job, Queue } from 'bull';
 import { Subject } from 'rxjs';
@@ -27,20 +27,29 @@ export class PointEventService {
       delete createPointEventDto.hashString;
     }
     const retVal = await this.pointEventRepository.addPointEvent(createPointEventDto)
-    this.sseQueue.add('updateSse',{userid: createPointEventDto.userid});
+    this.sseQueue.add(
+      'updateSse',
+      { userid: createPointEventDto.userid },
+      { removeOnComplete: true },
+    );
     /*
     this.subject.next({
       userid: createPointEventDto.userid, retVal
     });//*/
     return retVal;
   }
-  
+
   @Process('updateSse')
-  async sendDailyEmail(job: Job<unknown>) {
-    const { userid } = job.data as {userid: string};
+  async processUpdateSse(job: Job<unknown>) {
+    return (job.data as { userid: string }).userid;
+  }
+
+  @OnGlobalQueueCompleted()
+  broadcastEvent(job: Job<unknown>, data: string) {
+    const userid = JSON.parse(data);
     this.subject.next({
-      userid: userid
-    });//*/
+      userid: userid,
+    });
   }
 
   async rewardAccountConnected(userid:string, platform: string) {
