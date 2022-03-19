@@ -59,6 +59,7 @@ export class TwitterStrategy extends PassportStrategy(Strategy, 'twitter') {
       userid,
       profile_id: id,
       platform: 'twitter',
+      name: displayName,
       auth_token: token,
       token_secret: tokenSecret,
       auth_expiration: undefined,
