@@ -25,6 +25,11 @@ export class CreatePlatformConnectionDto {
   @ApiProperty({
     required: false,
   })
+  name?: string;
+
+  @ApiProperty({
+    required: false,
+  })
   auth_token: string;
 
   @ApiProperty({
