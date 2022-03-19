@@ -34,6 +34,7 @@ CREATE TABLE earthpoints.platform_connection (
    platform varchar,
    emails set<varchar>,
    name varchar,
+   phone varchar,
    auth_token varchar,
    token_secret varchar,
    auth_expiration timestamp,
