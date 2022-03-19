@@ -443,6 +443,7 @@ export class AppController {
           auth_token,
           auth_expiration,
           name,
+          phone,
         } = externalPlatformData;
 
         let emailsArray = emails;
@@ -472,6 +473,7 @@ export class AppController {
           profile_id: profileId,
           name,
           platform,
+          phone,
           auth_token,
           auth_expiration,
           emails,
