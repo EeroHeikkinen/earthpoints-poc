@@ -29,7 +29,7 @@ spec:
               image: registry.digitalocean.com/earthpoints/earthpoints-poc:latest-default
               imagePullPolicy: "Always"
               command: ["node"]
-              args: ["dist/cron"]
+              args: ["dist/cron", "cron"]
               resources:
                 requests:
                   cpu: 100m

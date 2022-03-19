@@ -7,6 +7,6 @@ export class QueueService {
     constructor(@InjectQueue('sync') private syncQueue: Queue) {}
 
     async addUserIdToQueue(userid, timestamp) {
-    this.syncQueue.add('syncUser', { userid, timestamp });
+    this.syncQueue.add('syncUser', { userid, timestamp },{jobId: userid, removeOnComplete: true});
     }
 }

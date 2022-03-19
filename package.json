@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest  --forceExit --config ./test/jest-e2e.json",
-    "cron": "node dist/cron"
+    "cron": "node dist/cron cron"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.6.1",
@@ -53,6 +53,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
     "mongodb": "^3.7.3",
+    "nest-commander": "^2.4.0",
     "nodemailer": "^6.7.2",
     "passport": "^0.5.2",
     "passport-facebook": "^3.0.0",
