@@ -61,6 +61,21 @@ export class UserService {
     return userid;
   }
 
+  computeName(user: User) {
+    if (user.firstName) {
+      return user.firstName;
+    }
+    if (user.email) {
+      const emailBeforeAt = user.email.split('@')[0];
+      const partBeforeFirstDot = emailBeforeAt.split('.')[0];
+      return (
+        partBeforeFirstDot.toUpperCase()[0] +
+        partBeforeFirstDot.slice(1).toLowerCase()
+      );
+    }
+    return undefined;
+  }
+
   async addEmailsToUser(userid: string, emails: any) {
     if (!emails.length) {
       return;
@@ -169,6 +184,9 @@ export class UserService {
     user.points = user.events
       .map((event) => event.points)
       .reduce((previous, current) => previous + current, 0);
+    if (!user.firstName) {
+      user.firstName = this.computeName(user);
+    }
 
     return user;
   }
