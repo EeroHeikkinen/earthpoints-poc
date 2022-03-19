@@ -30,6 +30,11 @@ export class CreatePlatformConnectionDto {
   @ApiProperty({
     required: false,
   })
+  phone?: number;
+
+  @ApiProperty({
+    required: false,
+  })
   auth_token: string;
 
   @ApiProperty({
