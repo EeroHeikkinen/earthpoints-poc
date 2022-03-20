@@ -84,6 +84,11 @@ export class ExternalJwtMiddleware implements NestMiddleware {
         };
 
         res.cookie('auth-cookie', secretData, { httpOnly: true });
+
+        if (redirect_url) {
+          res.cookie('external-redirect-url', redirect_url, { httpOnly: true });
+          req.cookies['external-redirect-url'] = redirect_url;
+        }
       } catch (err) {
         console.error(err);
       }

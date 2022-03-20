@@ -14,6 +14,9 @@
     <header>
       <!-- Navbar-->
       <nav class="navbar navbar-expand-lg navbar-light fixed-top scrolling-navbar" id="navbar" {{#if environment}}style="background-color: red !important"{{/if}}>
+        {{#if externalRedirectUrl}}
+          <a class="button" style="color: green;" href="{{externalRedirectUrl}}">⬅ Back</a>
+        {{/if}}
         <div class="container"><a class="navbar-brand" href="#"><strong>Earth Points Dashboard{{#if environment}} - WARNING {{environment}} SYSTEM{{/if}}</strong></a>
                   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
           {{#if user }}
