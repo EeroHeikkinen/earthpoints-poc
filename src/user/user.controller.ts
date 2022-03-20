@@ -50,7 +50,7 @@ export class UserController {
     @Body() body: UserFromExternalPlatformDataDto,
   ): Promise<User> {
     // Normalise emails to array
-    const { emails, profile_id: profileId, platform } = body;
+    const { emails, profile_id: profileId, platform, name, phone } = body;
 
     let emailsArray = emails;
     if (!Array.isArray(emails)) {
@@ -61,11 +61,16 @@ export class UserController {
       }
     }
 
+    let firstName;
+    if (name && typeof name === 'string') {
+      firstName = name.split(' ')[0];
+    }
+
     const userid = await this.userService.findOrCreateUserByEmailOrPlatform({
       emails: emailsArray,
       profileId,
       platform,
-      firstName: null,
+      firstName,
     });
 
     await this.platformConnectionService.create({
@@ -74,6 +79,8 @@ export class UserController {
       platform: platform,
       auth_token: body.auth_token,
       auth_expiration: body.auth_expiration,
+      name,
+      phone,
       emails,
     });
 
