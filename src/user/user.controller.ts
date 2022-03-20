@@ -92,13 +92,13 @@ export class UserController {
   @Get(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.userService.findByUserId(id);
   @ApiOAuth2([])
   @ApiResponse({
     status: 201,
     type: User,
   })
+  async findOne(@Param('id') id: string): Promise<User> {
+    return await this.userService.findByUserId(id);
   }
 
   @Get('byEmail/:email')
