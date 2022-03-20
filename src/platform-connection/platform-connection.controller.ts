@@ -4,6 +4,7 @@ import { CreatePlatformConnectionDto } from './dto/create-platform-connection.dt
 import { UpdatePlatformConnectionDto } from './dto/update-platform-connection.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AdminOnlyGuard } from 'src/auth/admin-only.guard';
+import { ApiOAuth2 } from '@nestjs/swagger';
 
 @Controller('platform-connection')
 export class PlatformConnectionController {
@@ -12,6 +13,7 @@ export class PlatformConnectionController {
   @Post()
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   create(@Body() createSocialCredentialDto: CreatePlatformConnectionDto) {
     return this.platformConnectionService.create(createSocialCredentialDto);
   }
@@ -19,6 +21,7 @@ export class PlatformConnectionController {
   @Get()
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   findAll() {
     return this.platformConnectionService.findAll();
   }
@@ -26,6 +29,7 @@ export class PlatformConnectionController {
   @Get(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   findOne(@Param('id') id: string) {
     return this.platformConnectionService.findOne(+id);
   }
@@ -33,6 +37,7 @@ export class PlatformConnectionController {
   @Patch(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   update(
     @Param('id') id: string,
     @Body() updatePlatformConnectionDto: UpdatePlatformConnectionDto,
@@ -43,6 +48,7 @@ export class PlatformConnectionController {
   @Delete(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   remove(@Param('id') id: string) {
     return this.platformConnectionService.remove(+id);
   }

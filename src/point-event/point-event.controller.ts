@@ -19,6 +19,7 @@ import { Request } from 'express'
 import { UserService } from 'src/user/user.service';
 import { AdminOnlyGuard } from 'src/auth/admin-only.guard';
 import crypto from 'crypto';
+import { ApiOAuth2 } from '@nestjs/swagger';
 
 @Controller('point-event')
 export class PointEventController {
@@ -27,6 +28,7 @@ export class PointEventController {
   @Get()
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   findAll() {
     return this.pointEventService.findAll();
   }
@@ -34,6 +36,7 @@ export class PointEventController {
   @Get(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   findOne(@Param('id') id: string) {
     return this.pointEventService.findOne(+id);
   }
@@ -41,6 +44,7 @@ export class PointEventController {
   @Patch(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   update(
     @Param('id') id: string,
     @Body() updatePointEventDto: UpdatePointEventDto,
@@ -51,6 +55,7 @@ export class PointEventController {
   @Delete(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   remove(@Param('id') id: string) {
     return this.pointEventService.remove(+id);
   }

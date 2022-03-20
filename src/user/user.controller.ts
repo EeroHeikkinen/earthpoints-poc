@@ -33,6 +33,7 @@ export class UserController {
   @Post()
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
@@ -86,11 +87,17 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findByUserId(id);
+  @ApiOAuth2([])
+  @ApiResponse({
+    status: 201,
+    type: User,
+  })
   }
 
   @Get('byEmail/:email')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   async findOneByEmail(@Param('email') email: string) {
     const user = await this.userService.findByEmail(email.trim());
 
@@ -106,6 +113,7 @@ export class UserController {
   @Patch(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(updateUserDto);
   }
@@ -113,6 +121,7 @@ export class UserController {
   @Delete(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
