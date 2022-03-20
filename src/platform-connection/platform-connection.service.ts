@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import process from 'process';
 import { IExtractor } from 'src/interfaces/extractor.interface';
+import { QueueService } from 'src/queue/queue.service';
 import { CreatePlatformConnectionDto } from './dto/create-platform-connection.dto';
 import { UpdatePlatformConnectionDto } from './dto/update-platform-connection.dto';
 import { FacebookExtractor } from './extractors/facebook.extractor';
@@ -25,6 +26,7 @@ export class PlatformConnectionService {
     private facebookExtractor: FacebookExtractor,
     private instagramExtractor: InstagramExtractor,
     private twitterExtractor: TwitterExtractor,
+    private queueService: QueueService
     ) {
       this.extractors = {
         'facebook': facebookExtractor,
@@ -34,7 +36,12 @@ export class PlatformConnectionService {
     }
 
   async create(createSocialCredentialDto: CreatePlatformConnectionDto) {
-    return await this.repository.addPlatformConnection(createSocialCredentialDto);
+    const retVal = await this.repository.addPlatformConnection(createSocialCredentialDto);
+    this.queueService.addUserIdToQueue(
+      createSocialCredentialDto.userid,
+      new Date(),
+    );
+    return retVal;
   }
 
   findAll() {
