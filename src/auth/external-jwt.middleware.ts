@@ -46,9 +46,17 @@ export class ExternalJwtMiddleware implements NestMiddleware {
           profile_id: string;
           iss: string;
           name: string;
+          redirect_url: string;
         };
+
         // Successfully verified the payload
-        const { profile_id: profileId, iss: platform, name } = payload;
+
+        const {
+          profile_id: profileId,
+          iss: platform,
+          name,
+          redirect_url,
+        } = payload;
 
         let firstName;
         if (name && typeof name === 'string') {
@@ -84,6 +92,7 @@ export class ExternalJwtMiddleware implements NestMiddleware {
         };
 
         res.cookie('auth-cookie', secretData, { httpOnly: true });
+        req.cookies['auth-cookie'] = secretData;
 
         if (redirect_url) {
           res.cookie('external-redirect-url', redirect_url, { httpOnly: true });
