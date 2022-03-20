@@ -52,6 +52,6 @@ import { ExternalJwtMiddleware } from './auth/external-jwt.middleware';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ExternalJwtMiddleware).forRoutes('connect/*');
+    consumer.apply(ExternalJwtMiddleware).forRoutes('*');
   }
 }
