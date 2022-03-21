@@ -60,7 +60,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
       .map((event) => event.points)
       .reduce((previous, current) => previous + current, 0);
 
-    if (hourInUserTimeZone != 20) {
+    if (hourInUserTimeZone != (process.env.DAILY_EMAIL_HOUR_IN_USER_TIMEZONE || 20)) {
       console.log('Wrong local time to send daily msg');
       return false;
     }
