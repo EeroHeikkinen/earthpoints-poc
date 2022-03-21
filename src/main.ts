@@ -5,7 +5,8 @@ import { AppModule } from './app.module';
 import flash = require('connect-flash');
 
 import * as passport from 'passport';
-import * as session from 'express-session';
+import sessions from 'client-sessions';
+
 import * as dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 import { engine } from "express-handlebars";
@@ -32,16 +33,21 @@ async function bootstrap() {
   app.use(cookieParser());
   app.set('views', viewsPath);
   app.set('view engine', '.hbs'); 
-  //app.use(session.defaul({ secret: 'SECRET' })); // session secret
 
   app.use(
-    session.default({
-      secret: 'earthpoints',
-      resave: false,
-      saveUninitialized: false,
+    sessions({
+      cookieName: 'session', // cookie name dictates the key name added to the request object
+      secret: process.env.JWT_SECRET, // should be a large unguessable string
+      duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
+      activeDuration: 1000 * 60 * 5 * 2000,
+      cookie: {
+        ephemeral: false, // when true, cookie expires when the browser closes
+        httpOnly: false, // when true, cookie is not accessible from javascript
+        //secure: true, // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
+      },
     }),
   );
-  
+
   const config = new DocumentBuilder()
     .setTitle('Earthpoints API')
     .setDescription('Earthpoints API description')
