@@ -33,6 +33,7 @@ export class UserController {
   @Post()
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
@@ -49,7 +50,7 @@ export class UserController {
     @Body() body: UserFromExternalPlatformDataDto,
   ): Promise<User> {
     // Normalise emails to array
-    const { emails, profile_id: profileId, platform } = body;
+    const { emails, profile_id: profileId, platform, name, phone } = body;
 
     let emailsArray = emails;
     if (!Array.isArray(emails)) {
@@ -60,11 +61,16 @@ export class UserController {
       }
     }
 
+    let firstName;
+    if (name && typeof name === 'string') {
+      firstName = name.split(' ')[0];
+    }
+
     const userid = await this.userService.findOrCreateUserByEmailOrPlatform({
       emails: emailsArray,
       profileId,
       platform,
-      firstName: null,
+      firstName,
     });
 
     await this.platformConnectionService.create({
@@ -73,6 +79,8 @@ export class UserController {
       platform: platform,
       auth_token: body.auth_token,
       auth_expiration: body.auth_expiration,
+      name,
+      phone,
       emails,
     });
 
@@ -84,13 +92,19 @@ export class UserController {
   @Get(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.userService.findByUserId(id);
+  @ApiOAuth2([])
+  @ApiResponse({
+    status: 201,
+    type: User,
+  })
+  async findOne(@Param('id') id: string): Promise<User> {
+    return await this.userService.findByUserId(id);
   }
 
   @Get('byEmail/:email')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   async findOneByEmail(@Param('email') email: string) {
     const user = await this.userService.findByEmail(email.trim());
 
@@ -106,6 +120,7 @@ export class UserController {
   @Patch(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(updateUserDto);
   }
@@ -113,6 +128,7 @@ export class UserController {
   @Delete(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
+  @ApiOAuth2([])
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }

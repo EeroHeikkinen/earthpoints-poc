@@ -53,6 +53,7 @@ export class InstagramStrategy extends PassportStrategy(Strategy, 'instagram') {
       userid,
       profile_id: id,
       platform: 'instagram',
+      name: username,
       auth_token: token,
       auth_expiration: undefined,
     });

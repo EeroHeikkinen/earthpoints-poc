@@ -11,9 +11,10 @@ import { InstagramApiModule } from 'src/instagram-api/instagram-api.module';
 import { FacebookApiModule } from 'src/facebook-api/facebook-api.module';
 import { RuleModule } from 'src/rule/rule.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { QueueModule } from 'src/queue/queue.module';
 
 @Module({
-  imports: [CassandraModule, FacebookApiModule, InstagramApiModule, RuleModule],
+  imports: [CassandraModule, FacebookApiModule, InstagramApiModule, RuleModule, QueueModule],
   controllers: [PlatformConnectionController],
   providers: [PlatformConnectionService, PlatformConnectionRepository, FacebookExtractor, InstagramExtractor, TwitterExtractor],
   exports: [PlatformConnectionService]

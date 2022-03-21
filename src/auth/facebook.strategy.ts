@@ -59,6 +59,11 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     await this.platformConnectionService.create({
       userid,
       profile_id: id,
+      name:
+        name.givenName +
+        ' ' +
+        (name.middleName ? name.middleName + ' ' : '') +
+        name.familyName,
       platform: 'facebook',
       auth_token: accessToken,
       auth_expiration: undefined,

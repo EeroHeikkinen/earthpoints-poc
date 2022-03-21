@@ -180,10 +180,13 @@ export class AppController {
           platform.show = false;
       }
     }
+
+    const externalRedirectUrl = req?.cookies['external-redirect-url'];
     
     return {
       user: req.user,
       summedPoints: user.points,
+      externalRedirectUrl,
       events: formattedEvents,
       platforms,
       environment: process.env.ENVIRONMENT
@@ -194,8 +197,10 @@ export class AppController {
   @Render('landing')
   async landing(@Req() req): Promise<any> {
     req.app.locals.layout = 'main';
+    const externalRedirectUrl = req?.cookies['external-redirect-url'];
     return {
-      environment: process.env.ENVIRONMENT
+      environment: process.env.ENVIRONMENT,
+      externalRedirectUrl
     }    
   }
 
@@ -257,6 +262,7 @@ export class AppController {
   async facebookConnectRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
     const user = req.user as User;
     await this.pointEventService.rewardAccountConnected(user.userid, 'facebook')
+    return this.redirectIfExternalCookieSet(req);
   }
 
   @Get('/callback/twitter/connect') 
@@ -264,19 +270,21 @@ export class AppController {
   @UseGuards(TwitterAuthGuard)
   @UseGuards(JwtAuthGuard)
   @Redirect('/')
-  async twitterConnectRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {
+  async twitterConnectRedirect(@Req() req: Request): Promise<any> {
     const user = req.user as User;
     await this.pointEventService.rewardAccountConnected(user.userid, 'twitter')
+    return this.redirectIfExternalCookieSet(req);
   }
 
-  @Get('/callback/instagram/connect') 
+  @Get('/callback/instagram/connect')
   @CallbackURL('/callback/instagram/connect')
   @UseGuards(InstagramAuthGuard)
   @UseGuards(JwtAuthGuard)
   @Redirect('/')
-  async instagramConnectRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<any> {  
+  async instagramConnectRedirect(@Req() req: Request): Promise<any> {
     const user = req.user as User;
     await this.pointEventService.rewardAccountConnected(user.userid, 'instagram')
+    return this.redirectIfExternalCookieSet(req);
   }
 
 
@@ -302,7 +310,7 @@ export class AppController {
     return {msg:'success'};
   }
 
-  @Get('/callback/twitter/login') 
+  @Get('/callback/twitter/login')
   @CallbackURL('/callback/twitter/login')
   @UseGuards(TwitterAuthGuard)
   @Redirect('/')
@@ -324,6 +332,15 @@ export class AppController {
     return {msg:'success'};
   }
 
+  redirectIfExternalCookieSet(req) {
+    const externalRedirectUrl = req?.cookies['external-redirect-url'];
+    if (externalRedirectUrl) {
+      return {
+        url: externalRedirectUrl,
+        statusCode: 302,
+      };
+    }
+  }
 
   @Get('/callback/facebook/login') 
   @CallbackURL('/callback/facebook/login')
@@ -442,6 +459,8 @@ export class AppController {
           platform,
           auth_token,
           auth_expiration,
+          name,
+          phone,
         } = externalPlatformData;
 
         let emailsArray = emails;
@@ -453,18 +472,25 @@ export class AppController {
           }
         }
 
+        let firstName;
+        if (name && typeof name === 'string') {
+          firstName = name.split(' ')[0];
+        }
+
         createPointEventDto.userid =
           await this.userService.findOrCreateUserByEmailOrPlatform({
             emails: emailsArray,
             profileId,
             platform,
-            firstName: null,
+            firstName,
           });
 
         await this.platformConnectionService.create({
           userid: createPointEventDto.userid,
           profile_id: profileId,
+          name,
           platform,
+          phone,
           auth_token,
           auth_expiration,
           emails,

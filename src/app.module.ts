@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
 import { AuthModule } from './auth/auth.module';
@@ -19,6 +19,7 @@ import { CronModule } from './cron/cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
+import { ExternalJwtMiddleware } from './auth/external-jwt.middleware';
 
 @Module({
   imports: [
@@ -49,4 +50,8 @@ import { CanvasModule } from './canvas/canvas.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ExternalJwtMiddleware).forRoutes('*');
+  }
+}
