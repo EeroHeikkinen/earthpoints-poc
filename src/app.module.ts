@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Inject, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 
 import { AuthModule } from './auth/auth.module';
@@ -19,6 +19,11 @@ import { CronModule } from './cron/cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
+import { RedisClient } from 'redis';
+import session from 'express-session';
+import RedisStore from 'connect-redis';
+import { session as passportSession, initialize as passportInitialize } from 'passport';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -44,9 +49,31 @@ import { CanvasModule } from './canvas/canvas.module';
     ScheduleModule.forRoot(),
     CronModule,
     EmailTemplateModule,
-    CanvasModule
+    CanvasModule,
+    RedisModule
   ], 
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  constructor(@Inject('AUTH:REDIS') private readonly redisClient: RedisClient) {}
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        session({
+          store: new (RedisStore(session))({ client: this.redisClient, logErrors: true }),
+          saveUninitialized: false,
+          secret: process.env.SESSION_STORE_REDIS_SECRET || 'sup3rs3cr3t',
+          resave: false,
+          cookie: {
+            sameSite: true,
+            httpOnly: false,
+            maxAge: 60000,
+          },
+        }),
+        passportInitialize(),
+        passportSession(),
+      )
+      .forRoutes('*');
+  }  
+}
