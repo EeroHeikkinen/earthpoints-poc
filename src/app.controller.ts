@@ -186,7 +186,8 @@ export class AppController {
       summedPoints: user.points,
       events: formattedEvents,
       platforms,
-      environment: process.env.ENVIRONMENT
+      environment: process.env.ENVIRONMENT,
+      gtag: process.env.GOOGLE_TAG
     }
   }
 
@@ -195,7 +196,8 @@ export class AppController {
   async landing(@Req() req): Promise<any> {
     req.app.locals.layout = 'main';
     return {
-      environment: process.env.ENVIRONMENT
+      environment: process.env.ENVIRONMENT,
+      gtag: process.env.GOOGLE_TAG
     }    
   }
 
