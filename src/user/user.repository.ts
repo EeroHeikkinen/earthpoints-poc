@@ -48,6 +48,6 @@ export class UserRepository implements OnModuleInit {
     }
 
     async getAll() {
-        return await this.userMapper.findAll();
+        return await this.userMapper.findAll({}, {fetchSize: 100000});
     }
 }

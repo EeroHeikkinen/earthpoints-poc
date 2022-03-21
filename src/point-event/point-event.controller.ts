@@ -24,6 +24,10 @@ import crypto from 'crypto';
 export class PointEventController {
   constructor(private readonly pointEventService: PointEventService) {}
 
+  /* TODO think about whether to keep this one 
+  since it will create a lot of traffic 
+  once we have say +1M events, 
+  unless we add pagination*/
   @Get()
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
