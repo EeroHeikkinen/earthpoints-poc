@@ -73,7 +73,7 @@ export class EmailTemplateService {
       return;
     }
     /* Let's get the current time in user's local timezone */
-    const timezone = user.timezone || 'Asia/Kolkata';
+    const timezone = user.timezone || 'Europe/Berlin';
     const formatter = new Intl.DateTimeFormat('en-US', {
       hour12: false,
       hour: 'numeric',
