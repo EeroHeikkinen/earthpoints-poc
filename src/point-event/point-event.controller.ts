@@ -49,7 +49,7 @@ export class PointEventController {
     @Param('id') id: string,
     @Body() updatePointEventDto: UpdatePointEventDto,
   ) {
-    return this.pointEventService.update(+id, updatePointEventDto);
+    return this.pointEventService.update(updatePointEventDto);
   }
 
   @Delete(':id')

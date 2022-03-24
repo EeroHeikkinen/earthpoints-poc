@@ -48,15 +48,28 @@
       {{#each platforms}}
         {{#if this.show }}
           <div class="col-lg-4 col-md-12 mb-5 {{this.name}}">
-            <div class="card card-image">
+            <div class="front card card-image">
               <div class="text-white text-center pricing-card d-flex align-items-center rgba-{{this.color}}-strong py-3 px-3 rounded">
                 <div class="card-body">
                   <div class="py-5"><h4>Connect {{this.Name}}</h4></div>
                   <div class="py-3"><span class="display-4">10 🌎</span></div>
-                  <a class="btn btn-outline-white mt-5" href="/connect/{{this.name}}">Connect</a>
+                  <a class="btn btn-outline-white mt-5" href="{{#if this.href}}{{this.href}}{{else}}/connect/{{this.name}}{{/if}}">Connect</a>
                 </div>
               </div>
             </div>
+            {{#if this.isPhone}}
+              <div class="back card card-image">
+                <div style="height: 100%" class="text-white text-center pricing-card d-flex align-items-center rgba-{{this.color}}-strong py-3 px-3 rounded">
+                  <div class="card-body">
+                    <form id="phone-form" method="GET" action="/connect/phone">
+                      <div class="py-5"><h4>Type your phone</h4></div>
+                      <div class="py-3"><input name='number'/></div>
+                      <a class="btn btn-outline-white mt-5" href="#">Submit</a>
+                    </form> 
+                  </div>
+                </div>
+              </div>
+            {{/if}}
           </div>
         {{/if}}
       {{/each}}

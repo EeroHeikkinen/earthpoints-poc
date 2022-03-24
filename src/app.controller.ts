@@ -251,7 +251,40 @@ export class AppController {
     return HttpStatus.OK;
   }
 
-  @Get('/callback/facebook/connect') 
+  @Get('/connect/phone')
+  @UseGuards(JwtAuthGuard)
+  @Redirect('/')
+  async phoneConnect(
+    @Query('number') phoneNumber: string,
+    @Req() req: Request,
+  ): Promise<any> {
+    const user = req.user as User;
+    const existingUserId =
+      await this.userService.findOrCreateUserByEmailOrPlatform({
+        emails: [],
+        profileId: phoneNumber,
+        firstName: null,
+        platform: 'phone',
+      });
+
+    if (existingUserId) {
+      // There's an existing user with points received for phone
+      // We need to merge these profiles now
+      await this.userService.merge(user.userid, existingUserId);
+    }
+
+    await this.platformConnectionService.create({
+      userid: user.userid,
+      profile_id: phoneNumber,
+      platform: 'phone',
+      auth_token: undefined,
+      auth_expiration: undefined,
+      emails: undefined,
+    });
+    await this.pointEventService.rewardAccountConnected(user.userid, 'phone');
+  }
+
+  @Get('/callback/facebook/connect')
   @CallbackURL('/callback/facebook/connect')
   @UseGuards(FacebookAuthGuard)
   @UseGuards(JwtAuthGuard)

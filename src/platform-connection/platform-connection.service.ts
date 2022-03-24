@@ -45,8 +45,10 @@ export class PlatformConnectionService {
     return `This action returns a #${id} socialProfile`;
   }
 
-  async update(updateSocialCredentialDto: UpdatePlatformConnectionDto) {
-    return await this.repository.updatePlatformConnection(updateSocialCredentialDto);
+  async update(updatePlatformConnectionDto: UpdatePlatformConnectionDto) {
+    return await this.repository.updatePlatformConnection(
+      updatePlatformConnectionDto,
+    );
   }
 
   remove(id: number) {

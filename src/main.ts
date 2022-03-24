@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import flash = require('connect-flash');
 
 import * as passport from 'passport';
+const helpers = require('handlebars-helpers')();
 import sessions from 'client-sessions';
 
 import * as dotenv from "dotenv";
