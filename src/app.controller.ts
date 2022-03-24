@@ -258,11 +258,19 @@ export class AppController {
     @Query('number') phoneNumber: string,
     @Req() req: Request,
   ): Promise<any> {
+    let formattedPhone = phoneNumber.trim();
+    if (!formattedPhone.startsWith('+')) {
+      return {
+        error: 'Please provide the number in international format (+123456789)',
+      };
+    }
+    formattedPhone = '+' + formattedPhone.replace(/\D/g, '');
+
     const user = req.user as User;
     const existingUserId =
       await this.userService.findOrCreateUserByEmailOrPlatform({
         emails: [],
-        profileId: phoneNumber,
+        profileId: formattedPhone,
         firstName: null,
         platform: 'phone',
       });
