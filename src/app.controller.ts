@@ -146,49 +146,59 @@ export class AppController {
       }
     }
 
-    this.userService.syncPoints(userid); 
+    this.userService.syncPoints(userid);
 
     const user = req.user as User;
-    
-    const {formattedEvents} = this.formatUserEvents(user.events,user.timezone)
+
+    const { formattedEvents } = this.formatUserEvents(
+      user.events,
+      user.timezone,
+    );
     formattedEvents.sort((a, b) => b.timestamp - a.timestamp);
 
     const platforms = [
-      { 
+      {
         name: 'facebook',
         Name: 'Facebook',
         show: true,
-        color: 'blue'
+        color: 'blue',
       },
       {
         name: 'twitter',
         Name: 'Twitter',
         show: true,
-        color: 'teal'
+        color: 'teal',
       },
       {
         name: 'instagram',
         Name: 'Instagram',
         show: true,
-        color: 'red'
-      }
-    ]
+        color: 'red',
+      },
+      {
+        name: 'phone',
+        href: '#',
+        isPhone: true,
+        Name: 'your phone number',
+        show: true,
+        color: 'black',
+      },
+    ];
     /* Hide already connected */
-    for(let connection of user.connections) {
-      for(let platform of platforms) {
-        if(platform.name == connection.platform)
-          platform.show = false;
+    for (let connection of user.connections) {
+      for (let platform of platforms) {
+        if (platform.name == connection.platform) platform.show = false;
       }
     }
-    
+
     return {
       user: req.user,
       summedPoints: user.points,
       events: formattedEvents,
       platforms,
       environment: process.env.ENVIRONMENT,
-      gtag: process.env.GOOGLE_TAG
-    }
+      gtag: process.env.GOOGLE_TAG,
+    };
   }
 
   @Get('landing')
@@ -197,8 +207,8 @@ export class AppController {
     req.app.locals.layout = 'main';
     return {
       environment: process.env.ENVIRONMENT,
-      gtag: process.env.GOOGLE_TAG
-    }    
+      gtag: process.env.GOOGLE_TAG,
+    };
   }
 
   @Get('/logout') 
