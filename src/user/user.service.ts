@@ -10,6 +10,8 @@ import { User } from './entities/user.entity';
 import { use } from 'passport';
 import { UserOwnedListsV2Paginator } from 'twitter-api-v2';
 import { types } from 'cassandra-driver';
+import { SentEmailRepository } from 'src/email-template/sent-email.repository';
+import { SentEmail } from 'src/email-template/entities/sent-email.entity';
 
 @Injectable()
 export class UserService {
@@ -123,6 +125,7 @@ export class UserService {
     private readonly emailTemplateService: EmailTemplateService,
     private readonly pointEventService: PointEventService,
     private readonly queueService: QueueService,
+    private readonly sentEmailRepository: SentEmailRepository
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -203,6 +206,38 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async merge(userid: string, mergedUserId: string) {
+    const events = await this.pointEventService.findAllForUser(mergedUserId);
+    for (const event of events) {
+      event.userid = userid;
+      await this.pointEventService.update(event);
+    }
+
+    const pcs = await this.platformConnectionService.findByUserId(mergedUserId);
+    for (const pc of pcs) {
+      pc.userid = userid;
+      await this.platformConnectionService.update(pc);
+    }
+
+    const sentEmails = await this.sentEmailRepository.getSentEmailsByUserId(
+      mergedUserId,
+    );
+    for (const sentEmail of sentEmails) {
+      await this.sentEmailRepository.addSentEmail({
+        userid,
+        template: sentEmail.template,
+        timestamp: sentEmail.timestamp,
+      });
+
+      await this.sentEmailRepository.deleteSentEmail(
+        sentEmail.userid,
+        sentEmail.template,
+      );
+    }
+
+    await this.userRepository.remove(mergedUserId);
   }
 
   async syncPoints(userid) {

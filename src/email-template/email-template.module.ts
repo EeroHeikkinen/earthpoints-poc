@@ -60,7 +60,7 @@ import { EmailContentTemplateRepository } from './email-content-template.reposit
     FiftyPointsEmailTemplate,
     WelcomeMessageEmailTemplate,
   ],
-  exports: [EmailTemplateService],
+  exports: [EmailTemplateService, SentEmailRepository],
   controllers: [EmailTemplateController],
 })
 export class EmailTemplateModule {}
