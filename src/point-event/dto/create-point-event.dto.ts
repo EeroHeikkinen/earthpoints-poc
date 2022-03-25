@@ -91,6 +91,15 @@ export class CreatePointEventDto {
   })
   points: number;
 
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    description:
+      'Priority of point event. Higher priority events will override lower ones for same hashString.',
+    example: 5,
+  })
+  priority?: number;
+
   @IsDateString()
   @ApiProperty({
     description:
