@@ -179,6 +179,15 @@ export class UserService {
     return users;
   }
 
+  async calculateStreakData() {
+    /*
+    const pointsEarnedToday = user.events
+            .filter((event)=>{ return event.timestamp > oneDayAgo })
+            .map((event) => event.points)
+            .reduce((previous, current) => previous + current, 0)
+    */
+  }
+
   async update(updateUserDto: UpdateUserDto) {
     return await this.userRepository.update(updateUserDto);
   }
