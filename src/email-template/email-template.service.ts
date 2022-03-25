@@ -6,7 +6,7 @@ import { DailyMessageEmailTemplate } from './templates/daily-message.template';
 import { MailerService } from '@nestjs-modules/mailer';
 import { SentEmailRepository } from './sent-email.repository';
 import { CreatePointEventDto } from 'src/point-event/dto/create-point-event.dto';
-import { FiftyPointsEmailTemplate } from './templates/fifty-points-message.template';
+import { FiftyPointsEmailTemplate } from './templates/n-points-reached.template';
 import { WelcomeMessageEmailTemplate } from './templates/welcome-message.template';
 import { EmailContentTemplateRepository } from './email-content-template.repository';
 import { CreateEmailContentTemplateDto } from './dto/email-content-template.dto';
