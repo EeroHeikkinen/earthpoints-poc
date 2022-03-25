@@ -22,9 +22,19 @@ export class PointEventService {
       createPointEventDto.hash = crypto.createHash('sha256').update(createPointEventDto.hashString).digest('base64');
       delete createPointEventDto.hashString;
     }
-    const retVal = await this.pointEventRepository.addPointEvent(createPointEventDto)
+    const existing = await this.pointEventRepository.findOne(
+      createPointEventDto.hash,
+    );
+    if (existing && existing.priority > createPointEventDto.priority) {
+      return false;
+    }
+
+    const retVal = await this.pointEventRepository.addPointEvent(
+      createPointEventDto,
+    );
     this.subject.next({
-      userid: createPointEventDto.userid, retVal
+      userid: createPointEventDto.userid,
+      retVal,
     });
     return retVal;
   }
