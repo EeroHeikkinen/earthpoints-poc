@@ -32,8 +32,18 @@ apply-uat:
 	kubectl apply -n=uat -f kuber-app-uat.yml; \
 	kubectl rollout status -n=uat deployment/earthpoints-poc;
 
+.PHONY: restart-app
+restart-app:
+	kubectl rollout restart deployment/earthpoints-poc	
+
+.PHONY: restart-app-uat
+restart-app-uat:
+	kubectl rollout restart -n=uat deployment/earthpoints-poc	
+
+
 #APP_POD_NAME=$(shell kubectl get pods -o=name | grep earthpoints-poc- | sed 's/^.\{4\}//')
 DB_POD_NAME=$(shell kubectl get pods -o=name | grep cassandra- | sed 's/^.\{4\}//')
+DB_POD_NAME_UAT=$(shell kubectl get pods -o=name -n=uat | grep cassandra- | sed 's/^.\{4\}//')
 
 #.PHONY: wipedb
 #wipedb:
@@ -51,10 +61,24 @@ DB_POD_NAME=$(shell kubectl get pods -o=name | grep cassandra- | sed 's/^.\{4\}/
 log-db:
 	kubectl logs -f $(DB_POD_NAME) -c cassandra
 
-.PHONY: restart-app
-restart-app:
-	kubectl rollout restart deployment/earthpoints-poc	
+.PHONY: log-db-uat
+log-db-uat:
+	kubectl logs -n=uat -f $(DB_POD_NAME_UAT) -c cassandra
 
-.PHONY: restart-app-uat
-restart-app-uat:
-	kubectl rollout restart -n=uat deployment/earthpoints-poc	
+.PHONY: connect-db
+connect-db:
+	kubectl exec -it $(DB_POD_NAME) -- bash
+	
+.PHONY: connect-db-uat
+connect-db-uat:
+	kubectl exec -n=uat -it $(DB_POD_NAME_UAT) -- bash
+
+## We have executed these commands once. No need to execute again. 
+## They are here for future references...
+#.PHONY: backup
+#backup:
+#	kubectl create -f kuber-snapshot.yml
+
+#.PHONY: backup-uat
+#backup-uat:
+#	kubectl create -n=uat -f kuber-snapshot.yml

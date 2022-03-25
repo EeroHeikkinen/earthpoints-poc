@@ -30,6 +30,10 @@ export class EmailContentTemplateRepository implements OnModuleInit {
     return (await this.mapper.find({ key })).toArray()[0];
   }
 
+  async getAllEmailContentTemplates() {
+    return (await this.mapper.findAll()).toArray();
+  }
+
   async updateEmailContentTemplate(
     updateEmailContentTemplateDto: UpdateEmailContentTemplateDto,
   ) {

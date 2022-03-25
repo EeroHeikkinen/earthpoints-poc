@@ -16,4 +16,17 @@ describe('CanvasService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('should generate badges for a large number of requests', () => {
+    expect(service).toBeDefined();
+    for (let i = 0; i < 1; i++) {
+      service.createStatusBadgeCached(
+        Math.floor(Math.random() * 100),
+        Math.floor(Math.random() * 1000),
+        Math.floor(Math.random() * 10),
+        '',
+        '',
+      );
+    }
+  });
 });

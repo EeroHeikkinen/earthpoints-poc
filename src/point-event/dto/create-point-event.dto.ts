@@ -10,6 +10,7 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
+import { UserFromExternalPlatformDataDto } from 'src/user/dto/from-external-platform-data.dto';
 
 export class CreatePointEventDto {
   @IsString()
@@ -36,6 +37,17 @@ export class CreatePointEventDto {
   @IsOptional()
   @ApiProperty({
     required: false,
+    isArray: true,
+    type: UserFromExternalPlatformDataDto,
+    description:
+      'External platform user data. This is used to identify the correct user. If no user is found, a new user will be created and tagged with the provided external credentials.',
+  })
+  externalPlatformUserData?: UserFromExternalPlatformDataDto[];
+
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+    deprecated: true,
     description:
       'Email to associate the points with. If an user with this email is not found, a new user will be created. One of this or an User UUID is required.',
     example: 'my.user@gmail.com',

@@ -4,7 +4,7 @@ OpenAPI specification can be found at: https://epoints.savesoil.cc/api
 
 For UAT environment you can test with: https://uat.epoints.hakanonal.com/api
 
-# Quickstart example for creating point events
+# Example for creating point events
 
 The Earth Points API uses the OAuth2 client credentials flow. 
 
@@ -50,21 +50,130 @@ Response:
 
 ```
 {
-   "access_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJpYXQiOjE2NDcwMDQ5MjUsImV4cCI6MTY0NzA5MTMyNX0.ZFKNvG5H2nMoDnA-Sx8jF4nSkdIg908fatBJOOl7p-Y",
+   "access_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJpYXQiOjE2NDcwOTcxNDAsImV4cCI6MTY0NzE4MzU0MH0.UX2M8NNhZ34sY1-Orvgavc0cZF-_brtWlezOk-mlyEc",
    "expires_in" : 86400,
    "token_type" : "Bearer"
 }
 ```
-## 2. Create point events for user
+
+## 2. Obtain userid
+
+To obtain an user id, call the [/user/fromExternalPlatformData](https://uat.epoints.hakanonal.com/api/#/default/UserController_userFromExternalPlatformData) endpoint.
+
+```
+curl -X 'POST' \
+  'https://uat.epoints.hakanonal.com/user/fromExternalPlatformData' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJpYXQiOjE2NDcwOTcxNDAsImV4cCI6MTY0NzE4MzU0MH0.UX2M8NNhZ34sY1-Orvgavc0cZF-_brtWlezOk-mlyEc' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "profile_id": "[user id on pledge platform]",
+  "platform": "pledge-page",
+  "emails": [
+    "eesahe@gmail.com"
+  ]
+}' -k
+```
+
+Example response:
+```
+{
+   "connections" : [
+      {
+         "authExpiration" : null,
+         "authToken" : null,
+         "emails" : [
+            "eesahe@gmail.com"
+         ],
+         "head" : null,
+         "platform" : "pledge-page",
+         "profileId" : "[user id on pledge platform]",
+         "tail" : null,
+         "tokenSecret" : null,
+         "userid" : "82b07aae-ca02-40f4-a71f-2c564fc52764",
+         "watchedResources" : null
+      }
+   ],
+   "createdAt" : "2022-03-12T15:01:02.222Z",
+   "email" : "eesahe@gmail.com",
+   "emails" : [
+      "eesahe@gmail.com"
+   ],
+   "events" : [],
+   "firstName" : null,
+   "points" : 0,
+   "timezone" : null,
+   "userid" : "82b07aae-ca02-40f4-a71f-2c564fc52764"
+}
+```
+
+
+
+## 3. Award points to user
 
 To create points for user now we can call the [Create Point Event endpoint](https://epoints.savesoil.cc/api/#/default/PointEventController_create) and supply the authentication token in the Authorization header.
 
 ```
-curl --request POST \                        
-  --url https://uat.epoints.hakanonal.com/point-event \  
-  --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJpYXQiOjE2NDcwMDQ5MjUsImV4cCI6MTY0NzA5MTMyNX0.ZFKNvG5H2nMoDnA-Sx8jF4nSkdIg908fatBJOOl7p-Y' \
-  --header 'content-type: application/json' --data '{ "hashString": "created-pledge-page-1234567", "email": "my.user@gmail.com", "icon": "star", "verb": "created a", "platform": "pledge-page", "message": "You created a pledge page.", "isBurn": false, "points": 5, "timestamp": "2022-03-11T14:20:20.546Z"}' -k | json_pp
+curl --request POST \
+  --url https://uat.epoints.hakanonal.com/point-event \
+  --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJpYXQiOjE2NDcwOTcxNDAsImV4cCI6MTY0NzE4MzU0MH0.UX2M8NNhZ34sY1-Orvgavc0cZF-_brtWlezOk-mlyEc' \
+  --header 'content-type: application/json' --data '{ "hashString": "created-pledge-page-1234567", "userid": "82b07aae-ca02-40f4-a71f-2c564fc52764", "icon": "star", "verb": "created a", "platform": "pledge-page", "message": "You created a pledge page.", "isBurn": false, "points": 5, "timestamp": "2022-03-11T14:20:20.546Z"}' -k | json_pp
 ```
+
+Example response:
+
+```
+{
+   "event" : {
+      "hash" : "+Bw0a3nhSjq20rfCFACgHbETeNaSM4ccrISMJkwmkV8=",
+      "icon" : "star",
+      "isBurn" : false,
+      "message" : "You created a pledge page.",
+      "metadata" : null,
+      "platform" : "pledge-page",
+      "points" : 5,
+      "timestamp" : "2022-03-11T14:20:20.546Z",
+      "userid" : "82b07aae-ca02-40f4-a71f-2c564fc52764",
+      "verb" : "created a"
+   },
+   "msg" : "Successfully created point event",
+   "userTotalPoints" : 5
+}
+```
+
+## Alternative to 2 and 3: directly lookup and reward user
+
+Alternatively, you can directly provide the externalPlatformUserData field in the call to the create point event endpoint.
+This will lookup or create the appropriate user and reward the points in the same call.
+
+```
+curl -X 'POST' \
+  'https://uat.epoints.hakanonal.com/point-event' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJpYXQiOjE2NDcyOTA0OTEsImV4cCI6MTY0NzM3Njg5MX0.60un7JLY4AVOc4OlVcX8rnDV-W6gZcks192SmE1mFHg' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "hashString": "created-pledge-page-1234567",
+  "externalPlatformUserData": [
+    {
+      "profile_id": "123",
+      "platform": "pledge-page",
+      "emails": [
+        "my.user@gmail.com"
+      ]
+    }
+  ],
+  "icon": "star",
+  "verb": "created a",
+  "platform": "pledge-page",
+  "message": "You created a pledge page.",
+  "isBurn": false,
+  "points": 5,
+  "timestamp": "2022-03-11T14:20:20.546Z",
+  "metadata": {}
+}'
+```
+
 
 ### Schema for creating point events
 

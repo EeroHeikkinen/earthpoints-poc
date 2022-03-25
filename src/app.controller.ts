@@ -42,6 +42,7 @@ export class AppController {
     private readonly userService: UserService, 
     private readonly authService: AuthService,
     private readonly pointEventService: PointEventService,
+    private readonly platformConnectionService: PlatformConnectionService,
     private readonly canvasService: CanvasService) {}
 
   @Sse('sse')
@@ -116,6 +117,7 @@ export class AppController {
   @Render('dashboard')
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req): Promise<any> {
+    req.app.locals.layout = 'main';
     const userid = req.user.userid;
 
     /* If necessary fill in user timezone from ip */
@@ -184,15 +186,18 @@ export class AppController {
       summedPoints: user.points,
       events: formattedEvents,
       platforms,
-      environment: process.env.ENVIRONMENT
+      environment: process.env.ENVIRONMENT,
+      gtag: process.env.GOOGLE_TAG
     }
   }
 
   @Get('landing')
   @Render('landing')
   async landing(@Req() req): Promise<any> {
+    req.app.locals.layout = 'main';
     return {
-      environment: process.env.ENVIRONMENT
+      environment: process.env.ENVIRONMENT,
+      gtag: process.env.GOOGLE_TAG
     }    
   }
 
@@ -404,15 +409,16 @@ export class AppController {
             total: total,
             streak: streak,
             theme: theme,
-            confetti: confetti
+            confetti: confetti,
+            random: Math.floor(Math.random() * 2147483646)
           })
         );
         return;
       }
       if(total){
-        return (await this.canvasService.createStatusBadge(point,total,streak,theme,confetti)).pipe(response);    
+        return (await this.canvasService.createStatusBadgeCached(point,total,streak,theme,confetti)).pipe(response);    
       }
-      return (await this.canvasService.createPointBadge(point,theme,confetti)).pipe(response);
+      return (await this.canvasService.createPointBadgeCached(point,theme,confetti)).pipe(response);
   }
 
   @Post('point-event')
@@ -427,6 +433,49 @@ export class AppController {
     @Req() req: Request,
     @Body() createPointEventDto: CreatePointEventDto,
   ) {
+    if (
+      !createPointEventDto.userid &&
+      createPointEventDto.externalPlatformUserData
+    ) {
+      for (const externalPlatformData of createPointEventDto.externalPlatformUserData) {
+        const {
+          emails,
+          profile_id: profileId,
+          platform,
+          auth_token,
+          auth_expiration,
+        } = externalPlatformData;
+
+        let emailsArray = emails;
+        if (!Array.isArray(emails)) {
+          if (emails) {
+            emailsArray = [emails as unknown as string];
+          } else {
+            emailsArray = [];
+          }
+        }
+
+        createPointEventDto.userid =
+          await this.userService.findOrCreateUserByEmailOrPlatform({
+            emails: emailsArray,
+            profileId,
+            platform,
+            firstName: null,
+          });
+
+        await this.platformConnectionService.create({
+          userid: createPointEventDto.userid,
+          profile_id: profileId,
+          platform,
+          auth_token,
+          auth_expiration,
+          emails,
+        });
+
+        break;
+      }
+    }
+
     if (!createPointEventDto.userid && createPointEventDto.email) {
       const { email } = createPointEventDto;
       let eventUser = await this.userService.findByEmail(email);

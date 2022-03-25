@@ -40,3 +40,7 @@ lerna-debug.log*
 !/secrets/localhost.conf
 
 .env
+
+
+#canvas auto generated point badge images
+/static/img/point-badge/PB_*

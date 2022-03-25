@@ -59,13 +59,21 @@ export class EmailTemplateService {
     );
   }
 
+  async getAllEmailContentTemplates() {
+    return await this.emailContentTemplateRepository.getAllEmailContentTemplates();
+  }
+
   getFrom() {
     return process.env.EMAIL_FROM || 'noreply@consciousplanet.org';
   }
 
   async processScheduled(user: User, timestamp: Date) {
+    if(process.env.EMAIL_ENABLED !== '1') {
+      console.log('E-Mails are disabled!'); 
+      return;
+    }
     /* Let's get the current time in user's local timezone */
-    const timezone = user.timezone || 'Asia/Kolkata';
+    const timezone = user.timezone || 'Europe/Berlin';
     const formatter = new Intl.DateTimeFormat('en-US', {
       hour12: false,
       hour: 'numeric',
@@ -112,6 +120,11 @@ export class EmailTemplateService {
               renderParams.context,
             );
           }
+        }
+
+        if (!renderParams.template && !renderParams.html) {
+          console.log(`No template found for ${renderParams.subject}`);
+          continue;
         }
 
         await this.mailerService
