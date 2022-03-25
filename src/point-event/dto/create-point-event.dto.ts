@@ -108,9 +108,10 @@ export class CreatePointEventDto {
   })
   timestamp: Date;
 
+  @IsOptional()
   @ApiProperty({
     type: 'object',
     description: 'Any custom metadata',
   })
-  metadata: Map<string, string>;
+  metadata?: Map<string, string>;
 }
