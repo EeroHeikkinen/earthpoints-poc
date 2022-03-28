@@ -30,12 +30,17 @@ export class WelcomeMessageEmailTemplate implements IEmailTemplate {
             return false;
         }
 
+        if (!user.points || user.points == 0) {
+            console.error('User ' + user.userid + ' has no points');
+            return false;
+        }      
+
         return {
             template: 'welcome-message',
             subject: 'Welcome to Earth Points dashboard!',
             context: {
                 firstName:user.firstName,
-                footerImage: `${process.env.BASE_URL}/point-badge?point=${process.env.CONNECT_PLATFORM_POINTS}`
+                footerImage: `${process.env.BASE_URL}/point-badge?point=${user.points}`
             }
         }
     }
