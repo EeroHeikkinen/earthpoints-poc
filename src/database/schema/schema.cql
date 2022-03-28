@@ -25,6 +25,7 @@ CREATE TABLE earthpoints.sent_email (
 CREATE TABLE earthpoints.email_content_template (
    key varchar,
    content varchar,
+   subject varchar,
    PRIMARY KEY (key)
 );
 

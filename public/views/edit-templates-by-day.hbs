@@ -22,7 +22,13 @@
 				<div>
 						<form method="POST" action="/email-template/{{day}}?type={{type}}">
 							<input type="hidden" value="{{key}}" name="key"/>
-							{{#if template}}<textarea style="height: 350px" name="content">{{template.content}}</textarea>{{else}}<textarea name="content"></textarea>{{/if}}
+							{{#if template}}
+								<input type="text" name="subject" value="{{template.subject}}" placeholder="subject"/>
+								<textarea style="height: 350px" name="content">{{template.content}}</textarea>
+							{{else}}
+								<input type="text" name="subject" placeholder="subject"/>
+								<textarea name="content"></textarea>
+							{{/if}}
 							<button type="submit" class="btn btn-primary" >Update</button>
 						</form>
 				</div>
