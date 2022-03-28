@@ -33,6 +33,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ffb1a5d5-e0c7-4553-87d2-db6633465a6d
 
       - name: Delete Volume Snapshot
+        if: always()
         run: kubectl delete volumesnapshots -n=${{ github.event.inputs.environment }} cassandra-snapshot-${{ steps.current-day.outputs.formattedTime }}
 
       - name: Update Snapshot Config File
