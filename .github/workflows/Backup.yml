@@ -1,12 +1,20 @@
 name: Backup
 
+env:
+  DEFAULT_ENVIRONMENT: "default"
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "0 */24 * * *"
+
 on:
   workflow_dispatch:
     inputs:
       environment:
         description: 'Environment to Backup'
         type: environment
-        required: true     
+        required: true
+        default: ${{DEFAULT_ENVIRONMENT}}
 
 jobs:
   backup:
