@@ -40,4 +40,5 @@ jobs:
         run: sed -ie "s/cassandra-snapshot/cassandra-snapshot-${{ steps.current-day.outputs.formattedTime }}/g" $GITHUB_WORKSPACE/kuber-snapshot.yml
 
       - name: Create Volume Snapshot
+        if: always()
         run: kubectl create -n=${{ github.event.inputs.environment }} -f $GITHUB_WORKSPACE/kuber-snapshot.yml
