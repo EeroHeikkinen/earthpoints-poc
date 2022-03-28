@@ -39,4 +39,8 @@ export class PointEventRepository implements OnModuleInit {
     async getPointEventsByUserId(userid) {
         return (await this.pointEventMapper.find({userid})).toArray();
     }
+
+    async getPointEventsByHash(hash) {
+        return (await this.pointEventMapper.find({hash})).toArray();
+    }
 }

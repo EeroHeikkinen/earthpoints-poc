@@ -54,6 +54,9 @@ export class PointEventService {
 
   async rewardAccountConnected(userid:string, platform: string) {
     const hashString = userid + "connectedaccount" + platform;
+    const reward = await this.findOne(hashString);
+    if(reward.length > 0)
+      return reward;
     return await this.create({
       hashString,
       userid,
@@ -76,8 +79,9 @@ export class PointEventService {
     return await this.pointEventRepository.getPointEventsByUserId(userid)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pointEvent`;
+  async findOne(hashString: string) {
+    const hash = crypto.createHash('sha256').update(hashString).digest('base64');
+    return await this.pointEventRepository.getPointEventsByHash(hash)
   }
 
   async update(updatePointEventDto: UpdatePointEventDto) {
