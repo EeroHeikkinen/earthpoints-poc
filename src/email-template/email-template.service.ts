@@ -120,6 +120,11 @@ export class EmailTemplateService {
               renderParams.context,
             );
           }
+          if (databaseTemplate && databaseTemplate.subject) {
+            renderParams.subject = handlebars.compile(databaseTemplate.subject)(
+              renderParams.context,
+            );
+          }
         }
 
         if (!renderParams.template && !renderParams.html) {
