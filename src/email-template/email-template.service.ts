@@ -1,5 +1,5 @@
 require('dotenv').config();
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { IEmailTemplate } from 'src/interfaces/email-template.interface';
 import { User } from 'src/user/entities/user.entity';
 import { DailyMessageEmailTemplate } from './templates/daily-message.template';
@@ -12,6 +12,7 @@ import { EmailContentTemplateRepository } from './email-content-template.reposit
 import { CreateEmailContentTemplateDto } from './dto/email-content-template.dto';
 import { UpdateEmailContentTemplateDto } from './dto/update-email-content-template.dto';
 import handlebars from 'handlebars';
+import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
 
 @Injectable()
 export class EmailTemplateService {
@@ -23,6 +24,8 @@ export class EmailTemplateService {
     private sentEmailRepository: SentEmailRepository,
     private emailContentTemplateRepository: EmailContentTemplateRepository,
     private readonly mailerService: MailerService,
+    @Inject(forwardRef(() => UnsubscribeService))
+    private unsubscribeService: UnsubscribeService
   ) {
     this.templates = new Map<string, IEmailTemplate>(
       Object.entries({
@@ -93,6 +96,12 @@ export class EmailTemplateService {
 
     for (const template of this.templates.values()) {
       const templateName = template.getName();
+
+      if(await this.unsubscribeService.checkUnsubscription(user.userid,templateName)){
+        console.log(`User is unsubscribed from ${template.getFullname()}`);
+        continue;
+      }
+
       const lastSent =
         await this.sentEmailRepository.getSentEmailByUserAndTemplateName(
           user.userid,

@@ -13,6 +13,11 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
     return 'daily-message';
   }
 
+  getFullname() {
+    return 'Daily Digest Trending E-Mails';
+  }
+
+
   async render(
     user: User,
     {

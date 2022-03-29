@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { EmailTemplateService } from 'src/email-template/email-template.service';
 import { CreateUnsubscriptionDto } from './dto/create-unsubscription.dto';
 import { Unsubscription } from './entities/unsubscription.entity';
 import { UnsubscriptionRepository } from './unsubscription.repository';
@@ -6,7 +7,9 @@ import { UnsubscriptionRepository } from './unsubscription.repository';
 @Injectable()
 export class UnsubscribeService {
   constructor(
-    private unsubscriptionRepository: UnsubscriptionRepository
+    private unsubscriptionRepository: UnsubscriptionRepository,
+    @Inject(forwardRef(() => EmailTemplateService))
+    private emailTemplateService: EmailTemplateService
   ) {}
 
   async add(createDto: CreateUnsubscriptionDto) {
@@ -25,10 +28,19 @@ export class UnsubscribeService {
   getAllTemplates(unsubscription: Unsubscription) {
     if(!unsubscription.templates)
       unsubscription.templates = [];
-    return [
-      {template:'welcome',name:'Welcome Email', checked: unsubscription.templates.includes('welcome') },
-      {template:'daily',name:'Daily Digest Trending Emails', checked: unsubscription.templates.includes('daily')}
-    ]
+    const templates = [...this.emailTemplateService.templates.values()]
+    return templates.map<any>((v,i,a) => {
+      return {
+        template: v.getName(),
+        name: v.getFullname(),
+        checked: unsubscription.templates.includes(v.getName())
+      };
+    });
+  }
+
+  async checkUnsubscription(userid: string, template: string) {
+    const unsubscription = await this.find(userid);
+    return unsubscription.templates.includes(template);
   }
 
 

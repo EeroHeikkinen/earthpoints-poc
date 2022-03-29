@@ -22,6 +22,10 @@ export class WelcomeMessageEmailTemplate implements IEmailTemplate {
         return 'welcome-message'
     }
 
+    getFullname() {
+        return 'Welcome E-Mail'
+    }
+
     async render(user:User, {hourInUserTimeZone, minutesInUserTimeZone, lastSent, contextTimestamp}:{hourInUserTimeZone: number, minutesInUserTimeZone: number, lastSent: Date, contextTimestamp: Date}) {
         const now = moment(contextTimestamp);
 
