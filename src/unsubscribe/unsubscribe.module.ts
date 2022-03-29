@@ -6,7 +6,10 @@ import { UnsubscribeService } from './unsubscribe.service';
 import { UnsubscriptionRepository } from './unsubscription.repository';
 
 @Module({
-  imports: [CassandraModule,forwardRef(() => EmailTemplateModule)],
+  imports: [
+    CassandraModule,
+    forwardRef(() => EmailTemplateModule)
+  ],
   providers: [UnsubscribeService,UnsubscriptionRepository],
   controllers: [UnsubscribeController],
   exports: [UnsubscribeService]

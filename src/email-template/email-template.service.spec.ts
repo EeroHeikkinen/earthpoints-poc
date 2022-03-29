@@ -1,4 +1,5 @@
 import { MailerModule } from '@nestjs-modules/mailer';
+import { forwardRef } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CassandraModule } from 'src/cassandra/cassandra.module';
 import { PointEventModule } from 'src/point-event/point-event.module';
@@ -24,7 +25,7 @@ describe('EmailTemplateService', () => {
         CassandraModule,
         MailerModule,
         EmailTemplateModule,
-        UnsubscribeModule,
+        forwardRef(()=>UnsubscribeModule),
       ],
     }).compile();
 

@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { EmailTemplateService } from './email-template.service';
 import { SentEmailRepository } from './sent-email.repository';
 import { DailyMessageEmailTemplate } from './templates/daily-message.template';
@@ -52,7 +52,7 @@ import { UnsubscribeModule } from 'src/unsubscribe/unsubscribe.module';
         },
       },
     }),
-    UnsubscribeModule,
+    forwardRef(()=>UnsubscribeModule),
   ],
   providers: [
     EmailContentTemplateRepository,

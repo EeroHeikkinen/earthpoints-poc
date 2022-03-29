@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
 import { AuthModule } from './auth/auth.module';
@@ -46,7 +46,7 @@ import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
     CronModule,
     EmailTemplateModule,
     CanvasModule,
-    UnsubscribeModule
+    forwardRef(()=>UnsubscribeModule),
   ], 
   controllers: [AppController],
   providers: [AppService],
