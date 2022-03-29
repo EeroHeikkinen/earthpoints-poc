@@ -29,7 +29,8 @@ export class FiftyPointsEmailTemplate implements IEmailTemplate {
             subject: 'You have reached 50 Earth Points!',
             context: {
                 numPointsReached: 50,
-                firstName: user.firstName
+                firstName: user.firstName,
+                unsubscribeUrl: `${process.env.BASE_URL}/unsubscribe/${user.userid}`,
             }
         }
     }

@@ -100,6 +100,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
         pointsEarnedToday,
         firstName: user.firstName,
         footerImage: `${process.env.BASE_URL}/point-badge?point=${pointsEarnedToday}&total=${user.points}&confetti=2&theme=bluered_bottom`,
+        unsubscribeUrl: `${process.env.BASE_URL}/unsubscribe/${user.userid}`,
       },
     };
   }

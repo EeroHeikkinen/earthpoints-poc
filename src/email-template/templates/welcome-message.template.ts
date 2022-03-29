@@ -39,7 +39,8 @@ export class WelcomeMessageEmailTemplate implements IEmailTemplate {
             subject: 'Welcome to Earth Points dashboard!',
             context: {
                 firstName:user.firstName,
-                footerImage: `${process.env.BASE_URL}/point-badge?point=${process.env.CONNECT_PLATFORM_POINTS}`
+                footerImage: `${process.env.BASE_URL}/point-badge?point=${process.env.CONNECT_PLATFORM_POINTS}`,
+                unsubscribeUrl: `${process.env.BASE_URL}/unsubscribe/${user.userid}`,
             }
         }
     }
