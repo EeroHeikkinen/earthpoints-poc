@@ -85,6 +85,12 @@ CREATE TABLE earthpoints.point_event_by_userid (
    PRIMARY KEY (userid,hash)
 );
 
+CREATE TABLE earthpoints.unsubscription (
+   userid uuid PRIMARY KEY,
+   templates set<varchar>,
+);
+
+
 /*CREATE TABLE computation_rule (
    id uuid PRIMARY KEY,
    profile_id string,

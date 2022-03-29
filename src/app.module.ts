@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
 import { AuthModule } from './auth/auth.module';
@@ -19,6 +19,7 @@ import { CronModule } from './cron/cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
+import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
 
 @Module({
   imports: [
@@ -44,7 +45,8 @@ import { CanvasModule } from './canvas/canvas.module';
     ScheduleModule.forRoot(),
     CronModule,
     EmailTemplateModule,
-    CanvasModule
+    CanvasModule,
+    forwardRef(()=>UnsubscribeModule),
   ], 
   controllers: [AppController],
   providers: [AppService],
