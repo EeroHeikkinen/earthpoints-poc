@@ -40,6 +40,8 @@ export class UnsubscribeService {
 
   async checkUnsubscription(userid: string, template: string) {
     const unsubscription = await this.find(userid);
+    if(!unsubscription)
+      return false;
     return unsubscription.templates.includes(template);
   }
 
