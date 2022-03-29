@@ -21,6 +21,7 @@ export class EmailTemplateController {
     pointsEarnedToday: 20,
     firstName: 'Shankaran',
     footerImage: `${process.env.BASE_URL}/point-badge?point=20&total=100`,
+    unsubscribeUrl: `${process.env.BASE_URL}/unsubscribe/2b46997f-4eb5-4010-a774-229f102b97ea`,
   };
 
   @Get('/')
