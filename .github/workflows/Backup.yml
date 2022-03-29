@@ -13,7 +13,7 @@ on:
         description: 'Environment to Backup'
         type: environment
         required: true
-        default: ${DEFAULT_ENVIRONMENT}
+        default: "uat"
 
 jobs:
   backup:
@@ -40,7 +40,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ffb1a5d5-e0c7-4553-87d2-db6633465a6d
 
       - name: Delete Volume Snapshot
-        run: kubectl delete volumesnapshots -n=${{ github.event.inputs.environment }} cassandra-snapshot-${{ steps.current-day.outputs.formattedTime }}
+        run: kubectl delete volumesnapshots -n=${{ github.event.inputs.environment || env.DEFAULT_ENVIRONMENT }} cassandra-snapshot-${{ steps.current-day.outputs.formattedTime }}
 
       - name: Update Snapshot Config File
         if: always()
@@ -48,4 +48,4 @@ jobs:
 
       - name: Create Volume Snapshot
         if: always()
-        run: kubectl create -n=${{ github.event.inputs.environment }} -f $GITHUB_WORKSPACE/kuber-snapshot.yml
+        run: kubectl create -n=${{ github.event.inputs.environment || env.DEFAULT_ENVIRONMENT }} -f $GITHUB_WORKSPACE/kuber-snapshot.yml
