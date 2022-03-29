@@ -31,8 +31,10 @@ export class UnsubscribeController {
   ){
     req.app.locals.layout = 'admin';
     let unsubscription = await this.unsubscribeService.find(userid);
-    if(!unsubscription)
-      unsubscription = await this.unsubscribeService.add({userid: userid});
+    if(!unsubscription){
+      await this.unsubscribeService.add({userid: userid});
+      unsubscription = await this.unsubscribeService.find(userid);
+    }
     return {
       userid: unsubscription.userid,
       allTemplates: this.unsubscribeService.getAllTemplates(unsubscription),

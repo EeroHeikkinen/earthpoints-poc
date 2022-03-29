@@ -12,10 +12,7 @@ export class UnsubscribeService {
   async add(createDto: CreateUnsubscriptionDto) {
       if(!createDto.templates)
         createDto.templates = [];
-      const unsubscription = await this.unsubscriptionRepository.add(createDto)
-      if(unsubscription && !unsubscription.templates)
-        unsubscription.templates = [];
-      return unsubscription;
+      return await this.unsubscriptionRepository.add(createDto)
   }
 
   async find(userid: string) {
