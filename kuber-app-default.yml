@@ -29,7 +29,7 @@ spec:
                 operator: In
                 values:
                 - earthpoints-poc
-      terminationGracePeriodSeconds: 120
+      terminationGracePeriodSeconds: 240
       containers:
         - name: earthpoints-poc
           image: registry.digitalocean.com/earthpoints/earthpoints-poc:latest-default
