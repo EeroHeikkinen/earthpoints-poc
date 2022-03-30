@@ -461,7 +461,7 @@ export class AppController {
             streak: streak,
             theme: theme,
             confetti: confetti,
-            random: Math.floor(Math.random() * 2147483646)
+            random_number: Math.floor(Math.random() * 2147483646)
           })
         );
         return;
