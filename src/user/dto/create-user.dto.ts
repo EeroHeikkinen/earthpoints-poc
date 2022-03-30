@@ -28,5 +28,10 @@ export class CreateUserDto {
   @ApiProperty({
     required: false,
   })
+  countryCode?: string;
+
+  @ApiProperty({
+    required: false,
+  })
   createdAt?: Date;
 }
