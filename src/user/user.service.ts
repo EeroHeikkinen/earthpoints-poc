@@ -20,6 +20,8 @@ export class UserService {
     profileId,
     firstName,
     platform,
+    timezone = null,
+    countryCode = null
   }) {
     let emailValues = emails;
     if (emails[0] && emails[0].value) {
@@ -58,6 +60,8 @@ export class UserService {
       firstName,
       email: emailValues.length ? emailValues[0] : undefined,
       emails: emailValues,
+      timezone: timezone,
+      countryCode: countryCode
     });
 
     return userid;

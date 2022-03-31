@@ -1,4 +1,7 @@
+import { registerDecorator, ValidationArguments, ValidationOptions } from "class-validator";
+
 const moment = require('moment');
+const countries = require("i18n-iso-countries");
 
 export default class Utils {
       static MONTH_NAMES = [
@@ -73,4 +76,44 @@ export default class Utils {
       
         return Utils.getFormattedDate(date, false, false, timezone); // 10. January 2017. at 10:20
       }
+
+
+      static IsTimezone(validationOptions?: ValidationOptions) {
+        const defaultValidationOptions: ValidationOptions = {...validationOptions};
+        if(!defaultValidationOptions.message)
+          defaultValidationOptions.message = "Invalid timezone";
+        return function (object: Object, propertyName: string) {
+          registerDecorator({
+            name: 'isTimezone',
+            target: object.constructor,
+            propertyName: propertyName,
+            options: defaultValidationOptions,            
+            validator: {
+              validate(value: any, args: ValidationArguments) {
+                return moment.tz.zone(value);
+              },
+            },
+          });
+        };
+      }
+
+      static IsCountryCode(validationOptions?: ValidationOptions) {
+        const defaultValidationOptions: ValidationOptions = {...validationOptions};
+        if(!defaultValidationOptions.message)
+          defaultValidationOptions.message = "Invalid countryCode";
+        return function (object: Object, propertyName: string) {
+          registerDecorator({
+            name: 'isCountryCode',
+            target: object.constructor,
+            propertyName: propertyName,
+            options: defaultValidationOptions,            
+            validator: {
+              validate(value: any, args: ValidationArguments) {
+                return countries.isValid(value);
+              },
+            },
+          });
+        };
+      }
+
 }
