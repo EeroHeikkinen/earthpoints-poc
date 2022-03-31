@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 import { CreatePlatformConnectionDto } from 'src/platform-connection/dto/create-platform-connection.dto';
 import { PlatformConnection } from 'src/platform-connection/entities/platform-connection.entity';
 
@@ -11,23 +12,27 @@ export class CreateUserDto {
   firstName?: string;
 
   @ApiProperty({
-    required: false,
+    required: true,
   })
+  @IsNotEmpty()
   email?: string;
 
   @ApiProperty({
-    required: false,
+    required: true,
   })
+  @IsNotEmpty()
   emails?: string[];
 
   @ApiProperty({
-    required: false,
+    required: true,
   })
+  @IsNotEmpty()
   timezone?: string;
 
   @ApiProperty({
-    required: false,
+    required: true,
   })
+  @IsNotEmpty()
   countryCode?: string;
 
   @ApiProperty({
