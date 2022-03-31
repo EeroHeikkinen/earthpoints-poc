@@ -24,6 +24,16 @@ export class PlatformConnection {
   @ApiProperty({
     required: false,
   })
+  name?: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  phone?: number;
+
+  @ApiProperty({
+    required: false,
+  })
   authToken: string;
 
   @ApiProperty({

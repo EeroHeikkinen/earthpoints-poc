@@ -495,6 +495,8 @@ export class AppController {
           platform,
           auth_token,
           auth_expiration,
+          name,
+          phone,
         } = externalPlatformData;
 
         let emailsArray = emails;
@@ -506,18 +508,25 @@ export class AppController {
           }
         }
 
+        let firstName;
+        if (name && typeof name === 'string') {
+          firstName = name.split(' ')[0];
+        }
+
         createPointEventDto.userid =
           await this.userService.findOrCreateUserByEmailOrPlatform({
             emails: emailsArray,
             profileId,
             platform,
-            firstName: null,
+            firstName,
           });
 
         await this.platformConnectionService.create({
           userid: createPointEventDto.userid,
           profile_id: profileId,
+          name,
           platform,
+          phone,
           auth_token,
           auth_expiration,
           emails,
