@@ -88,6 +88,7 @@ CREATE TABLE earthpoints.point_event_by_userid (
 CREATE TABLE earthpoints.unsubscription (
    userid uuid PRIMARY KEY,
    templates set<varchar>,
+   reason varchar,
 );
 
 
