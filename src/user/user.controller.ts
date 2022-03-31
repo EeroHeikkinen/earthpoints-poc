@@ -65,6 +65,8 @@ export class UserController {
       profileId,
       platform,
       firstName: null,
+      timezone: body.timezone,
+      countryCode: body.countryCode
     });
 
     await this.platformConnectionService.create({
