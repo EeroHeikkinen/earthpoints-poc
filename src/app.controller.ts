@@ -124,7 +124,7 @@ export class AppController {
   @Render('ep-dashboard')
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req): Promise<any> {
-    req.app.locals.layout = null;
+    req.app.locals.layout = 'ep-main';
     const userid = req.user.userid;
 
     /* If necessary fill in user timezone from ip */
@@ -224,7 +224,7 @@ export class AppController {
   @Get('landing')
   @Render('ep-dashboard-login')
   async landing(@Req() req): Promise<any> {
-    req.app.locals.layout = null;
+    req.app.locals.layout = 'ep-main';
     return {
       environment: process.env.ENVIRONMENT,
       gtag: process.env.GOOGLE_TAG,
