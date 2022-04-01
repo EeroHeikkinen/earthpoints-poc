@@ -193,16 +193,17 @@ export class AppController {
       },*/
     ];
     /* Hide already connected */
-    let haveUnconnectedPlatforms = false;
+    
     for (let connection of user.connections) {
       for (let platform of platforms) {
         if (platform.name == connection.platform) {
           platform.show = false;
-        } else {
-          haveUnconnectedPlatforms = true;
         }
       }
     }
+    const haveUnconnectedPlatforms = Object.values(platforms).some(
+      (platform) => platform.show,
+    );
 
     const pointsEarnedToday = await this.userService.pointsEarnedToday(user);
 
