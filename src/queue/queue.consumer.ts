@@ -19,7 +19,7 @@ export class QueueConsumer {
     };
 
     await this.userService.syncPoints(userid);
-    const user = await this.userService.findByUserId(userid);
+    const user = await this.userService.findByUserId(userid, timestamp);
 
     this.emailTemplateService.processScheduled(user, new Date(timestamp));
 
