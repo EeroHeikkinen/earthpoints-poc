@@ -52,16 +52,17 @@ export class AppController {
         
     const renderEvents = handlebars.compile(`
       {{#each events}}
-      <tr class="point-event-row">
-        <td align="left" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px;width:85%">
+      <tr>
+        <td align="center" height="60" width="60" style="padding:0;Margin:0">
+          <div class="point-badge">{{this.points}}</div>
+        </td>
+        <td align="left" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px">
           <p
             style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:24px;color:#333333;font-size:16px">
-            <span style="font-size:20px">{{this.formattedTimestamp}}</span><br>{{this.Verb}}
+            <span style="font-size:19px">{{this.formattedTimestamp}}</span><br>{{this.Verb}}
             {{this.platform}}
           </p>
         </td>
-        <td align="center" style="padding:0;Margin:0;font-size:16px;width:15%;">
-          <div class="point-badge">{{this.points}}</div></td>
       </tr>
       {{/each}}
     `)
