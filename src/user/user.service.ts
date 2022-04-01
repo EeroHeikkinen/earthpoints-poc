@@ -12,6 +12,7 @@ import { UserOwnedListsV2Paginator } from 'twitter-api-v2';
 import { types } from 'cassandra-driver';
 import { SentEmailRepository } from 'src/email-template/sent-email.repository';
 import { SentEmail } from 'src/email-template/entities/sent-email.entity';
+import moment from 'moment';
 
 @Injectable()
 export class UserService {
@@ -179,7 +180,7 @@ export class UserService {
     return null;
   }
 
-  async findByUserId(userid: string) {
+  async findByUserId(userid: string, contextTimestamp?: Date) {
     const user = await this.userRepository.get(userid);
     if (!user) {
       return undefined;
@@ -194,8 +195,29 @@ export class UserService {
     if (!user.firstName) {
       user.firstName = this.computeName(user);
     }
+    user.pointsEarnedToday = await this.pointsEarnedToday(
+      user,
+      contextTimestamp,
+    );
 
     return user;
+  }
+
+  async pointsEarnedToday(user: User, contextTimestamp: Date = new Date()) {
+    const now = moment(contextTimestamp);
+    const oneDayAgo = now.subtract(1, 'day').toDate();
+
+    if (!user.events) {
+      user.events = await this.pointEventService.findAllForUser(user.userid);
+    }
+    const pointsEarnedToday = user.events
+      .filter((event) => {
+        return event.timestamp > oneDayAgo;
+      })
+      .map((event) => event.points)
+      .reduce((previous, current) => previous + current, 0);
+
+    return pointsEarnedToday;
   }
 
   async findAll() {
