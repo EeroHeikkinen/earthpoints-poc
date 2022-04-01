@@ -1,43 +1,59 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="font-family:'merriweather sans', 'helvetica neue', helvetica, arial, sans-serif"> 
- <head> 
-  <meta charset="UTF-8"> 
-  <meta content="width=device-width, initial-scale=1" name="viewport"> 
-  <meta name="x-apple-disable-message-reformatting"> 
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
-  <meta content="telephone=no" name="format-detection"> 
-  <title>Save Soil: Any guess how many Earth Points you gained today 🙂</title><!--[if (mso 16)]>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office"
+    style="font-family:'merriweather sans', 'helvetica neue', helvetica, arial, sans-serif">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="telephone=no" name="format-detection">
+    <title>Save Soil: Any guess how many Earth Points you gained today 🙂</title>
+    <!--[if (mso 16)]>
     <style type="text/css">
     a {text-decoration: none;}
     </style>
-    <![endif]--><!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]--><!--[if gte mso 9]>
+    <![endif]-->
+    <!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]-->
+    <!--[if gte mso 9]>
 <xml>
     <o:OfficeDocumentSettings>
     <o:AllowPNG></o:AllowPNG>
     <o:PixelsPerInch>96</o:PixelsPerInch>
     </o:OfficeDocumentSettings>
 </xml>
-<![endif]--><!--[if !mso]><!-- --> 
+<![endif]-->
+    <!--[if !mso]><!-- -->
 
-  <link href="https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i" rel="stylesheet"> 
-  <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,400i,700,700i" rel="stylesheet"> 
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i" rel="stylesheet"> 
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet"><!--<![endif]--> 
-  <link href="css/ep-main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,400i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+    <!--<![endif]-->
+    <link href="css/ep-main.css" rel="stylesheet">
     {{#if gtag}}
-      <!-- Global site tag (gtag.js) - Google Analytics -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-0E2LXQSQCZ"></script>
-      <script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0E2LXQSQCZ"></script>
+    <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
         gtag('config', '{{gtag}}');
-      </script>
+    </script>
     {{/if}}
- </head> 
- <body style="width:100%;font-family:'merriweather sans', 'helvetica neue', helvetica, arial, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0">
-     {{{ body }}}
+</head>
+
+<body
+    style="width:100%;font-family:'merriweather sans', 'helvetica neue', helvetica, arial, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0">
+    {{#if environment}}
+    <div style="background-color: #ff5a19; padding: 5px; text-align: center;">
+        WARNING: {{environment}} system
+    </div>
+    {{/if}}
+
+    {{{ body }}}
 
     <script type="text/javascript" src="{{baseUrl}}/scripts/jquery.min.js?ver=1.1.0"></script>
     <script type="text/javascript" src="{{baseUrl}}/scripts/popper.min.js?ver=1.1.0"></script>
@@ -47,5 +63,6 @@
     <script type="text/javascript" src="{{baseUrl}}/scripts/jquery.flip.min.js"></script>
     <script type="text/javascript" src="{{baseUrl}}/scripts/main.js"></script>
     <script type="text/javascript" src="{{baseUrl}}/scripts/dashboard.js"></script>
-  </body>
+</body>
+
 </html>
