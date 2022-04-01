@@ -31,5 +31,8 @@ export class User {
   points?: number;
 
   @ApiProperty()
+  pointsEarnedToday?: number;
+
+  @ApiProperty()
   lastEmailed?: Date;
 }

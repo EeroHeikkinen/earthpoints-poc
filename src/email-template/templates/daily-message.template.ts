@@ -7,8 +7,6 @@ import { PointEventService } from 'src/point-event/point-event.service';
 
 @Injectable()
 export class DailyMessageEmailTemplate implements IEmailTemplate {
-  constructor(private pointEventService: PointEventService) {}
-
   getName() {
     return 'daily-message';
   }
@@ -57,13 +55,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
       }
     }
 
-    const oneDayAgo = now.subtract(1, 'day').toDate();
-    const pointsEarnedToday = user.events
-      .filter((event) => {
-        return event.timestamp > oneDayAgo;
-      })
-      .map((event) => event.points)
-      .reduce((previous, current) => previous + current, 0);
+    const pointsEarnedToday = user.pointsEarnedToday;
 
     if (hourInUserTimeZone != (process.env.DAILY_EMAIL_HOUR_IN_USER_TIMEZONE || 20)) {
       console.log('Wrong local time to send daily msg');
