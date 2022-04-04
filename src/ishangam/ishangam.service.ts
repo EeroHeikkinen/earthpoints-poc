@@ -25,7 +25,7 @@ export class IshangamService {
             "name": user.firstName,
             "email":user.email,
             "list_identifier":"Earth Points",
-            "country":"IN", // TODO: change it when country branch is merged
+            "country": user.countryCode,
             "language":"en",
             "subs_id":1,
             "system_id":74,
