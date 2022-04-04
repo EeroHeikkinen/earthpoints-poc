@@ -1,9 +1,18 @@
 $(function() {
-    $('#view-all-point-events').click(function(event) {
+    let showFunction = function(event) {
+        $('#events tr').slice(3).css('display', 'none');
+        $('#view-all-point-events').text('View all');
+        $('#view-all-point-events').click(hideFunction);
+    }
+
+    let hideFunction = function(event) {
         event.preventDefault();
         $('#events tr').css('display', 'block');
-        $('#show-all-row').css('display', 'none');
-    });
+        $('#view-all-point-events').text('View less');
+        $('#view-all-point-events').click(showFunction);
+    };
+
+    $('#view-all-point-events').click(hideFunction);
 
     const eventSource = new EventSource('/sse');
     let dataToUpdate;
