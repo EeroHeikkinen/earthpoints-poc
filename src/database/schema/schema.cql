@@ -12,6 +12,7 @@ CREATE TABLE earthpoints.user (
    email varchar, /* will be deprecated */
    emails set<varchar>,
    timezone varchar,
+   country_code varchar,
    created_at timestamp
 );
 

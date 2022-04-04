@@ -19,6 +19,9 @@ export class User {
   timezone?: string;
 
   @ApiProperty()
+  countryCode?: string;
+
+  @ApiProperty()
   createdAt?: Date;
 
   @ApiProperty()
@@ -29,6 +32,9 @@ export class User {
 
   @ApiProperty()
   points?: number;
+
+  @ApiProperty()
+  pointsEarnedToday?: number;
 
   @ApiProperty()
   lastEmailed?: Date;
