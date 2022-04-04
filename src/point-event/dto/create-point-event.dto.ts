@@ -9,7 +9,9 @@ import {
   IsString,
   IsUUID,
   Min,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { UserFromExternalPlatformDataDto } from 'src/user/dto/from-external-platform-data.dto';
 
 export class CreatePointEventDto {
@@ -42,6 +44,8 @@ export class CreatePointEventDto {
     description:
       'External platform user data. This is used to identify the correct user. If no user is found, a new user will be created and tagged with the provided external credentials.',
   })
+  @ValidateNested({ each: true })
+  @Type(() => UserFromExternalPlatformDataDto)
   externalPlatformUserData?: UserFromExternalPlatformDataDto[];
 
   @IsOptional()

@@ -535,6 +535,8 @@ export class AppController {
             profileId,
             platform,
             firstName: null,
+            timezone: externalPlatformData.timezone,
+            countryCode: externalPlatformData.countryCode,
           });
 
         await this.platformConnectionService.create({
