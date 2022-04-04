@@ -19,6 +19,9 @@ export class User {
   timezone?: string;
 
   @ApiProperty()
+  countryCode?: string;
+
+  @ApiProperty()
   createdAt?: Date;
 
   @ApiProperty()

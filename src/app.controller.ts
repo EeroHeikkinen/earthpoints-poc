@@ -129,7 +129,7 @@ export class AppController {
     const userid = req.user.userid;
 
     /* If necessary fill in user timezone from ip */
-    if (!req.user.timezone) {
+    if (!req.user.timezone || !req.user.countryCode) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       if (ip == '::1' || ip.startsWith('::ffff')) {
         ip = process.env.TEST_IP;
@@ -137,12 +137,13 @@ export class AppController {
       try {
         req.user.timezone = await new Promise<string>((resolve, reject) => {
           satelize.satelize({ ip }, (err, payload) => {
-            if (err || !payload || !payload.timezone) {
+            if (err || !payload || !payload.timezone || !payload.country_code) {
               reject(err);
             }
             this.userService.update({
               userid: userid,
               timezone: payload.timezone,
+              countryCode: payload.country_code,
             });
             resolve(payload.timezone);
           });
@@ -534,6 +535,8 @@ export class AppController {
             profileId,
             platform,
             firstName: null,
+            timezone: externalPlatformData.timezone,
+            countryCode: externalPlatformData.countryCode,
           });
 
         await this.platformConnectionService.create({
