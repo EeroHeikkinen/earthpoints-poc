@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { PointEventService } from 'src/point-event/point-event.service';
 import { User } from 'src/user/entities/user.entity';
 
 const got = require('got');
@@ -7,10 +8,19 @@ const moment = require('moment');
 @Injectable()
 export class IshangamService {
 
-    constructor() {}
+    constructor(
+        private pointEventService: PointEventService
+    ) {}
 
 
     async addNonCrmContact(user: User, timestamp: Date) {
+        const events = await this.pointEventService.findAllForUser(user.userid);
+        if(!events.length){
+            console.log(`ishangam error: no event found for user: ${user.userid}`);
+            return null;
+        }
+        events.sort((a, b) =>+b.timestamp - +a.timestamp)
+        
         const toPost = {
             "name": user.firstName,
             "email":user.email,
@@ -23,7 +33,7 @@ export class IshangamService {
             "dynamic_dt_field_1": moment(timestamp).format('YYYY-MM-DD'),
             "dynamic_int_field_1": user.pointsEarnedToday,
             "dynamic_int_field_2": user.points,
-            "dynamic_field_1" : "Frist action", // first action in EP
+            "dynamic_field_1" : `${events[0].verb} ${events[0].platform}`, // first action in EP
             "dynamic_field_2" : "false", // send welcome message
             "dynamic_field_3" : "", // dynamic content
             "dynamic_field_4" : "1", // communication frequency
