@@ -14,6 +14,12 @@ export class IshangamService {
 
 
     async addNonCrmContact(user: User, timestamp: Date) {
+
+        if(user.countryCode != 'IN') {
+            console.log(`ishangam warning: user countryCode is not IN (${user.countryCode})`);
+            return null;
+        }
+
         const events = await this.pointEventService.findAllForUser(user.userid);
         if(!events.length){
             console.log(`ishangam error: no event found for user: ${user.userid}`);
