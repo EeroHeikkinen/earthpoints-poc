@@ -26,7 +26,7 @@ export class IshangamService {
             "dynamic_field_1" : "Frist action", // first action in EP
             "dynamic_field_2" : "false", // send welcome message
             "dynamic_field_3" : "", // dynamic content
-            "dynamic_field_4" : "false", // communication frequency
+            "dynamic_field_4" : "1", // communication frequency
             "dynamic_field_5": user.userid,
             "additional_id_field":"dynamic_field_5",
             "dynamic_field_6": user.timezone
