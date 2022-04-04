@@ -6,4 +6,7 @@ export class Unsubscription {
 
   @ApiProperty()
   templates?: string[];
+
+  @ApiProperty()  
+  reason?: string;
 }

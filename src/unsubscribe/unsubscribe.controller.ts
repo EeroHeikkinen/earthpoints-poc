@@ -39,6 +39,7 @@ export class UnsubscribeController {
       userid: unsubscription.userid,
       allTemplates: this.unsubscribeService.getAllTemplates(unsubscription),
       templates: unsubscription.templates,
+      reason: unsubscription.reason,
       environment: process.env.ENVIRONMENT,
       gtag: process.env.GOOGLE_TAG,
     };

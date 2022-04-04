@@ -11,4 +11,7 @@ export class CreateUnsubscriptionDto {
   })
   templates?: string[];
 
+  @ApiProperty()  
+  reason?: string;
+
 }
