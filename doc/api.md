@@ -71,7 +71,9 @@ curl -X 'POST' \
   "platform": "pledge-page",
   "emails": [
     "eesahe@gmail.com"
-  ]
+  ],
+  "timezone": "Europe/Istanbul",
+  "countryCode": "TR",
 }' -k
 ```
 
@@ -102,7 +104,8 @@ Example response:
    "events" : [],
    "firstName" : null,
    "points" : 0,
-   "timezone" : null,
+   "timezone": "Europe/Istanbul",
+   "countryCode": "TR",
    "userid" : "82b07aae-ca02-40f4-a71f-2c564fc52764"
 }
 ```
@@ -160,7 +163,9 @@ curl -X 'POST' \
       "platform": "pledge-page",
       "emails": [
         "my.user@gmail.com"
-      ]
+      ],
+      "timezone": "Europe/Istanbul",
+      "countryCode": "TR"
     }
   ],
   "icon": "star",
