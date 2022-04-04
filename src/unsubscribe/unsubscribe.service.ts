@@ -29,7 +29,9 @@ export class UnsubscribeService {
     if(!unsubscription.templates)
       unsubscription.templates = [];
     const templates = [...this.emailTemplateService.templates.values()]
-    return templates.map<any>((v,i,a) => {
+    return templates.filter((v,i,a) => {
+      return v.getName() !== 'welcome-message';
+    }).map<any>((v,i,a) => {
       return {
         template: v.getName(),
         name: v.getFullname(),
