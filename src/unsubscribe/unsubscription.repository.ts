@@ -33,6 +33,7 @@ export class UnsubscriptionRepository implements OnModuleInit {
     }
 
     async update(updateDto: UpdateUnsubscriptionDto) {
+        updateDto.timestamp = new Date();
         return (await this.mapper.update(updateDto)).toArray()[0];
     }
 
@@ -41,6 +42,7 @@ export class UnsubscriptionRepository implements OnModuleInit {
     }
 
     async add(createDto: CreateUnsubscriptionDto) {
+        createDto.timestamp = new Date();
         return (await this.mapper.insert(createDto)).toArray()[0];
     }
 }
