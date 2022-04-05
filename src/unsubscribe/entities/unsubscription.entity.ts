@@ -9,4 +9,7 @@ export class Unsubscription {
 
   @ApiProperty()  
   reason?: string;
+
+  @ApiProperty()  
+  timestamp?: Date;
 }
