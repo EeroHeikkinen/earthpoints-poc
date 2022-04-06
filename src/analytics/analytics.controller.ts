@@ -20,6 +20,8 @@ import { AnalyticsService } from './analytics.service';
     ) {}
   
   
+    //TODO: please note that these requests must be paginated...
+
     @Get('user')
     @UseGuards(AnalyticsGuard)  
     async user(
