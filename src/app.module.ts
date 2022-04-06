@@ -20,6 +20,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
 import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
     EmailTemplateModule,
     CanvasModule,
     forwardRef(()=>UnsubscribeModule),
+    AnalyticsModule
   ], 
   controllers: [AppController],
   providers: [AppService],
