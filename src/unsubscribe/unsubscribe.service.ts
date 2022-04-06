@@ -47,5 +47,9 @@ export class UnsubscribeService {
     return unsubscription.templates.includes(template);
   }
 
+  async findAll() {
+    const result = await this.unsubscriptionRepository.findAll();
+    return result;
+  }
 
 }

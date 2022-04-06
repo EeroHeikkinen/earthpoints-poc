@@ -21,6 +21,7 @@ import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
 import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
 import { IshangamModule } from './ishangam/ishangam.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -48,7 +49,8 @@ import { IshangamModule } from './ishangam/ishangam.module';
     EmailTemplateModule,
     CanvasModule,
     forwardRef(()=>UnsubscribeModule),
-    IshangamModule
+    IshangamModule,
+    AnalyticsModule
   ], 
   controllers: [AppController],
   providers: [AppService],
