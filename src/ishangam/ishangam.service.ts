@@ -33,7 +33,7 @@ export class IshangamService {
             "list_identifier":"Earth Points",
             "country": user.countryCode,
             "language":"en",
-            "subs_id":1,
+            "subs_id":process.env.ISHANGAM_SUBS_ID,
             "system_id":74,
             "dynamic_data":"true",
             "dynamic_dt_field_1": moment(timestamp).format('YYYY-MM-DD'),
