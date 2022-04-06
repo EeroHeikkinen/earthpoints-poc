@@ -1,6 +1,7 @@
 import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
 import { EmailTemplateService } from 'src/email-template/email-template.service';
+import { IshangamService } from 'src/ishangam/ishangam.service';
 import { UserService } from 'src/user/user.service';
 
 @Processor('sync')
@@ -8,6 +9,7 @@ export class QueueConsumer {
   constructor(
     private userService: UserService,
     private emailTemplateService: EmailTemplateService,
+    private ishangamService: IshangamService,
   ) {}
 
   @Process('syncUser')
@@ -22,6 +24,8 @@ export class QueueConsumer {
     const user = await this.userService.findByUserId(userid, timestamp);
 
     this.emailTemplateService.processScheduled(user, new Date(timestamp));
+
+    this.ishangamService.addNonCrmContact(user, new Date(timestamp));
 
     console.log(
       `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!User is synced with number of points: ${user.points}`,

@@ -9,7 +9,7 @@ import { QueueService } from 'src/queue/queue.service';
 import { User } from './entities/user.entity';
 import { use } from 'passport';
 import { UserOwnedListsV2Paginator } from 'twitter-api-v2';
-import { types } from 'cassandra-driver';
+import { mapping, types } from 'cassandra-driver';
 import { SentEmailRepository } from 'src/email-template/sent-email.repository';
 import { SentEmail } from 'src/email-template/entities/sent-email.entity';
 import moment from 'moment';
@@ -220,8 +220,8 @@ export class UserService {
     return pointsEarnedToday;
   }
 
-  async findAll() {
-    const users = await this.userRepository.getAll();
+  async findAll(docInfo: mapping.FindDocInfo = {}) {
+    const users = await this.userRepository.getAll(docInfo);
 
     return users;
   }

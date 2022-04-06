@@ -14,4 +14,6 @@ export class CreateUnsubscriptionDto {
   @ApiProperty()  
   reason?: string;
 
+  @ApiProperty()  
+  timestamp?: Date;
 }
