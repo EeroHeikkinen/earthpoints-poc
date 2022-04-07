@@ -25,7 +25,9 @@ export class QueueConsumer {
 
     this.emailTemplateService.processScheduled(user, new Date(timestamp));
 
-    this.ishangamService.addNonCrmContact(user, new Date(timestamp));
+    if(process.env.ISHANGAM_ENABLED=='1'){
+      this.ishangamService.addNonCrmContact(user, new Date(timestamp));
+    }
 
     console.log(
       `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!User is synced with number of points: ${user.points}`,
