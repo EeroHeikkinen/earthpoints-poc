@@ -1,7 +1,7 @@
 $(function() {
     let showFunction = function(event) {
         $('#events tr').slice(3).css('display', 'none');
-        $('#view-all-point-events').text('View all');
+        $('#view-all-point-events').text('Show more');
         $('#view-all-point-events').click(hideFunction);
     }
 
