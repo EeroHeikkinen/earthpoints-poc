@@ -8,7 +8,7 @@ $(function() {
     let hideFunction = function(event) {
         event.preventDefault();
         $('#events tr').css('display', 'block');
-        $('#view-all-point-events').text('View less');
+        $('#view-all-point-events').text('Show less');
         $('#view-all-point-events').click(showFunction);
     };
 
