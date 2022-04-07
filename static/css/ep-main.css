@@ -329,6 +329,21 @@ a[x-apple-data-detectors] {
     .es-m-p40l {
         padding-left: 40px!important
     }
+    .es-h-180 {
+        height: 180px!important;
+    }
+    .es-h-100 {
+        height: 100px!important;
+    }
+    .es-h-50 {
+        height: 50px!important;
+    }
+    .es-bsize-contain{
+        background-size: contain!important;
+    }
+    .es-bsize-cover{
+        background-size: cover!important;
+    }
 }
 
 #events tr {
