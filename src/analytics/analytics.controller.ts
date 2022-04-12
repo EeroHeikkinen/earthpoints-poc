@@ -5,6 +5,7 @@ import {
     UseGuards,
   } from '@nestjs/common';
 import { AnalyticsGuard } from 'src/auth/anlytics-auth.guard';
+import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
 import { PointEventService } from 'src/point-event/point-event.service';
 import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
 import { UserService } from 'src/user/user.service';
@@ -16,7 +17,8 @@ import { AnalyticsService } from './analytics.service';
         private readonly analyticsService: AnalyticsService,
         private readonly userService: UserService,
         private readonly unsubscriptionService: UnsubscribeService,
-        private readonly pointEventService: PointEventService
+        private readonly pointEventService: PointEventService,
+        private readonly platformConnectionService: PlatformConnectionService
     ) {}
   
   
@@ -45,6 +47,14 @@ import { AnalyticsService } from './analytics.service';
       @Req() req,
     ){
         return await this.pointEventService.findAll();
+    }
+
+    @Get('platform-connection')
+    @UseGuards(AnalyticsGuard)  
+    async platformConnection(
+      @Req() req,
+    ){
+        return await (await this.platformConnectionService.findAll({fields: ['userid','platform','head','tail']})).toArray();
     }
 
 

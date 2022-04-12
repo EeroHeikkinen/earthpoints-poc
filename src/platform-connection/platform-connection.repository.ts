@@ -43,4 +43,9 @@ export class PlatformConnectionRepository implements OnModuleInit {
     async getPlatformConnectionl(userid) {
         return (await this.mapper.find({userid})).toArray();
     }
+
+    async getAll(docInfo: mapping.FindDocInfo = {}) {
+        return await this.mapper.findAll(docInfo, {fetchSize: 100000});
+    }
+
 }
