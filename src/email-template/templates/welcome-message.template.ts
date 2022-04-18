@@ -28,12 +28,18 @@ export class WelcomeMessageEmailTemplate implements IEmailTemplate {
 
     async render(user:User, {hourInUserTimeZone, minutesInUserTimeZone, lastSent, contextTimestamp}:{hourInUserTimeZone: number, minutesInUserTimeZone: number, lastSent: Date, contextTimestamp: Date}) {
         const now = moment(contextTimestamp);
+        const meCountries: string[] = ['AF','BH','EG','IR','IQ','JO','KW','LB','OM','PK','PS','QA','SA','SY','TR','AE','YE'];
 
         // First time sending daily message
         if(lastSent) {
             return false;
         }
 
+        //Will not send welcome message to Middle East Countries.
+        if(meCountries.includes(user.countryCode)){
+            return false;
+        }
+        
         return {
             template: 'welcome-message',
             subject: 'Welcome to Earth Points dashboard!',
