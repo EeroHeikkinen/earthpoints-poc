@@ -1,0 +1,1 @@
+export const EUCountries: string[] = ['AL','AD','AT','BE','BA','BG','HR','CY','CZ','DK','EE','FO','FI','FR','DE','GI','GR','GG','VA','HU','IS','IE','IM','IL','IT','JE','XK','LV','LI','LT','LU','MK','MT','MD','MC','ME','NL','NO','PL','PT','RO','SM','RS','SK','SI','ES','SJ','SE','CH','AX','GB'];

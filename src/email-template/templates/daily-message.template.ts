@@ -5,6 +5,7 @@ import { IEmailTemplate } from 'src/interfaces/email-template.interface';
 import moment from 'moment';
 import { PointEventService } from 'src/point-event/point-event.service';
 import { MECountries } from 'src/user/constants/MECountries';
+import { EUCountries } from 'src/user/constants/EUCountries';
 
 @Injectable()
 export class DailyMessageEmailTemplate implements IEmailTemplate {
@@ -32,9 +33,9 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
   ) {
     const now = moment(contextTimestamp);
 
-    //Will not send message to Middle East Countries.
-    if(MECountries.includes(user.countryCode)){
-      console.log(`Skipping sending daily e-mail to ME countries! (${user.countryCode})`);
+    //Send only to EU
+    if(!EUCountries.includes(user.countryCode)){
+      console.log(`Skipping sending daily e-mail to out of EU countries! (${user.countryCode})`);
       return false;
     }
     

@@ -11,6 +11,7 @@ import { UserService } from 'src/user/user.service';
 import moment from 'moment';
 import { PointEventService } from 'src/point-event/point-event.service';
 import { MECountries } from 'src/user/constants/MECountries';
+import { EUCountries } from 'src/user/constants/EUCountries';
 
 @Injectable()
 export class WelcomeMessageEmailTemplate implements IEmailTemplate {
@@ -35,12 +36,12 @@ export class WelcomeMessageEmailTemplate implements IEmailTemplate {
             return false;
         }
 
-        //Will not send message to Middle East Countries.
-        if(MECountries.includes(user.countryCode)){
-            console.log(`Skipping sending welcome e-mail to ME countries! (${user.countryCode})`);
+        //Send only to EU
+        if(!EUCountries.includes(user.countryCode)){
+            console.log(`Skipping sending welcome e-mail to out of EU countries! (${user.countryCode})`);
             return false;
         }
-        
+          
         return {
             template: 'welcome-message',
             subject: 'Welcome to Earth Points dashboard!',
