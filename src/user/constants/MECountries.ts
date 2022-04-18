@@ -1,0 +1,1 @@
+export const MECountries: string[] = ['AF','BH','EG','IR','IQ','JO','KW','LB','OM','PK','PS','QA','SA','SY','TR','AE','YE'];

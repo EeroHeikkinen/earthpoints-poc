@@ -10,6 +10,7 @@ import { IEmailTemplate } from 'src/interfaces/email-template.interface';
 import { UserService } from 'src/user/user.service';
 import moment from 'moment';
 import { PointEventService } from 'src/point-event/point-event.service';
+import { MECountries } from 'src/user/constants/MECountries';
 
 @Injectable()
 export class WelcomeMessageEmailTemplate implements IEmailTemplate {
@@ -28,15 +29,15 @@ export class WelcomeMessageEmailTemplate implements IEmailTemplate {
 
     async render(user:User, {hourInUserTimeZone, minutesInUserTimeZone, lastSent, contextTimestamp}:{hourInUserTimeZone: number, minutesInUserTimeZone: number, lastSent: Date, contextTimestamp: Date}) {
         const now = moment(contextTimestamp);
-        const meCountries: string[] = ['AF','BH','EG','IR','IQ','JO','KW','LB','OM','PK','PS','QA','SA','SY','TR','AE','YE'];
 
         // First time sending daily message
         if(lastSent) {
             return false;
         }
 
-        //Will not send welcome message to Middle East Countries.
-        if(meCountries.includes(user.countryCode)){
+        //Will not send message to Middle East Countries.
+        if(MECountries.includes(user.countryCode)){
+            console.log(`Skipping sending welcome e-mail to ME countries! (${user.countryCode})`);
             return false;
         }
         
