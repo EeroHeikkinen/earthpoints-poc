@@ -6,24 +6,49 @@
 	<meta charset="UTF-8">
 	<title>Bootstrap Datepicker Material</title>
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="../css/bootstrap-datepicker3.min.css">
-	<link rel="stylesheet" type="text/css" href="../css/admin.css">
+	<link rel="stylesheet" type="text/css" href="{{baseUrl}}/css/admin.css">
+	{{#if customCss}}
+      {{#each customCss}}
+        <link href="{{baseUrl}}/css/{{this}}" rel="stylesheet">
+      {{/each}}
+	{{else}}
+	<link rel="stylesheet" type="text/css" href="{{baseUrl}}/css/bootstrap.3.3.1.min.css">
+	<link rel="stylesheet" type="text/css" href="{{baseUrl}}/css/bootstrap-datepicker3.min.css">
+    {{/if}}
 </head>
 <body>
 
-	<br><br><br>
+	
+				<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+			<a class="navbar-brand" href="#">Earth Points Dashboard</a>
+			</div>
+			<ul class="nav navbar-nav">
+			<li><a href="{{baseUrl}}/email-template">Edit Email Templates</a></li>
+			<li><a href="{{baseUrl}}/rule">Edit Point Rules</a></li>
+			</ul>
+		</div>
+	</nav>
 	<section class="body">
+
+
 		<div class="container">
 			{{{ body }}}
 		</div>
 	</section>
 	<br><br><br>
 	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-	<script src="../scripts/bootstrap-datepicker.min.js"></script>
-	<script src="../scripts/manage-templates.js"></script>
-
+	{{#if customScript}}<script type="text/javascript">{{{customScript}}}</script>{{/if}}
+	{{#if customScripts}}
+		{{#each customScripts}}
+		<script type="text/javascript" src="{{baseUrl}}/scripts/{{{this}}}"></script>
+		{{/each}}
+	{{else}}
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+		<script src="{{baseUrl}}/scripts/bootstrap-datepicker.min.js"></script>
+		<script src="{{baseUrl}}/scripts/manage-templates.js"></script>
+	{{/if}}
 </body>
 </html>

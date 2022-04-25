@@ -89,4 +89,17 @@ background-color: white !important; }
 .thumbnail {
   width: 100%;
   margin-left: -25%;
+  margin-top: 12px;
+}
+
+#events > .row.mb-12:after {
+  width: 44%;
+  height: 1px;
+  left: 25%;
+  position: relative;
+  background-color: rgb(222, 222, 222);
+  display: block;
+  content: ' ';
+  margin-top: 8px;
+  bottom: 1px;
 }
