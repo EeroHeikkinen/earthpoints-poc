@@ -45,11 +45,8 @@ export class PointEventController {
   @Patch(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
-  update(
-    @Param('id') id: string,
-    @Body() updatePointEventDto: UpdatePointEventDto,
-  ) {
-    return this.pointEventService.update(+id, updatePointEventDto);
+  update(@Body() updatePointEventDto: UpdatePointEventDto) {
+    return this.pointEventService.update(updatePointEventDto);
   }
 
   @Delete(':id')
