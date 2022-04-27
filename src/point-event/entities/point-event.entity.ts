@@ -14,6 +14,9 @@ export class PointEvent {
   points: number;
 
   @ApiProperty()
+  priority?: number;
+
+  @ApiProperty()
   message: string;
 
   @ApiProperty()
