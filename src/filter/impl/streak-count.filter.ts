@@ -16,7 +16,12 @@ export class StreakCountFilter extends BaseFilter {
   }
 
   async preprocess(itemSet: ItemSet) {
-    itemSet.match_count = itemSet.items.length;
+    for (const item of itemSet.items) {
+      // start from latest item
+      // go back until the streak is no longer continous
+      // check how long is the current streak from latest item
+    }
+    itemSet.streak_count = 3;
     return itemSet;
   }
 
