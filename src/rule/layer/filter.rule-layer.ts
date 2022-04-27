@@ -23,7 +23,9 @@ export class FilterLayer extends BaseRuleLayer {
     return `<div data-qb-rules='${JSON.stringify(rules)}' data-type='${
       this.type
     }' data-qb-filters='${JSON.stringify(
-      this.filters.map((filter: any) => filter.renderQueryBuilderFilter()),
+      (this.filters || []).map((filter: any) =>
+        filter.renderQueryBuilderFilter(),
+      ),
     )}' class="filter-rule-builder query-builder"></div>`;
   }
 
