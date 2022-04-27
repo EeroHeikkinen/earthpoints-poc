@@ -32,5 +32,5 @@ export class PointEvent {
   timestamp: Date;
 
   @ApiProperty()
-  metadata: Map<string, string>;
+  metadata: { [key: string]: string };
 }
