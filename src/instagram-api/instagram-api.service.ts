@@ -36,32 +36,44 @@ export class InstagramApiService {
     return await lastValueFrom(source$);
   }
 
-  async getFeed(authToken) {
-    var dataBuffer = await this.getQuery(
+  async getFeed(
+    authToken,
+    {
+      retrieveUntil = new Date(),
+      retrieveFrom = new Date('2021-09-01T00:00:00'),
+      maxPages = 5,
+    },
+  ) {
+    let dateParams = `since=${Math.floor(retrieveFrom.getTime() / 1000)}`;
+    if (retrieveUntil) {
+      dateParams += `&until=${Math.floor(retrieveUntil.getTime() / 1000)}`;
+    }
+    let dataBuffer = await this.getQuery(
       authToken,
-      'me/media?fields=caption,media_type,permalink,media_url,timestamp',
+      `me/media?${dateParams}&fields=caption,media_type,permalink,media_url,timestamp`,
     );
     if (!dataBuffer.data) {
       return null;
     }
-    var data = dataBuffer.data.data;
+    const data = dataBuffer.data.data;
 
-    return data;
-    /*
-        var maxPages = 10; 
-        var donePages = 1;
+    let oldestTimestamp;
+    if (
+      dataBuffer.data.paging &&
+      dataBuffer.data.paging.cursors &&
+      dataBuffer.data.paging.cursors.after ==
+        dataBuffer.data.paging.cursors.after
+    ) {
+      // No more results
+      oldestTimestamp = retrieveFrom;
+    } else {
+      oldestTimestamp = new Date(data[data.length - 1].created_time);
+    }
 
-        while(dataBuffer.data && dataBuffer.data.paging && dataBuffer.data.paging.next && donePages++ < maxPages) {
-            const next = dataBuffer.data.paging.next;
-
-            dataBuffer = await this.getUrl(next);
-            if (!dataBuffer.data) {
-                break;
-            }
-
-            data = data.concat(dataBuffer.data.data); 
-        }
-
-        return data;*/
+    return {
+      items: data,
+      retrievedFrom: oldestTimestamp,
+      retrievedUntil: retrieveUntil,
+    };
   }
 }
