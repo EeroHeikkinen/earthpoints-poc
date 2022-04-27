@@ -8,6 +8,7 @@ export class Rule {
   templateObj: IRuleTemplate;
   description: string;
   layersJson: string;
+  enabled: boolean;
   layers: IRuleLayer[];
   options: Map<string, string>;
   filter: Map<string, string>;

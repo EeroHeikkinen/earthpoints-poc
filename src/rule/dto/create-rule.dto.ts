@@ -6,6 +6,7 @@ export class CreateRuleDto {
   template: string;
   templateObj?: IRuleTemplate;
   description?: string;
+  enabled: boolean;
   layersJson?: string;
   options?: any;
   filter?: Map<string, string>;

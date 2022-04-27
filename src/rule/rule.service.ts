@@ -129,6 +129,7 @@ export class RuleService {
     item.eventName = name;
 
     for (const rule of rules) {
+      if (!rule.enabled) continue;
       let result;
       const template = this.templates[rule.template];
       if (!template) {
