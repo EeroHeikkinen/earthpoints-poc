@@ -17,7 +17,7 @@ export class TwitterExtractor implements IExtractor {
 
     private maxTweetsPerUpdate:number = 300;
 
-    async process(credential: PlatformConnection, {from, until}) {
+    async process(credential: PlatformConnection, {from, until}, user: User) {
         const userid = credential.userid;
 
         if(!credential.authToken || !credential.tokenSecret) {
@@ -73,11 +73,11 @@ export class TwitterExtractor implements IExtractor {
                         if(referencedTweet.id == referencedId) {
                             augmentedText += " ";
                             augmentedText += referencedTweet.text; 
-                            await this.ruleService.trigger('user.published.share', { 'userid': userid, 'platform': 'twitter', message: augmentedText, data: tweet })
+                            await this.ruleService.trigger('user.published.share', { user, 'userid': userid, 'platform': 'twitter', message: augmentedText, data: tweet })
                         }
                     }
                 } else {
-                    await this.ruleService.trigger('user.published.post', {  'userid': userid, 'platform': 'twitter', message: tweet.text, data: tweet })
+                    await this.ruleService.trigger('user.published.post', { user, 'userid': userid, 'platform': 'twitter', message: tweet.text, data: tweet })
                 }
             }
 
