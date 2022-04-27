@@ -214,8 +214,9 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
-  async syncPoints(userid) {
-    await this.platformConnectionService.syncAllForUser(userid);
+  async syncPoints(userid: string) {
+    const user = await this.findByUserId(userid);
+    await this.platformConnectionService.syncAllForUser(user);
   }
 
   async triggerScheduledEmails(userid: string, currentCallDate: Date) {

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import process from 'process';
 import { IExtractor } from 'src/interfaces/extractor.interface';
+import { User } from 'src/user/entities/user.entity';
 import { CreatePlatformConnectionDto } from './dto/create-platform-connection.dto';
 import { UpdatePlatformConnectionDto } from './dto/update-platform-connection.dto';
 import { FacebookExtractor } from './extractors/facebook.extractor';
@@ -53,9 +54,9 @@ export class PlatformConnectionService {
     return `This action removes a #${id} socialProfile`;
   }
 
-  async syncAllForUser(userid: string) {
-    const credentials = await this.findByUserId(userid);
-    for(const credential of credentials) {
+  async syncAllForUser(user: User) {
+    const credentials = await this.findByUserId(user.userid);
+    for (const credential of credentials) {
       try {
         const extractor = this.extractors[credential.platform] as IExtractor;
         if(!extractor) {
