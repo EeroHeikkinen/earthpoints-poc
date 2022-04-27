@@ -125,5 +125,5 @@ export class CreatePointEventDto {
     type: 'object',
     description: 'Any custom metadata',
   })
-  metadata?: Map<string, string>;
+  metadata?: { [key: string]: string };
 }

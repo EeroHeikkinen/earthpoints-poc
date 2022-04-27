@@ -73,7 +73,7 @@ export class PointEventService {
       platform: platform,
       points: parseInt(process.env.CONNECT_PLATFORM_POINTS),
       timestamp: new Date(),
-      metadata: new Map<string, string>(),
+      metadata: {},
       message: '',
       isBurn: false,
     })
