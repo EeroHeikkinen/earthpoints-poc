@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Query,
+  Render,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,7 +24,7 @@ import { platform } from 'os';
 import { CreatePlatformConnectionDto } from 'src/platform-connection/dto/create-platform-connection.dto';
 import { UserFromExternalPlatformDataDto } from './dto/from-external-platform-data.dto';
 import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
-
+import { Request } from 'express';
 @Controller('user')
 export class UserController {
   constructor(
