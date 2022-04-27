@@ -15,6 +15,7 @@ import { CreatePointEventDto } from 'src/point-event/dto/create-point-event.dto'
 import { ModuleRef } from '@nestjs/core';
 import { FilterService } from 'src/filter/filter.service';
 import { ItemSet } from 'src/filter/entities/item-set.model';
+import { CreateRuleDto } from './dto/create-rule.dto';
 
 @Injectable()
 export class RuleService {
@@ -50,8 +51,18 @@ export class RuleService {
     }
   }
 
+  async createRule(createRuleDto: CreateRuleDto) {
+    await this.ruleRepository.createRule(createRuleDto);
+    await this.cacheManager.del('all-rules');
+  }
+
   async updateRule(updateRuleDto: UpdateRuleDto) {
     await this.ruleRepository.updateRule(updateRuleDto);
+    await this.cacheManager.del('all-rules');
+  }
+
+  async deleteRule(id: string) {
+    await this.ruleRepository.deleteRule(id);
     await this.cacheManager.del('all-rules');
   }
 
