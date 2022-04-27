@@ -181,6 +181,7 @@ export class RuleService {
           result.metadata = {};
         }
         result.metadata.template = rule.template;
+        delete item.user;
         result.metadata.item = JSON.stringify(item);
 
         /* TODO: implement onPointEvent trigger from points awarded
