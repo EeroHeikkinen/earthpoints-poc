@@ -39,7 +39,7 @@ export class PointEventController {
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
-    return this.pointEventService.findOne(+id);
+    return this.pointEventService.findOne(id);
   }
 
   @Patch(':id')

@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
 import { AuthModule } from './auth/auth.module';
@@ -20,6 +20,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
 import { FilterModule } from './filter/filter.module';
+import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
+import { IshangamModule } from './ishangam/ishangam.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -46,7 +49,10 @@ import { FilterModule } from './filter/filter.module';
     CronModule,
     EmailTemplateModule,
     CanvasModule,
-    FilterModule
+    FilterModule,
+    forwardRef(()=>UnsubscribeModule),
+    IshangamModule,
+    AnalyticsModule
   ], 
   controllers: [AppController],
   providers: [AppService],

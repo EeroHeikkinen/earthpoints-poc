@@ -1,0 +1,51 @@
+name: Backup
+
+env:
+  DEFAULT_ENVIRONMENT: "default"
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "0 */24 * * *"
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to Backup'
+        type: environment
+        required: true
+        default: "uat"
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Install doctl.
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Get Current Week Day
+        uses: josStorer/get-current-time@v2
+        id: current-day
+        with:
+          format: d
+
+
+      - name: Login to digitalocean
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ffb1a5d5-e0c7-4553-87d2-db6633465a6d
+
+      - name: Delete Volume Snapshot
+        run: kubectl delete volumesnapshots -n=${{ github.event.inputs.environment || env.DEFAULT_ENVIRONMENT }} cassandra-snapshot-${{ steps.current-day.outputs.formattedTime }}
+
+      - name: Update Snapshot Config File
+        if: always()
+        run: sed -ie "s/cassandra-snapshot/cassandra-snapshot-${{ steps.current-day.outputs.formattedTime }}/g" $GITHUB_WORKSPACE/kuber-snapshot.yml
+
+      - name: Create Volume Snapshot
+        if: always()
+        run: kubectl create -n=${{ github.event.inputs.environment || env.DEFAULT_ENVIRONMENT }} -f $GITHUB_WORKSPACE/kuber-snapshot.yml

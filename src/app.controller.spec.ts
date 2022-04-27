@@ -1,3 +1,4 @@
+import { forwardRef } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -15,6 +16,7 @@ import { PlatformConnectionModule } from './platform-connection/platform-connect
 import { PointEventModule } from './point-event/point-event.module';
 import { RuleModule } from './rule/rule.module';
 import { TemplateModule } from './template/template.module';
+import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
 import { UserModule } from './user/user.module';
 
 describe('AppController', () => {
@@ -38,7 +40,8 @@ describe('AppController', () => {
         CronModule,
         EmailTemplateModule,
         PlatformConnectionModule,
-        CanvasModule
+        CanvasModule,
+        forwardRef(()=>UnsubscribeModule),
       ],
       controllers: [AppController],
       providers: [AppService],

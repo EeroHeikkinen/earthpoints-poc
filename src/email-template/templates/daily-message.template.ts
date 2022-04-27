@@ -4,14 +4,19 @@ import { User } from 'src/user/entities/user.entity';
 import { IEmailTemplate } from 'src/interfaces/email-template.interface';
 import moment from 'moment';
 import { PointEventService } from 'src/point-event/point-event.service';
+import { MECountries } from 'src/user/constants/MECountries';
+import { EUCountries } from 'src/user/constants/EUCountries';
 
 @Injectable()
 export class DailyMessageEmailTemplate implements IEmailTemplate {
-  constructor(private pointEventService: PointEventService) {}
-
   getName() {
     return 'daily-message';
   }
+
+  getFullname() {
+    return 'Daily Digest Trending E-Mails';
+  }
+
 
   async render(
     user: User,
@@ -28,6 +33,12 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
   ) {
     const now = moment(contextTimestamp);
 
+    //Send only to EU
+    if(!EUCountries.includes(user.countryCode)){
+      console.log(`Skipping sending daily e-mail to out of EU countries! (${user.countryCode})`);
+      return false;
+    }
+    
     // First time sending daily message
     if (!lastSent) {
       const userRegistered = moment(user.createdAt);
@@ -52,13 +63,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
       }
     }
 
-    const oneDayAgo = now.subtract(1, 'day').toDate();
-    const pointsEarnedToday = user.events
-      .filter((event) => {
-        return event.timestamp > oneDayAgo;
-      })
-      .map((event) => event.points)
-      .reduce((previous, current) => previous + current, 0);
+    const pointsEarnedToday = user.pointsEarnedToday;
 
     if (hourInUserTimeZone != (process.env.DAILY_EMAIL_HOUR_IN_USER_TIMEZONE || 20)) {
       console.log('Wrong local time to send daily msg');
@@ -95,6 +100,7 @@ export class DailyMessageEmailTemplate implements IEmailTemplate {
         pointsEarnedToday,
         firstName: user.firstName,
         footerImage: `${process.env.BASE_URL}/point-badge?point=${pointsEarnedToday}&total=${user.points}&confetti=2&theme=bluered_bottom`,
+        unsubscribeUrl: `${process.env.BASE_URL}/unsubscribe/${user.userid}`,
       },
     };
   }

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { mapping } from 'cassandra-driver';
 import process from 'process';
 import { IExtractor } from 'src/interfaces/extractor.interface';
 import { User } from 'src/user/entities/user.entity';
@@ -38,16 +39,20 @@ export class PlatformConnectionService {
     return await this.repository.addPlatformConnection(createSocialCredentialDto);
   }
 
-  findAll() {
-    return `This action returns all socialProfile`;
+  async findAll(docInfo: mapping.FindDocInfo = {}) {
+    const users = await this.repository.getAll(docInfo);
+
+    return users;
   }
 
   findOne(id: number) {
     return `This action returns a #${id} socialProfile`;
   }
 
-  async update(updateSocialCredentialDto: UpdatePlatformConnectionDto) {
-    return await this.repository.updatePlatformConnection(updateSocialCredentialDto);
+  async update(updatePlatformConnectionDto: UpdatePlatformConnectionDto) {
+    return await this.repository.updatePlatformConnection(
+      updatePlatformConnectionDto,
+    );
   }
 
   remove(id: number) {

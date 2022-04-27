@@ -12,6 +12,7 @@ CREATE TABLE earthpoints.user (
    email varchar, /* will be deprecated */
    emails set<varchar>,
    timezone varchar,
+   country_code varchar,
    created_at timestamp
 );
 
@@ -25,6 +26,7 @@ CREATE TABLE earthpoints.sent_email (
 CREATE TABLE earthpoints.email_content_template (
    key varchar,
    content varchar,
+   subject varchar,
    PRIMARY KEY (key)
 );
 
@@ -84,6 +86,13 @@ CREATE TABLE earthpoints.point_event_by_userid (
    icon varchar,
    metadata map<varchar, varchar>,
    PRIMARY KEY (userid,hash)
+);
+
+CREATE TABLE earthpoints.unsubscription (
+   userid uuid PRIMARY KEY,
+   templates set<varchar>,
+   reason varchar,
+   timestamp timestamp,
 );
 
 CREATE TABLE earthpoints.rule_instance (

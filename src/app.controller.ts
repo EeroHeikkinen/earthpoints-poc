@@ -52,25 +52,18 @@ export class AppController {
         
     const renderEvents = handlebars.compile(`
       {{#each events}}
-        <div class="row mb-12">
-          <div class="offset-2 col-1 mr-1 mt-2">
-            {{#if this.imageUrl}}
-              <img src={{this.imageUrl}} class="thumbnail"/>
-            {{else}}
-              <i class="mt-1 fa fa-{{this.icon}} fa-2x"></i>
-            {{/if}} 
-          </div>
-          <div class="col-5">
-            <p class="grey-text"></p>
-            You {{this.verb}} {{this.platform}} - {{this.formattedTimestamp}}
-            </p>
-            
-            <h5 class="font-weight-bold">
-              {{this.message}}
-            </h5>
-          </div>
-          <div class="col-2 mt-3"><h5>{{this.points}} 🌎</h5> </div>
-        </div>
+      <tr>
+        <td align="center" height="60" width="60" style="padding:0;Margin:0">
+          <div class="point-badge">{{this.points}}</div>
+        </td>
+        <td align="left" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px">
+          <p
+            style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:24px;color:#333333;font-size:16px">
+            <span style="font-size:19px">{{this.formattedTimestamp}}</span><br>{{this.Verb}}
+            {{this.platform}}
+          </p>
+        </td>
+      </tr>
       {{/each}}
     `)
 
@@ -79,28 +72,43 @@ export class AppController {
         return data.userid.toString() === user.userid.toString()}
       ), 
       concatMap(async (event) => { 
-          const events = await this.pointEventService.findAllForUser(user.userid);
-          const {formattedEvents, summedPoints} = this.formatUserEvents(events,user.timezone)
-          formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
-          return { 
-            data: { 
-              'userid': user.userid, 
-              'eventsHTML': renderEvents({events: formattedEvents}),
-              'events': JSON.stringify(formattedEvents),
-              summedPoints
-            } 
-          } 
-        } 
-      ))
+        const events = await this.pointEventService.findAllForUser(user.userid);
+        const updatedUser = await this.userService.findByUserId(user.userid);
+        const { formattedEvents, summedPoints } = this.formatUserEvents(
+          events,
+          user.timezone,
+        );
+        const pointsEarnedToday = await this.userService.pointsEarnedToday(
+          updatedUser,
+        );
+        formattedEvents.sort((a, b) => b.timestamp - a.timestamp)
+        return {
+          data: {
+            userid: user.userid,
+            pointsEarnedToday,
+            badgeUrl:
+              process.env.BASE_URL +
+              `/point-badge?point=${pointsEarnedToday}&total=${updatedUser.points}&theme=greenred_bottom&confetti=1`,
+            eventsHTML: renderEvents({ events: formattedEvents }),
+            events: JSON.stringify(formattedEvents),
+            summedPoints,
+          },
+        };
+      }),
+    );
   }
 
   formatUserEvents(events,timezone
     ) {
     const formattedEvents = []
-    for(let event of events) {
+    for (let event of events) {
       const formattedEvent = event as any
       formattedEvent.formattedTimestamp = Utils.getFormattedDate(event.timestamp,false,false,timezone); 
       formattedEvent.platform = event.platform[0].toUpperCase() + event.platform.slice(1);
+      if (formattedEvent.verb) {
+        formattedEvent.Verb =
+          formattedEvent.verb[0].toUpperCase() + formattedEvent.verb.slice(1);
+      }
       if (formattedEvent.icon.startsWith('https://')) {
         formattedEvent.imageUrl = formattedEvent.icon;
         formattedEvent.icon = undefined;
@@ -114,14 +122,14 @@ export class AppController {
 
   @Get('/')
   @UseFilters(UnauthorizedExceptionFilter)
-  @Render('dashboard')
+  @Render('ep-dashboard')
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req): Promise<any> {
-    req.app.locals.layout = 'main';
+    req.app.locals.layout = 'ep-main';
     const userid = req.user.userid;
 
     /* If necessary fill in user timezone from ip */
-    if (!req.user.timezone) {
+    if (!req.user.timezone || !req.user.countryCode) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       if (ip == '::1' || ip.startsWith('::ffff')) {
         ip = process.env.TEST_IP;
@@ -129,12 +137,13 @@ export class AppController {
       try {
         req.user.timezone = await new Promise<string>((resolve, reject) => {
           satelize.satelize({ ip }, (err, payload) => {
-            if (err || !payload || !payload.timezone) {
+            if (err || !payload || !payload.timezone || !payload.country_code) {
               reject(err);
             }
             this.userService.update({
               userid: userid,
               timezone: payload.timezone,
+              countryCode: payload.country_code,
             });
             resolve(payload.timezone);
           });
@@ -146,59 +155,84 @@ export class AppController {
       }
     }
 
-    this.userService.syncPoints(userid); 
+    this.userService.syncPoints(userid);
 
     const user = req.user as User;
-    
-    const {formattedEvents} = this.formatUserEvents(user.events,user.timezone)
+
+    const { formattedEvents } = this.formatUserEvents(
+      user.events,
+      user.timezone,
+    );
     formattedEvents.sort((a, b) => b.timestamp - a.timestamp);
 
     const platforms = [
-      { 
+      {
         name: 'facebook',
         Name: 'Facebook',
         show: true,
-        color: 'blue'
+        color: 'blue',
       },
       {
         name: 'twitter',
         Name: 'Twitter',
         show: true,
-        color: 'teal'
+        color: 'teal',
       },
       {
         name: 'instagram',
         Name: 'Instagram',
         show: true,
-        color: 'red'
-      }
-    ]
+        color: 'red',
+      },
+      /*{
+        name: 'phone',
+        href: '#',
+        isPhone: true,
+        Name: 'your phone number',
+        show: true,
+        color: 'black',
+      },*/
+    ];
     /* Hide already connected */
-    for(let connection of user.connections) {
-      for(let platform of platforms) {
-        if(platform.name == connection.platform)
+    
+    for (let connection of user.connections) {
+      for (let platform of platforms) {
+        if (platform.name == connection.platform) {
           platform.show = false;
+        }
       }
     }
-    
+    const haveUnconnectedPlatforms = Object.values(platforms).some(
+      (platform) => platform.show,
+    );
+
+    const pointsEarnedToday = await this.userService.pointsEarnedToday(user);
+
     return {
       user: req.user,
+      connectPlatformPoints: process.env.CONNECT_PLATFORM_POINTS,
       summedPoints: user.points,
+      haveUnconnectedPlatforms,
+      badgeUrl:
+        process.env.BASE_URL +
+        `/point-badge?point=${pointsEarnedToday}&total=${user.points}&theme=greenred_bottom&confetti=1`,
+      pointsEarnedToday,
       events: formattedEvents,
       platforms,
       environment: process.env.ENVIRONMENT,
-      gtag: process.env.GOOGLE_TAG
-    }
+      gtag: process.env.GOOGLE_TAG,
+      timezone: user.timezone,
+    };
   }
 
   @Get('landing')
-  @Render('landing')
+  @Render('ep-dashboard-login')
   async landing(@Req() req): Promise<any> {
-    req.app.locals.layout = 'main';
+    req.app.locals.layout = 'ep-main';
     return {
       environment: process.env.ENVIRONMENT,
-      gtag: process.env.GOOGLE_TAG
-    }    
+      gtag: process.env.GOOGLE_TAG,
+    };
   }
 
   @Get('/logout') 
@@ -251,7 +285,48 @@ export class AppController {
     return HttpStatus.OK;
   }
 
-  @Get('/callback/facebook/connect') 
+  @Get('/connect/phone')
+  @UseGuards(JwtAuthGuard)
+  @Redirect('/')
+  async phoneConnect(
+    @Query('number') phoneNumber: string,
+    @Req() req: Request,
+  ): Promise<any> {
+    let formattedPhone = phoneNumber.trim();
+    if (!formattedPhone.startsWith('+')) {
+      return {
+        error: 'Please provide the number in international format (+123456789)',
+      };
+    }
+    formattedPhone = '+' + formattedPhone.replace(/\D/g, '');
+
+    const user = req.user as User;
+    const existingUserId =
+      await this.userService.findOrCreateUserByEmailOrPlatform({
+        emails: [],
+        profileId: formattedPhone,
+        firstName: null,
+        platform: 'phone',
+      });
+
+    if (existingUserId) {
+      // There's an existing user with points received for phone
+      // We need to merge these profiles now
+      await this.userService.merge(user.userid, existingUserId);
+    }
+
+    await this.platformConnectionService.create({
+      userid: user.userid,
+      profile_id: phoneNumber,
+      platform: 'phone',
+      auth_token: undefined,
+      auth_expiration: undefined,
+      emails: undefined,
+    });
+    await this.pointEventService.rewardAccountConnected(user.userid, 'phone');
+  }
+
+  @Get('/callback/facebook/connect')
   @CallbackURL('/callback/facebook/connect')
   @UseGuards(FacebookAuthGuard)
   @UseGuards(JwtAuthGuard)
@@ -410,7 +485,7 @@ export class AppController {
             streak: streak,
             theme: theme,
             confetti: confetti,
-            random: Math.floor(Math.random() * 2147483646)
+            random_number: Math.floor(Math.random() * 2147483646)
           })
         );
         return;
@@ -461,6 +536,8 @@ export class AppController {
             profileId,
             platform,
             firstName: null,
+            timezone: externalPlatformData.timezone,
+            countryCode: externalPlatformData.countryCode,
           });
 
         await this.platformConnectionService.create({

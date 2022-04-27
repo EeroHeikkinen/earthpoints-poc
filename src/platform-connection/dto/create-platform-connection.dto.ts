@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class CreatePlatformConnectionDto {
   @ApiProperty({
@@ -10,11 +10,13 @@ export class CreatePlatformConnectionDto {
   @ApiProperty({
     required: true,
   })
+  @IsNotEmpty()
   profile_id: string;
 
   @ApiProperty({
     required: true,
   })
+  @IsNotEmpty()
   platform: string;
 
   @ApiProperty({

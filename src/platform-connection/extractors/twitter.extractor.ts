@@ -45,7 +45,7 @@ export class TwitterExtractor implements IExtractor {
                 'expansions': ['referenced_tweets.id', 'referenced_tweets.id.author_id', 'entities.mentions.username', 'in_reply_to_user_id', 'attachments.media_keys'],
                 'media.fields': ['preview_image_url', 'type', 'url'],
                 'max_results': 100,
-                'exclude': 'replies',
+                //'exclude': 'replies',
                 'start_time': from.toISOString(),
                 'end_time': until.toISOString()
             });

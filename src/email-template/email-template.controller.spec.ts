@@ -1,7 +1,9 @@
 import { MailerModule } from '@nestjs-modules/mailer';
+import { forwardRef } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CassandraModule } from 'src/cassandra/cassandra.module';
 import { PointEventModule } from 'src/point-event/point-event.module';
+import { UnsubscribeModule } from 'src/unsubscribe/unsubscribe.module';
 import { EmailContentTemplateRepository } from './email-content-template.repository';
 import { EmailTemplateController } from './email-template.controller';
 import { EmailTemplateModule } from './email-template.module';
@@ -30,6 +32,7 @@ describe('EmailTemplateController', () => {
         CassandraModule,
         MailerModule,
         EmailTemplateModule,
+        forwardRef(()=>UnsubscribeModule),
       ],
     }).compile();
 

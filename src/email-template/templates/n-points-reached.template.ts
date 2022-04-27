@@ -14,7 +14,11 @@ export class FiftyPointsEmailTemplate implements IEmailTemplate {
     getName() {
         return 'fifty-points';
     }
-    
+
+    getFullname() {
+        return 'Reached Fifty Points';
+    }
+
     async render(user:User, {hourInUserTimeZone, minutesInUserTimeZone, lastSent, contextTimestamp}:{hourInUserTimeZone: number, minutesInUserTimeZone: number, lastSent: Date, contextTimestamp: Date}) {
         if(user.points < 50 || lastSent) {
             return false;
@@ -25,7 +29,8 @@ export class FiftyPointsEmailTemplate implements IEmailTemplate {
             subject: 'You have reached 50 Earth Points!',
             context: {
                 numPointsReached: 50,
-                firstName: user.firstName
+                firstName: user.firstName,
+                unsubscribeUrl: `${process.env.BASE_URL}/unsubscribe/${user.userid}`,
             }
         }
     }

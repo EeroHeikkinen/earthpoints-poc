@@ -10,6 +10,7 @@ import {
   Query,
   Render,
   Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -67,6 +68,8 @@ export class UserController {
       profileId,
       platform,
       firstName: null,
+      timezone: body.timezone,
+      countryCode: body.countryCode
     });
 
     await this.platformConnectionService.create({
@@ -119,7 +122,11 @@ export class UserController {
   @Patch(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.userService.findByUserId(id);
+    if(!user)
+      throw new BadRequestException(user,"user not found!");
+    updateUserDto.userid = id;
     return this.userService.update(updateUserDto);
   }
 

@@ -7,7 +7,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserRepository implements OnModuleInit {
-
+    async remove(userid: string) {
+      await this.userMapper.remove({ userid });
+    }
 
     constructor(private cassandraService: CassandraService) { }
 
@@ -47,7 +49,7 @@ export class UserRepository implements OnModuleInit {
         return await this.userMapper.get(({userid: userid}));
     }
 
-    async getAll() {
-        return await this.userMapper.findAll({}, {fetchSize: 100000});
+    async getAll(docInfo: mapping.FindDocInfo = {}) {
+        return await this.userMapper.findAll(docInfo, {fetchSize: 100000});
     }
 }
