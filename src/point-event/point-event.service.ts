@@ -30,8 +30,12 @@ export class PointEventService {
     const existing = await this.pointEventRepository.findOne(
       createPointEventDto.hash,
     );
-    if (existing && existing.priority > createPointEventDto.priority) {
-      return false;
+    if (existing) {
+      if (existing && existing.priority > createPointEventDto.priority) {
+        return false;
+      }
+
+      return await this.update(createPointEventDto);
     }
 
     const retVal = await this.pointEventRepository.addPointEvent(
