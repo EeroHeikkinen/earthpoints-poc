@@ -19,10 +19,10 @@ import { CronModule } from './cron/cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
+import { FilterModule } from './filter/filter.module';
 
 @Module({
   imports: [
-    CacheModule.register(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'static'),
     }),
@@ -45,7 +45,8 @@ import { CanvasModule } from './canvas/canvas.module';
     ScheduleModule.forRoot(),
     CronModule,
     EmailTemplateModule,
-    CanvasModule
+    CanvasModule,
+    FilterModule
   ], 
   controllers: [AppController],
   providers: [AppService],
