@@ -7,6 +7,7 @@ import { PlatformConnection } from 'src/platform-connection/entities/platform-co
 
 import * as dotenv from "dotenv";
 import { response } from 'express';
+import { User } from 'src/user/entities/user.entity';
 dotenv.config();
 
 @Injectable()
