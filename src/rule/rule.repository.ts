@@ -28,6 +28,13 @@ export class RuleRepository implements OnModuleInit {
     await this.ruleMapper.update(updateRuleDto);
   }
 
+  async deleteRule(id: string) {
+    await this.ruleMapper.remove({ id });
+  }
+
+  async createRule(createRuleDto) {
+    await this.ruleMapper.insert(createRuleDto);
+  }
   async getAll() {
     return (await this.ruleMapper.findAll()).toArray();
   }
