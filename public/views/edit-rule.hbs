@@ -54,12 +54,25 @@
               <input id="rule-priority" name="priority" class="form-control input-lg" value="{{this.rule.options.priority}}" />
               </div>
             </div>
+            <h4>Enabled</h4>
+
+            <div class="form-group row">
+              <div class="col-xs-4">
+                <label for="rule-enabled">Is the rule active?</label>
+                <input id="rule-enabled" value="true" name="enabled" type="checkbox" class="form-control input-lg" {{#if this.rule.enabled}}checked{{/if}} />
+              </div>
+            </div>
+
             <div class="form-group">
               <a id="submit" href="#" class="btn btn-primary">Save</a>
               <a href="{{baseUrl}}/rule" class="btn btn-primary">Back</a>
             </div>
+            <div class="form-group">
+              {{#unless rule.new}}<a id="submit" href="{{baseUrl}}/rule/{{this.rule.id}}/delete" class="btn btn-danger">Delete</a>{{/unless}}
+            </div>
           </div>
         </div>
+        
         <div class="w-100"></div>
       </div>
   </div>

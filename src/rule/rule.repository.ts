@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { mapping } from 'cassandra-driver';
-import { Rule } from './rule.model';
+import { Rule } from './entities/rule.model';
 import { CassandraService } from 'src/cassandra/cassandra.service';
 
 @Injectable()
@@ -12,8 +12,8 @@ export class RuleRepository implements OnModuleInit {
   onModuleInit() {
     const mappingOptions: mapping.MappingOptions = {
       models: {
-        Rule: {
-          tables: ['rule'],
+        RuleInstance: {
+          tables: ['rule_instance'],
           mappings: new mapping.UnderscoreCqlToCamelCaseMappings(),
         },
       },
@@ -21,7 +21,11 @@ export class RuleRepository implements OnModuleInit {
 
     this.ruleMapper = this.cassandraService
       .createMapper(mappingOptions)
-      .forModel('Rule');
+      .forModel('RuleInstance');
+  }
+
+  async updateRule(updateRuleDto) {
+    await this.ruleMapper.update(updateRuleDto);
   }
 
   async getAll() {
