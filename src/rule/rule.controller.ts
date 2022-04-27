@@ -65,15 +65,16 @@ export class RuleController {
     }
 
     if (id == 'new') {
-      sanitizedUpdateRuleDto.id = types.Uuid.random().toString();
+      id = sanitizedUpdateRuleDto.id = types.Uuid.random().toString();
       await this.ruleService.createRule(
         sanitizedUpdateRuleDto as CreateRuleDto,
       );
-      const redirectUrl = '/rule/' + sanitizedUpdateRuleDto.id + '/edit';
-      return response.redirect(303, redirectUrl);
+      //const redirectUrl = '/rule/' + sanitizedUpdateRuleDto.id + '/edit';
+      //return response.redirect(303, redirectUrl);
+    } else {
+      await this.ruleService.updateRule(sanitizedUpdateRuleDto);
     }
 
-    await this.ruleService.updateRule(sanitizedUpdateRuleDto);
     return await this.serveEditRulePage(request, id);
   }
 

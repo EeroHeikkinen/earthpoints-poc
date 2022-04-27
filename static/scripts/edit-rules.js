@@ -42,6 +42,9 @@ $(function() {
         if ($.isArray(rules) && rules.length == 1) {
             rules = rules[0];
         }
+        if (!rules.rules) {
+            rules = { rules: [rules] };
+        }
 
         $(this).queryBuilder({
             plugins: ['bt-tooltip-errors'],

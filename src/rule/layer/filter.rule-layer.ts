@@ -11,11 +11,17 @@ export class FilterLayer extends BaseRuleLayer {
   public title = 'Apply filter';
   protected uuid = uuidv4();
 
-  protected filters: BaseFilter[];
+  public filters: BaseFilter[];
   protected rules: any[];
 
   constructor(options?: { filters: any; activeRules?: any }) {
     super(options);
+    if (options && options.filters) {
+      this.addFilters(options.filters);
+    }
+    if (options && options.activeRules) {
+      this.addActiveRules(options.activeRules);
+    }
   }
 
   render() {
@@ -31,10 +37,12 @@ export class FilterLayer extends BaseRuleLayer {
 
   addFilters(filters: BaseFilter[]) {
     this.filters = (this.filters || []).concat(filters);
+    return this;
   }
 
   addActiveRules(rules: any[]) {
     this.rules = (this.rules || []).concat(rules);
+    return this;
   }
 
   getFilter(id) {

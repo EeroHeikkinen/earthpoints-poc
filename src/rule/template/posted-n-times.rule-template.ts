@@ -39,10 +39,9 @@ export class PostedNTimesRuleTemplate extends ContentCreatedTemplate {
     ]);
 
     layers = layers.concat([
-      (await this.moduleRef.create(UserHistoryLayer)).setOptions({
-        id: 'query-history',
-        filters: layers[0].options.filters,
-        rules: [
+      (await this.moduleRef.create(UserHistoryLayer))
+        .addFilters((layers[0] as FilterLayer).filters)
+        .addActiveRules([
           {
             id: 'content_type',
             field: 'content_type',
@@ -52,8 +51,7 @@ export class PostedNTimesRuleTemplate extends ContentCreatedTemplate {
             readonly: true,
             value: ContentTypeFilter.options.Post,
           },
-        ],
-      }),
+        ]),
       new FilterLayer({
         filters: [new MatchCountFilter(), new StreakCountFilter()],
       }),
