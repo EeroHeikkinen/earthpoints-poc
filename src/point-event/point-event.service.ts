@@ -91,8 +91,10 @@ export class PointEventService {
     return `This action returns a #${id} pointEvent`;
   }
 
-  update(id: number, updatePointEventDto: UpdatePointEventDto) {
-    return `This action updates a #${id} pointEvent`;
+  async update(updatePointEventDto: UpdatePointEventDto) {
+    return await this.pointEventRepository.updatePointEvent(
+      updatePointEventDto,
+    );
   }
 
   remove(id: number) {
