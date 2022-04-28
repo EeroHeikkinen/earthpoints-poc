@@ -34,7 +34,8 @@ import fs from 'fs';
 
 import { ClientCredentialsResponseDto } from './auth/dto/client-credentials-response.dto';
 import { CreatePointEventResponseDto } from './point-event/dto/create-point-event-response.dto';
-import { CreateUserDto } from './user/dto/create-user.dto';
+import { UpdateUserUIDto } from './user/dto/update-user-ui.dto';
+import { UserEditBadRequestExceptionFilter } from './user/user-edit-exception.filter';
 
 @Controller()
 export class AppController {
@@ -615,13 +616,19 @@ export class AppController {
 
   @Post('user-edit')
   @UseFilters(UnauthorizedExceptionFilter)
+  @UseFilters(UserEditBadRequestExceptionFilter)
   @UseGuards(JwtAuthGuard)  
   async updateUser(
     @Req() req,
-    @Body() body: CreateUserDto,
+    @Body() body: UpdateUserUIDto,
     @Res() res: Response
   ): Promise<any> {
-    body.userid = req.user.userid;
+    const user = await this.userService.findByUserId(req.user.userid);
+    if(!user)
+      throw new BadRequestException(user,"user not found!");
+
+    throw new BadRequestException({},"testing");      
+
     return res.redirect('/user-edit');
   }  
 
