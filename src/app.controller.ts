@@ -36,6 +36,8 @@ import { ClientCredentialsResponseDto } from './auth/dto/client-credentials-resp
 import { CreatePointEventResponseDto } from './point-event/dto/create-point-event-response.dto';
 import { UpdateUserUIDto } from './user/dto/update-user-ui.dto';
 import { UserEditBadRequestExceptionFilter } from './user/user-edit-exception.filter';
+import { plainToClass, plainToClassFromExist } from 'class-transformer';
+import { UpdateUserDto } from './user/dto/update-user.dto';
 
 @Controller()
 export class AppController {
@@ -603,9 +605,13 @@ export class AppController {
   @UseFilters(UnauthorizedExceptionFilter)
   @Render('ep-dashboard-edit')
   @UseGuards(JwtAuthGuard)  
-  async userEdit(@Req() req): Promise<any> {
+  async userEdit(
+    @Req() req,
+    @Query('msg') msg: string
+  ): Promise<any> {
     req.app.locals.layout = 'ep-main';
     return {
+      msg: msg,
       timezones: Utils.getTimezones(),
       countryCodes: Utils.getCountryCodes(),
       user: req.user,
@@ -625,11 +631,18 @@ export class AppController {
   ): Promise<any> {
     const user = await this.userService.findByUserId(req.user.userid);
     if(!user)
-      throw new BadRequestException(user,"user not found!");
+      throw new BadRequestException("user not found!");
 
-    throw new BadRequestException({},"testing");      
+    const userWithEmail = await this.userService.findByEmail(body.email);
+    if(userWithEmail && (userWithEmail.userid.toString() != user.userid.toString()))
+      throw new BadRequestException("This E-Mail is being used by another user!");
+    
+    const userToUpdate = plainToClassFromExist(user,body);
+    userToUpdate.emails.push(body.email);
 
-    return res.redirect('/user-edit');
+    const result = await this.userService.update(userToUpdate);
+
+    return res.redirect('/');
   }  
 
 

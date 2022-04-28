@@ -6,8 +6,9 @@ export class UpdateUserUIDto {
   userid?: string;
 
   @ApiProperty({
-    required: false,
+    required: true,
   })
+  @IsNotEmpty()
   firstName?: string;
 
   @ApiProperty({

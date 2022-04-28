@@ -42,10 +42,10 @@
                             style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                             <tr>
                               <td style="padding:30px;Margin:0">
+{{msg}}
 
 <form method="POST">
-    <input name="name" placeholder="name" value="{{user.firstName}}"><br>
-    <input name="phone"  placeholder="phone"><br>
+    <input name="firstName" placeholder="First Name" value="{{user.firstName}}"><br>
     <input name="email"  placeholder="email" value="{{user.email}}"><br>
     <select name="timezone">
         {{#each timezones}}
@@ -60,6 +60,8 @@
     <br>
     <button type="submit" class="btn btn-primary" >Update</button>
 </form>
+
+<a href="/"> &lt; Back </a>
                               </td>
                             </tr>
                           </table>
