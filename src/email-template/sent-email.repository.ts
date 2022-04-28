@@ -46,4 +46,9 @@ export class SentEmailRepository implements OnModuleInit {
     async addSentEmail(createSentEmailDto: CreateSentEmailDto) {
         return (await this.mapper.insert(createSentEmailDto)).toArray();
     }
+
+    async findAll() {
+        return (await this.mapper.findAll({}, {fetchSize: 100000})).toArray();
+    }
+
 }
