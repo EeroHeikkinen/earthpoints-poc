@@ -9,7 +9,7 @@ metadata:
     service.beta.kubernetes.io/do-loadbalancer-name: "earthpoints-poc-service"
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
     service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "20f424dd-149c-494a-92f6-f71683af0b47"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "a36c6aa6-60d8-4d86-b2cc-69f2683eb3e6"
     service.beta.kubernetes.io/do-loadbalancer-disable-lets-encrypt-dns-records: "false"
     service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
 spec:
