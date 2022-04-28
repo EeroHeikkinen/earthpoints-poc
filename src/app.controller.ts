@@ -1,5 +1,5 @@
 require('dotenv').config()
-import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query, Body, Post, HttpCode } from '@nestjs/common';
+import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query, Body, Post, HttpCode, BadRequestException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -34,6 +34,7 @@ import fs from 'fs';
 
 import { ClientCredentialsResponseDto } from './auth/dto/client-credentials-response.dto';
 import { CreatePointEventResponseDto } from './point-event/dto/create-point-event-response.dto';
+import { CreateUserDto } from './user/dto/create-user.dto';
 
 @Controller()
 export class AppController {
@@ -596,5 +597,33 @@ export class AppController {
       msg: 'Error retrieving created point event',
     };
   }
+
+  @Get('user-edit')
+  @UseFilters(UnauthorizedExceptionFilter)
+  @Render('ep-dashboard-edit')
+  @UseGuards(JwtAuthGuard)  
+  async userEdit(@Req() req): Promise<any> {
+    req.app.locals.layout = 'ep-main';
+    return {
+      timezones: Utils.getTimezones(),
+      countryCodes: Utils.getCountryCodes(),
+      user: req.user,
+      environment: process.env.ENVIRONMENT,
+      gtag: process.env.GOOGLE_TAG,
+    };
+  }  
+
+  @Post('user-edit')
+  @UseFilters(UnauthorizedExceptionFilter)
+  @UseGuards(JwtAuthGuard)  
+  async updateUser(
+    @Req() req,
+    @Body() body: CreateUserDto,
+    @Res() res: Response
+  ): Promise<any> {
+    body.userid = req.user.userid;
+    return res.redirect('/user-edit');
+  }  
+
 
 }

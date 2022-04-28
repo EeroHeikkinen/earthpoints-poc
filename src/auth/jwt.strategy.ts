@@ -34,7 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return false;
     }
 
-    console.log('returning user ' + JSON.stringify(user));
+    //console.log('returning user ' + JSON.stringify(user));
     return user;
   }
 }

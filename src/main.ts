@@ -16,6 +16,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestApplicationOptions, ValidationPipe } from '@nestjs/common';
 
 import basicAuth from 'express-basic-auth';
+import { HandlebarHelpers } from './hb.helpers';
 
 dotenv.config();
 
@@ -30,7 +31,13 @@ async function bootstrap() {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
   const viewsPath = join(__dirname, '../public/views'); 
-  app.engine('.hbs', engine({ extname: '.hbs', defaultLayout: 'main' }));
+  app.engine('.hbs', engine(
+    { 
+      extname: '.hbs', 
+      defaultLayout: 'main',
+      helpers:  HandlebarHelpers
+    }
+  ));
   app.use(cookieParser());
   app.set('views', viewsPath);
   app.set('view engine', '.hbs'); 

@@ -97,6 +97,10 @@ export default class Utils {
         };
       }
 
+      static getTimezones() {
+        return moment.tz.names();
+      }
+
       static IsCountryCode(validationOptions?: ValidationOptions) {
         const defaultValidationOptions: ValidationOptions = {...validationOptions};
         if(!defaultValidationOptions.message)
@@ -114,6 +118,10 @@ export default class Utils {
             },
           });
         };
+      }
+
+      static getCountryCodes() {
+        return countries.getNames("en", {select: "official"});;
       }
 
 }
