@@ -5,6 +5,7 @@ import {
     UseGuards,
   } from '@nestjs/common';
 import { AnalyticsGuard } from 'src/auth/anlytics-auth.guard';
+import { SentEmailRepository } from 'src/email-template/sent-email.repository';
 import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
 import { PointEventService } from 'src/point-event/point-event.service';
 import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
@@ -18,7 +19,8 @@ import { AnalyticsService } from './analytics.service';
         private readonly userService: UserService,
         private readonly unsubscriptionService: UnsubscribeService,
         private readonly pointEventService: PointEventService,
-        private readonly platformConnectionService: PlatformConnectionService
+        private readonly platformConnectionService: PlatformConnectionService,
+        private readonly sentEmailRepository: SentEmailRepository
     ) {}
   
   
@@ -55,6 +57,14 @@ import { AnalyticsService } from './analytics.service';
       @Req() req,
     ){
         return await (await this.platformConnectionService.findAll({fields: ['userid','platform','head','tail']})).toArray();
+    }
+
+    @Get('sent-email')
+    @UseGuards(AnalyticsGuard)  
+    async sentEmail(
+      @Req() req,
+    ){
+        return await this.sentEmailRepository.findAll();
     }
 
 
