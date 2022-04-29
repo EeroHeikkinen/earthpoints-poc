@@ -611,7 +611,7 @@ export class AppController {
   ): Promise<any> {
     req.app.locals.layout = 'ep-main';
     return {
-      msg: msg,
+      messages: msg && msg.split(','),
       timezones: Utils.getTimezones(),
       countryCodes: Utils.getCountryCodes(),
       user: req.user,
