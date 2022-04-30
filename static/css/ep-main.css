@@ -363,7 +363,9 @@ a[x-apple-data-detectors] {
     height: 30px;
     color: rgb(153 232 36 / 87%);
     background: rgb(23 37 204 / 84%);
-    font-family: 'roboto'
+    font-family: 'roboto';
+    line-height: initial;
+    box-sizing: initial;    
 }
 
 #outlook a {

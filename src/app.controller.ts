@@ -226,6 +226,8 @@ export class AppController {
       environment: process.env.ENVIRONMENT,
       gtag: process.env.GOOGLE_TAG,
       timezone: user.timezone,
+      timezones: Utils.getTimezones(),
+      countryCodes: Utils.getCountryCodes(),
     };
   }
 
