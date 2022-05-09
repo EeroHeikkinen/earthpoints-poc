@@ -53,9 +53,9 @@ DB_POD_NAME_UAT=$(shell kubectl get pods -o=name -n=uat | grep cassandra- | sed 
 #	kubectl exec -it $(kubectl get pods -o=name | grep cassandra- | sed 's/^.\{4\}//') -c cassandra -- cqlsh -e "select * from earthpoints.user"
 
 
-#.PHONY: log-app
-#log-app:
-#	kubectl logs -f $(APP_POD_NAME) -c earthpoints-poc
+.PHONY: log-app
+log-app:
+	kubectl logs -f $(pod_name) -c earthpoints-poc --tail=10
 
 .PHONY: log-db
 log-db:
