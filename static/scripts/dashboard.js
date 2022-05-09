@@ -37,4 +37,41 @@ $(function() {
             timer = setTimeout(update, 500);
         }
     };
+
+    var profileEditModal = new bootstrap.Modal(document.getElementById('profileEdit'),{
+        keyboard: false
+      });
+    const hasConnectedEPBefore = jQuery("#profileEdit").attr("data-hasConnectedEPBefore");
+    if(!hasConnectedEPBefore || hasConnectedEPBefore == "false"){
+        profileEditModal.show();
+    }
+
+    jQuery("#profileEditFooterLink").click(()=>{
+        profileEditModal.show();
+    });
+
+    jQuery("#profileEditSave").on('click',function(event) {
+        event.preventDefault(); // Prevent the form from submitting via the browser
+        var form = $(this).closest("form");
+        $.ajax({
+          type: form.attr('method'),
+          url: form.attr('action'),
+          data: form.serialize()
+        }).done(function(data) {
+          console.log(data);
+          $('#profileEditMessages').text('');
+          if(data.error){
+            jQuery.each(data.error,(i,e)=>{
+                $('#profileEditMessages').append('<li>'+e+'</li>');
+            });
+          }
+          else {
+            profileEditModal.hide();
+          }
+        }).fail(function(data) {
+            console.log("fail");
+            console.log(data);
+          // Optionally alert the user of an error here...
+        });
+      });
 });

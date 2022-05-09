@@ -199,11 +199,15 @@ export class AppController {
     ];
     /* Hide already connected */
     
+    let hasConnectedEPBefore = false;
     for (let connection of user.connections) {
       for (let platform of platforms) {
         if (platform.name == connection.platform) {
           platform.show = false;
         }
+      }
+      if(connection.platform=='earthpoints'){
+        hasConnectedEPBefore = true;
       }
     }
     const haveUnconnectedPlatforms = Object.values(platforms).some(
@@ -226,8 +230,8 @@ export class AppController {
       environment: process.env.ENVIRONMENT,
       gtag: process.env.GOOGLE_TAG,
       timezone: user.timezone,
-      timezones: Utils.getTimezones(),
       countryCodes: Utils.getCountryCodes(),
+      hasConnectedEPBefore: hasConnectedEPBefore,
     };
   }
 
@@ -603,25 +607,6 @@ export class AppController {
     };
   }
 
-  @Get('user-edit')
-  @UseFilters(UnauthorizedExceptionFilter)
-  @Render('ep-dashboard-edit')
-  @UseGuards(JwtAuthGuard)  
-  async userEdit(
-    @Req() req,
-    @Query('msg') msg: string
-  ): Promise<any> {
-    req.app.locals.layout = 'ep-main';
-    return {
-      messages: msg && msg.split(','),
-      timezones: Utils.getTimezones(),
-      countryCodes: Utils.getCountryCodes(),
-      user: req.user,
-      environment: process.env.ENVIRONMENT,
-      gtag: process.env.GOOGLE_TAG,
-    };
-  }  
-
   @Post('user-edit')
   @UseFilters(UnauthorizedExceptionFilter)
   @UseFilters(UserEditBadRequestExceptionFilter)
@@ -629,7 +614,7 @@ export class AppController {
   async updateUser(
     @Req() req,
     @Body() body: UpdateUserUIDto,
-    @Res() res: Response
+    @Res({ passthrough: true }) res: Response
   ): Promise<any> {
     const user = await this.userService.findByUserId(req.user.userid);
     if(!user)
@@ -638,13 +623,22 @@ export class AppController {
     const userWithEmail = await this.userService.findByEmail(body.email);
     if(userWithEmail && (userWithEmail.userid.toString() != user.userid.toString()))
       throw new BadRequestException("This E-Mail is being used by another user!");
-    
+
     const userToUpdate = plainToClassFromExist(user,body);
     userToUpdate.emails.push(body.email);
 
     const result = await this.userService.update(userToUpdate);
 
-    return res.redirect('/');
+    await this.platformConnectionService.create({
+      userid: userToUpdate.userid,
+      profile_id: userToUpdate.userid.toString(),
+      platform: 'earthpoints',
+      auth_token: null,
+      auth_expiration: null,
+      emails: userToUpdate.emails,
+    });    
+
+    return {result: "done"};
   }  
 
 

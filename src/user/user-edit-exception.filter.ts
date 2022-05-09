@@ -17,6 +17,7 @@ export class UserEditBadRequestExceptionFilter implements ExceptionFilter {
       }
     }
 
-    response.redirect(`/user-edit?msg=${msg}`);
+    return response.send({error: msg.split(',')});
+
   }
 }

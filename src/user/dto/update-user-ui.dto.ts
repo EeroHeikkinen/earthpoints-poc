@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 import Utils from 'src/utils';
 
 export class UpdateUserUIDto {
@@ -15,14 +15,8 @@ export class UpdateUserUIDto {
     required: true,
   })
   @IsNotEmpty()
+  @IsEmail()
   email?: string;
-
-  @ApiProperty({
-    required: true,
-  })
-  @IsNotEmpty()
-  @Utils.IsTimezone()
-  timezone?: string;
 
   @ApiProperty({
     required: true,
