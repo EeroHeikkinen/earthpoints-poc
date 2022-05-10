@@ -16,6 +16,12 @@ export class CreateUserDto {
   firstName?: string;
 
   @ApiProperty({
+    required: false,
+  })
+  @Expose()
+  lastName?: string;
+
+  @ApiProperty({
     required: true,
   })
   @IsNotEmpty()

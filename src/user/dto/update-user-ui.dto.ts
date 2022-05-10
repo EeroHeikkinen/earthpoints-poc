@@ -15,6 +15,12 @@ export class UpdateUserUIDto {
     required: true,
   })
   @IsNotEmpty()
+  lastName?: string;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsNotEmpty()
   @IsEmail()
   email?: string;
 

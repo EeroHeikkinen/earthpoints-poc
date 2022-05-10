@@ -67,6 +67,7 @@ $(function() {
           }
           else {
             profileEditModal.hide();
+            location.reload();
           }
         }).fail(function(data) {
             console.log("fail");

@@ -10,6 +10,9 @@ export class User {
   firstName?: string;
 
   @ApiProperty()
+  lastName?: string;
+
+  @ApiProperty()
   email?: string;
 
   @ApiProperty()
