@@ -42,6 +42,7 @@ $(function() {
     if(profileEditElm)
     {
         var profileEditModal = new bootstrap.Modal(profileEditElm,{
+            backdrop: 'static',
             keyboard: false
           });
         const hasConnectedEPBefore = jQuery("#profileEdit").attr("data-hasConnectedEPBefore");
@@ -129,7 +130,7 @@ $(function() {
         }
     });
 
-    jQuery("input,select").on("blur keyup click change load",function(event){
+    jQuery("input,select,form").on("blur keyup click change load",function(event){
         var saveButton = $('#profileEditSave');
         $('#profileEditForm').valid() ? saveButton.removeAttr("disabled") : saveButton.attr("disabled","disabled");
     });
