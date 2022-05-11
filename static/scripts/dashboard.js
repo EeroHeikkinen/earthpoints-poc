@@ -56,6 +56,8 @@ $(function() {
 
     jQuery("#profileEditSave").on('click',function(event) {
         event.preventDefault(); // Prevent the form from submitting via the browser
+        var thisButton = $(this);
+        thisButton.attr("disabled","disabled");
         var form = $(this).closest("form");
         $.ajax({
           type: form.attr('method'),
@@ -71,6 +73,7 @@ $(function() {
           }
           else {
             profileEditModal.hide();
+            thisButton.removeAttr("disabled");
             location.reload();
           }
         }).fail(function(data) {
@@ -79,10 +82,56 @@ $(function() {
           // Optionally alert the user of an error here...
         });
       });
-    
+
     const phoneShowHideFunc = function(){
         $('#inputPhoneGroup')[ ($("option[value='IN']").is(":checked"))? "show" : "hide" ]();  
     };
     phoneShowHideFunc();
     jQuery('#inputCountryCode').change(phoneShowHideFunc);
+
+    jQuery("#profileEditForm").validate({
+        debug: true,
+        rules: {
+            firstName: {
+                required: true
+            },
+            lastName: {
+                required: true
+            },
+            email: {
+                required: true,
+                email: true,
+            },
+            countryCode: {
+                required: true,
+            },
+            phone: {
+                required: "option[value='IN']:checked",
+            },
+        },
+        messages: {
+            firstName: {
+                required: "First name is required"
+            },
+            lastName: {
+                required: "Last name is required"
+            },
+            email: {
+                required: "E-mail is required",
+                email: "Please enter a valid e-mail address",
+            },
+            countryCode: {
+                required: "Select a country",
+            },
+            phone: {
+                required: "Phone is required",
+            }
+        }
+    });
+
+    jQuery("input,select").on("blur keyup click change load",function(event){
+        var saveButton = $('#profileEditSave');
+        $('#profileEditForm').valid() ? saveButton.removeAttr("disabled") : saveButton.attr("disabled","disabled");
+    });
+
 });

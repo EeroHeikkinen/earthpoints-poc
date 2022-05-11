@@ -734,6 +734,15 @@ a[x-apple-data-detectors] {
     padding: 10px 20px 10px 20px!important;
 }
 
+.form-group.required .control-label:after { 
+    content:" * ";
+    color:red;
+}
+
+.form-group label.error {
+    color:red;
+}
+
 @media only screen and (max-width:600px) {
     p,
     ul li,
