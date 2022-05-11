@@ -200,6 +200,7 @@ export class AppController {
     /* Hide already connected */
     
     let hasConnectedEPBefore = false;
+    let userPhone = '';
     for (let connection of user.connections) {
       for (let platform of platforms) {
         if (platform.name == connection.platform) {
@@ -208,6 +209,9 @@ export class AppController {
       }
       if(connection.platform=='earthpoints'){
         hasConnectedEPBefore = true;
+      }
+      if(connection.platform=='phone'){
+        userPhone = connection.profileId;
       }
     }
     const haveUnconnectedPlatforms = Object.values(platforms).some(
@@ -232,6 +236,7 @@ export class AppController {
       timezone: user.timezone,
       countryCodes: Utils.getCountryCodes(),
       hasConnectedEPBefore: hasConnectedEPBefore,
+      phone: userPhone,
     };
   }
 
@@ -616,6 +621,11 @@ export class AppController {
     @Body() body: UpdateUserUIDto,
     @Res({ passthrough: true }) res: Response
   ): Promise<any> {
+    if(body.countryCode == 'IN'){
+      if(!/^\+91\d{8,10}$/.test(body.phone))
+        throw new BadRequestException("Invalid phone format. (+91xxxxxxxxxx)");
+    }
+
     const user = await this.userService.findByUserId(req.user.userid);
     if(!user)
       throw new BadRequestException("user not found!");
@@ -636,7 +646,18 @@ export class AppController {
       auth_token: null,
       auth_expiration: null,
       emails: userToUpdate.emails,
-    });    
+    });   
+    
+    if(body.countryCode == 'IN'){
+      await this.platformConnectionService.create({
+        userid: userToUpdate.userid,
+        profile_id: body.phone,
+        platform: 'phone',
+        auth_token: undefined,
+        auth_expiration: undefined,
+        emails: undefined,
+      });  
+    }
 
     return {result: "done"};
   }  

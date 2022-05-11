@@ -38,12 +38,16 @@ $(function() {
         }
     };
 
-    var profileEditModal = new bootstrap.Modal(document.getElementById('profileEdit'),{
-        keyboard: false
-      });
-    const hasConnectedEPBefore = jQuery("#profileEdit").attr("data-hasConnectedEPBefore");
-    if(!hasConnectedEPBefore || hasConnectedEPBefore == "false"){
-        profileEditModal.show();
+    var profileEditElm = document.getElementById('profileEdit');
+    if(profileEditElm)
+    {
+        var profileEditModal = new bootstrap.Modal(profileEditElm,{
+            keyboard: false
+          });
+        const hasConnectedEPBefore = jQuery("#profileEdit").attr("data-hasConnectedEPBefore");
+        if(!hasConnectedEPBefore || hasConnectedEPBefore == "false"){
+            profileEditModal.show();
+        }    
     }
 
     jQuery("#profileEditFooterLink").click(()=>{
@@ -75,4 +79,10 @@ $(function() {
           // Optionally alert the user of an error here...
         });
       });
+    
+    const phoneShowHideFunc = function(){
+        $('#inputPhoneGroup')[ ($("option[value='IN']").is(":checked"))? "show" : "hide" ]();  
+    };
+    phoneShowHideFunc();
+    jQuery('#inputCountryCode').change(phoneShowHideFunc);
 });

@@ -30,4 +30,9 @@ export class UpdateUserUIDto {
   @IsNotEmpty()
   @Utils.IsCountryCode()
   countryCode?: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  phone?: string;
 }
