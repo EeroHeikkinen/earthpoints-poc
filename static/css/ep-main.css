@@ -363,7 +363,9 @@ a[x-apple-data-detectors] {
     height: 30px;
     color: rgb(153 232 36 / 87%);
     background: rgb(23 37 204 / 84%);
-    font-family: 'roboto'
+    font-family: 'roboto';
+    line-height: initial;
+    box-sizing: initial;    
 }
 
 #outlook a {
@@ -730,6 +732,15 @@ a[x-apple-data-detectors] {
 [data-ogsb] .es-button {
     border-width: 0!important;
     padding: 10px 20px 10px 20px!important;
+}
+
+.form-group.required .control-label:after { 
+    content:" * ";
+    color:red;
+}
+
+.form-group label.error {
+    color:red;
 }
 
 @media only screen and (max-width:600px) {

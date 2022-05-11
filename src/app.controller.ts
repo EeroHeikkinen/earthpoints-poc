@@ -1,5 +1,5 @@
 require('dotenv').config()
-import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query, Body, Post, HttpCode } from '@nestjs/common';
+import { MessageEvent, Controller, Get, UseGuards, HttpStatus, Req, Render, Res, Redirect, UseFilters, Sse, Param, Query, Body, Post, HttpCode, BadRequestException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedExceptionFilter } from './auth/unauthorized-exception.filter';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -34,6 +34,10 @@ import fs from 'fs';
 
 import { ClientCredentialsResponseDto } from './auth/dto/client-credentials-response.dto';
 import { CreatePointEventResponseDto } from './point-event/dto/create-point-event-response.dto';
+import { UpdateUserUIDto } from './user/dto/update-user-ui.dto';
+import { UserEditBadRequestExceptionFilter } from './user/user-edit-exception.filter';
+import { plainToClass, plainToClassFromExist } from 'class-transformer';
+import { UpdateUserDto } from './user/dto/update-user.dto';
 
 @Controller()
 export class AppController {
@@ -195,11 +199,19 @@ export class AppController {
     ];
     /* Hide already connected */
     
+    let hasConnectedEPBefore = false;
+    let userPhone = '';
     for (let connection of user.connections) {
       for (let platform of platforms) {
         if (platform.name == connection.platform) {
           platform.show = false;
         }
+      }
+      if(connection.platform=='earthpoints'){
+        hasConnectedEPBefore = true;
+      }
+      if(connection.platform=='phone'){
+        userPhone = connection.profileId;
       }
     }
     const haveUnconnectedPlatforms = Object.values(platforms).some(
@@ -222,6 +234,9 @@ export class AppController {
       environment: process.env.ENVIRONMENT,
       gtag: process.env.GOOGLE_TAG,
       timezone: user.timezone,
+      countryCodes: Utils.getCountryCodes(),
+      hasConnectedEPBefore: hasConnectedEPBefore,
+      phone: userPhone,
     };
   }
 
@@ -596,5 +611,56 @@ export class AppController {
       msg: 'Error retrieving created point event',
     };
   }
+
+  @Post('user-edit')
+  @UseFilters(UnauthorizedExceptionFilter)
+  @UseFilters(UserEditBadRequestExceptionFilter)
+  @UseGuards(JwtAuthGuard)  
+  async updateUser(
+    @Req() req,
+    @Body() body: UpdateUserUIDto,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<any> {
+    if(body.countryCode == 'IN'){
+      if(!/^\+91\d{8,10}$/.test(body.phone))
+        throw new BadRequestException("Invalid phone format. (+91xxxxxxxxxx)");
+    }
+
+    const user = await this.userService.findByUserId(req.user.userid);
+    if(!user)
+      throw new BadRequestException("user not found!");
+
+    const userWithEmail = await this.userService.findByEmail(body.email);
+    if(userWithEmail && (userWithEmail.userid.toString() != user.userid.toString()))
+      throw new BadRequestException("This E-Mail is being used by another user!");
+
+    const userToUpdate = plainToClassFromExist(user,body);
+    userToUpdate.emails.push(body.email);
+
+    const result = await this.userService.update(userToUpdate);
+
+    await this.platformConnectionService.create({
+      userid: userToUpdate.userid,
+      profile_id: userToUpdate.userid.toString(),
+      platform: 'earthpoints',
+      auth_token: null,
+      auth_expiration: null,
+      emails: userToUpdate.emails,
+    });   
+    
+    if(body.countryCode == 'IN'){
+      await this.platformConnectionService.create({
+        userid: userToUpdate.userid,
+        profile_id: body.phone,
+        platform: 'phone',
+        auth_token: undefined,
+        auth_expiration: undefined,
+        emails: undefined,
+      });  
+    }
+
+    return {result: "done"};
+  }  
+
 
 }

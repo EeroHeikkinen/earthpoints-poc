@@ -9,6 +9,7 @@ CREATE KEYSPACE IF NOT EXISTS earthpoints
 CREATE TABLE earthpoints.user (
    userid uuid PRIMARY KEY,
    first_name varchar,
+   last_name varchar,
    email varchar, /* will be deprecated */
    emails set<varchar>,
    timezone varchar,
