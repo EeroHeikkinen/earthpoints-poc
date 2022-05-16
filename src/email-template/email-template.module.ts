@@ -4,7 +4,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { EmailTemplateService } from './email-template.service';
 import { SentEmailRepository } from './sent-email.repository';
 import { DailyMessageEmailTemplate } from './templates/daily-message.template';
-import { FiftyPointsEmailTemplate } from './templates/fifty-points-message.template';
+import { FiftyPointsEmailTemplate } from './templates/n-points-reached.template';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { CassandraModule } from 'src/cassandra/cassandra.module';

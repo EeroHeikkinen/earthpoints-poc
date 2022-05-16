@@ -26,16 +26,27 @@ export class PointEventService {
       createPointEventDto.hash = crypto.createHash('sha256').update(createPointEventDto.hashString).digest('base64');
       delete createPointEventDto.hashString;
     }
-    const retVal = await this.pointEventRepository.addPointEvent(createPointEventDto)
+
+    const existing = await this.pointEventRepository.findOne(
+      createPointEventDto.hash,
+    );
+    if (existing) {
+      if (existing && existing.priority > createPointEventDto.priority) {
+        return false;
+      }
+
+      return await this.update(createPointEventDto);
+    }
+
+    const retVal = await this.pointEventRepository.addPointEvent(
+      createPointEventDto,
+    );
     this.sseQueue.add(
       'updateSse',
       { userid: createPointEventDto.userid },
       { removeOnComplete: true },
     );
-    /*
-    this.subject.next({
-      userid: createPointEventDto.userid, retVal
-    });//*/
+
     return retVal;
   }
 
@@ -65,7 +76,7 @@ export class PointEventService {
       platform: platform,
       points: parseInt(process.env.CONNECT_PLATFORM_POINTS),
       timestamp: new Date(),
-      metadata: new Map<string, string>(),
+      metadata: {},
       message: '',
       isBurn: false,
     })

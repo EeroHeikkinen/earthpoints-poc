@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { mapping } from 'cassandra-driver';
 import process from 'process';
 import { IExtractor } from 'src/interfaces/extractor.interface';
+import { User } from 'src/user/entities/user.entity';
 import { CreatePlatformConnectionDto } from './dto/create-platform-connection.dto';
 import { UpdatePlatformConnectionDto } from './dto/update-platform-connection.dto';
 import { FacebookExtractor } from './extractors/facebook.extractor';
@@ -58,9 +59,9 @@ export class PlatformConnectionService {
     return `This action removes a #${id} socialProfile`;
   }
 
-  async syncAllForUser(userid: string) {
-    const credentials = await this.findByUserId(userid);
-    for(const credential of credentials) {
+  async syncAllForUser(user: User) {
+    const credentials = await this.findByUserId(user.userid);
+    for (const credential of credentials) {
       try {
         const extractor = this.extractors[credential.platform] as IExtractor;
         if(!extractor) {
@@ -69,45 +70,59 @@ export class PlatformConnectionService {
 
         const oldestToProcess = new Date(process.env.OLDEST_TO_RETRIEVE);
 
-        if(!credential.head) {
-            // First retrieve. try to get all items if possible
-            
-            const latestToProcess = new Date();
-            const {processedFrom, processedUntil} = await extractor.process(credential, {from: oldestToProcess, until: latestToProcess});
-            
-            credential.tail = processedFrom;
-            credential.head = processedUntil;
-            
-            this.update(credential);
+        if (!credential.head) {
+          // First retrieve. try to get all items if possible
+
+          const latestToProcess = new Date();
+          const { processedFrom, processedUntil } = await extractor.process(
+            credential,
+            { from: oldestToProcess, until: latestToProcess },
+            user,
+          );
+
+          credential.tail = processedFrom;
+          credential.head = processedUntil;
+
+          this.update(credential);
         } else {
-            // process any since last retrieve
-            const latestToProcess = new Date();
-            const {processedFrom, processedUntil} = await extractor.process(credential, {from: credential.head, until: latestToProcess});
+          // process any since last retrieve
+          const latestToProcess = new Date();
+          const { processedFrom, processedUntil } = await extractor.process(
+            credential,
+            { from: credential.head, until: latestToProcess },
+            user,
+          );
 
-            if(processedFrom < credential.head) {
-              // We couldn't process all new items
-              // We are forced to move tail and redownload the rest
-              credential.tail = processedFrom;
-            } else {
-              // Processed all new items
-              // Save progress
-              credential.head = processedUntil;
-            }
+          if (processedFrom < credential.head) {
+            // We couldn't process all new items
+            // We are forced to move tail and redownload the rest
+            credential.tail = processedFrom;
+          } else {
+            // Processed all new items
+            // Save progress
+            credential.head = processedUntil;
+          }
 
+          this.update(credential);
+
+          if (oldestToProcess < credential.tail) {
+            // We still didn't fetch all old history
+            // So let's download more items
+            const { processedFrom } = await extractor.process(
+              credential,
+              { from: oldestToProcess, until: credential.tail },
+              user,
+            );
+
+            // Save progress
+            credential.tail = processedFrom;
             this.update(credential);
-            
-            if(oldestToProcess < credential.tail) {
-              // We still didn't fetch all old history
-              // So let's download more items
-              const {processedFrom, processedUntil} = await extractor.process(credential, {from: oldestToProcess, until: credential.tail});
-
-              // Save progress
-              credential.tail = processedFrom;
-              this.update(credential);
-            }
+          }
         }
       } catch (err) {
-        this.logger.debug('Got error processing platform ' + credential.platform + ': ' + err);
+        this.logger.debug(
+          'Got error processing platform ' + credential.platform + ': ' + err,
+        );
       }
     }
   }

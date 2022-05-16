@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Query,
+  Render,
+  Req,
   BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -23,7 +25,7 @@ import { platform } from 'os';
 import { CreatePlatformConnectionDto } from 'src/platform-connection/dto/create-platform-connection.dto';
 import { UserFromExternalPlatformDataDto } from './dto/from-external-platform-data.dto';
 import { PlatformConnectionService } from 'src/platform-connection/platform-connection.service';
-
+import { Request } from 'express';
 @Controller('user')
 export class UserController {
   constructor(
@@ -84,6 +86,17 @@ export class UserController {
     return user;
   }
 
+  @Get('debug-user')
+  @Render('debug-user')
+  async debugUserRules(
+    @Req() request: Request,
+    @Query('email') email: string,
+    @Query('userid') userid: string,
+    @Query('recalculate') recalculate: boolean,
+  ) {
+    return await this.serveDebugUserPage(request, email, userid, recalculate);
+  }
+
   @Get(':id')
   @UseGuards(AdminOnlyGuard)
   @UseGuards(JwtAuthGuard)
@@ -122,5 +135,50 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  async serveDebugUserPage(
+    request: Request,
+    email: string,
+    userid: string,
+    recalculate: boolean,
+  ) {
+    request.app.locals.layout = 'admin';
+
+    let user;
+    if (userid) {
+      user = await this.userService.findByUserId(userid);
+    } else if (email) {
+      user = await this.userService.findByEmail(email);
+    }
+
+    if (recalculate) {
+      // reset the "tail" (oldest downloaded information) of all the user's platforms
+      // so all data will be redownloaded
+      for (const platformConnection of user.connections) {
+        await this.platformConnectionService.update({
+          ...platformConnection,
+          tail: null,
+          head: null,
+        });
+      }
+      await this.userService.syncPoints(userid);
+      user = await this.userService.findByUserId(userid);
+    }
+
+    return {
+      user,
+      email,
+      customCss: ['bootstrap.3.3.1.min.css'],
+      customScripts: [
+        'jquery.min.js?ver=1.1.0',
+        'popper.min.js?ver=1.1.0',
+        'bootstrap.min.js?ver=1.1.0',
+        'wow.min.js?ver=1.1.0',
+        'moment.min.js',
+        'query-builder.standalone.js',
+        'debug-user.js',
+      ],
+    };
   }
 }

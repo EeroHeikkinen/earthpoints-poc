@@ -30,7 +30,19 @@ async function bootstrap() {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
   const viewsPath = join(__dirname, '../public/views'); 
-  app.engine('.hbs', engine({ extname: '.hbs', defaultLayout: 'main' }));
+  app.engine(
+    '.hbs',
+    engine({
+      extname: '.hbs',
+      defaultLayout: 'main',
+      helpers: {
+        baseUrl: () => process.env.BASE_URL,
+        eq: (a, b) => a == b,
+        renderLayer: (layer) => layer.render(),
+      },
+    }),
+  );
+
   app.use(cookieParser());
   app.set('views', viewsPath);
   app.set('view engine', '.hbs'); 

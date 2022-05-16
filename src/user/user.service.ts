@@ -226,6 +226,15 @@ export class UserService {
     return users;
   }
 
+  async calculateStreakData() {
+    /*
+    const pointsEarnedToday = user.events
+            .filter((event)=>{ return event.timestamp > oneDayAgo })
+            .map((event) => event.points)
+            .reduce((previous, current) => previous + current, 0)
+    */
+  }
+
   async update(updateUserDto: UpdateUserDto) {
     return await this.userRepository.update(updateUserDto);
   }
@@ -266,8 +275,9 @@ export class UserService {
     await this.userRepository.remove(mergedUserId);
   }
 
-  async syncPoints(userid) {
-    await this.platformConnectionService.syncAllForUser(userid);
+  async syncPoints(userid: string) {
+    const user = await this.findByUserId(userid);
+    await this.platformConnectionService.syncAllForUser(user);
   }
 
   async triggerScheduledEmails(userid: string, currentCallDate: Date) {

@@ -14,6 +14,9 @@ export class PointEvent {
   points: number;
 
   @ApiProperty()
+  priority?: number;
+
+  @ApiProperty()
   message: string;
 
   @ApiProperty()
@@ -29,5 +32,5 @@ export class PointEvent {
   timestamp: Date;
 
   @ApiProperty()
-  metadata: Map<string, string>;
+  metadata: { [key: string]: string };
 }

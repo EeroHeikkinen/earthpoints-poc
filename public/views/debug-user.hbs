@@ -1,0 +1,106 @@
+<form id="debug-user-form" action="{{baseUrl}}/user/debug-user" method="GET">
+  <div id="content">
+    <section class="mt-5 rules" id="edit-rules">
+      <div class="container">
+        <div class="row wow zoomIn"></div>
+        <div class="col-lg-8 col-md-8 mb-5">
+          <div class="wow fadeIn py-5">
+            <h2 class="h1 pt-5 pb-3">Debug user</h2>
+          </div>
+          <div class="form-group">
+            <h4><label for="email">Enter the email of user to debug</label></h4>
+            <input id="email" name="email" class="form-control input-md" value="{{this.email}}"/>
+          </div>
+          <div class="form-group">
+            <!--<h4>Reward</h4>
+
+            <div class="form-group row">
+              <div class="col-xs-2">
+                <label for="rule-points">Points</label>
+                <input id="rule-points" name="points" class="form-control input-lg" value="" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="rule-name">Message</label>
+              <input id="rule-message" name="message" class="form-control input-lg" value="" />
+            </div>
+
+            <div class="form-group row">
+              <div class="col-xs-2">
+              <label for="rule-name">Priority</label>
+              <input id="rule-priority" name="priority" class="form-control input-lg" value="" />
+              </div>
+            </div>-->
+            <div class="form-group">
+              <button type="submit" id="submit" class="btn btn-primary">Debug</button>
+            </div>
+          </div>
+
+          {{#if this.user}}
+            Found user with id {{this.user.userid}}
+            
+            <!--<div class="form-group row mb-3">
+              <div class="col-xs-6">
+              <h4><label for="rule-template">Template</label></h4>
+              <select class="form-control input-lg" name="template" id="rule-template">
+              </select>
+              <i></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <h4><label for="rule-name">Conditions</label></h4>
+            </div>-->
+            <h4 class="h4 pt-5 pb-3">Total points</h4>
+            {{this.user.points}}
+            <h4 class="h4 pt-5 pb-3">Events</h4>
+            {{#each this.user.events}}
+              <div class="form-group">
+                <ul>
+                <li><b>User {{this.verb}} {{this.platform}} - {{this.points}} points</b></li>
+                </ul>
+              </div>
+            {{/each}}
+
+            <div class="form-group">
+            <!--<h4>Reward</h4>
+
+            <div class="form-group row">
+              <div class="col-xs-2">
+                <label for="rule-points">Points</label>
+                <input id="rule-points" name="points" class="form-control input-lg" value="" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="rule-name">Message</label>
+              <input id="rule-message" name="message" class="form-control input-lg" value="" />
+            </div>
+
+            <div class="form-group row">
+              <div class="col-xs-2">
+              <label for="rule-name">Priority</label>
+              <input id="rule-priority" name="priority" class="form-control input-lg" value="" />
+              </div>
+            </div>-->
+            <div class="form-group">
+              <a href="{{baseUrl}}/user/debug-user?userid={{this.user.userid}}&recalculate=true" type="submit" id="submit" class="btn btn-warning">Recalculate points</a>
+            </div>
+          </div>
+          
+          {{/if}}
+        </div>
+        <div class="w-100"></div>
+      </div>
+  </div>
+  </section>
+  <section class="py-0">
+    <div class="container">
+      <div class="row wow">
+        <div class="col-lg-4 col-md-8 mb-5">
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+</form>

@@ -63,6 +63,7 @@ CREATE TABLE earthpoints.point_event (
    userid uuid,
    is_burn boolean,
    points double,
+   priority int,
    timestamp timestamp,  
    platform varchar, 
    verb varchar,
@@ -77,6 +78,7 @@ CREATE TABLE earthpoints.point_event_by_userid (
    userid uuid,
    is_burn boolean,
    points double,
+   priority int,
    timestamp timestamp,  
    platform varchar, 
    verb varchar,
@@ -93,12 +95,40 @@ CREATE TABLE earthpoints.unsubscription (
    timestamp timestamp,
 );
 
-
-/*CREATE TABLE computation_rule (
+CREATE TABLE earthpoints.rule_instance (
    id uuid PRIMARY KEY,
-   profile_id string,
-   platform varchar,
-   auth_token varchar,
-   auth_expiration timestamp,
-   last_sync timestamp
-);*/
+   name varchar,
+   template varchar,
+   layers_json varchar,
+   enabled boolean,
+   options map<varchar, varchar>,
+   filter map<varchar, varchar>
+);
+
+INSERT INTO earthpoints.rule_instance (id, name, template, options, layers_json) 
+VALUES (now(), 'User posted with #SaveSoil', 'posted', 
+{ 
+   'points': '15',
+   'hashtags': 'SaveSoil',
+   'priority': '0',
+   'message': 'You posted about soil! Well done!'
+}, '[{"type":"FilterLayer","options":{"rules":{"condition":"AND","rules":[{"id":"content_type","field":"content_type","type":"integer","input":"select","operator":"equal","value":1,"flags":{"filter_readonly":true,"operator_readonly":true,"value_readonly":true,"no_delete":true}},{"id":"hashtags","field":"hashtags","type":"string","input":"text","operator":"contains","value":"#SaveSoil"}],"valid":true},"filters":[{"id":"platform","label":"Platform","type":"integer","input":"select","values":{"1":"Twitter","2":"Instagram","3":"Facebook"},"operators":["equal","not_equal","in","not_in","is_null","is_not_null"]},{"id":"hashtags","label":"Hashtags","type":"string"},{"id":"message","label":"Message","type":"string"},{"id":"content_type","label":"Content type","type":"integer","input":"select","values":{"1":"Post","2":"Share"},"operators":["equal"]}]}}]');
+
+
+INSERT INTO earthpoints.rule_instance (id, name, template, options, layers_json) 
+VALUES (now(), 'User shared content with #SaveSoil', 'shared', 
+{ 
+   'points': '10',
+   'hashtags': 'SaveSoil',
+   'priority': '0',
+   'message': 'You shared #SaveSoil related content.'
+}, '[{"type":"FilterLayer","options":{"rules":{"condition":"AND","rules":[{"id":"content_type","field":"content_type","type":"integer","input":"select","operator":"equal","value":2,"flags":{"filter_readonly":true,"operator_readonly":true,"value_readonly":true,"no_delete":true}},{"id":"hashtags","field":"hashtags","type":"string","input":"text","operator":"contains","value":"#SaveSoil"}],"valid":true},"filters":[{"id":"platform","label":"Platform","type":"integer","input":"select","values":{"1":"Twitter","2":"Instagram","3":"Facebook"},"operators":["equal","not_equal","in","not_in","is_null","is_not_null"]},{"id":"hashtags","label":"Hashtags","type":"string"},{"id":"message","label":"Message","type":"string"},{"id":"content_type","label":"Content type","type":"integer","input":"select","values":{"1":"Post","2":"Share"},"operators":["equal"]}]}}]');
+
+
+INSERT INTO earthpoints.rule_instance (id, name, template, options, layers_json) 
+VALUES (now(), 'User posted 5 times with #SaveSoil', 'postedNTimes', 
+{ 
+   'points': '5',
+   'priority': '0',
+   'message': 'You posted with #SaveSoil more than 5 times!'
+}, '[{"type":"FilterLayer","options":{"rules":{"condition":"AND","rules":[{"id":"content_type","field":"content_type","type":"integer","input":"select","operator":"equal","value":1,"flags":{"filter_readonly":true,"operator_readonly":true,"value_readonly":true,"no_delete":true}}],"valid":true},"filters":[{"id":"platform","label":"Platform","type":"integer","input":"select","values":{"1":"Twitter","2":"Instagram","3":"Facebook"},"operators":["equal","not_equal","in","not_in","is_null","is_not_null"]},{"id":"hashtags","label":"Hashtags","type":"string"},{"id":"message","label":"Message","type":"string"},{"id":"content_type","label":"Content type","type":"integer","input":"select","values":{"1":"Post","2":"Share"},"operators":["equal"]}]}},{"type":"UserHistoryLayer","options":{"rules":{"condition":"AND","rules":[{"id":"content_type","field":"content_type","type":"integer","input":"select","operator":"equal","value":1,"flags":{"filter_readonly":true,"operator_readonly":true,"value_readonly":true,"no_delete":true}}],"valid":true},"filters":[{"id":"platform","label":"Platform","type":"integer","input":"select","values":{"1":"Twitter","2":"Instagram","3":"Facebook"},"operators":["equal","not_equal","in","not_in","is_null","is_not_null"]},{"id":"hashtags","label":"Hashtags","type":"string"},{"id":"message","label":"Message","type":"string"},{"id":"content_type","label":"Content type","type":"integer","input":"select","values":{"1":"Post","2":"Share"},"operators":["equal"]}]}},{"type":"FilterLayer","options":{"rules":{"condition":"AND","rules":[{"id":"match_count","field":"match_count","type":"integer","input":"number","operator":"greater_or_equal","value":5}],"valid":true},"filters":[{"id":"match_count","label":"Match count","type":"integer"}]}}]');

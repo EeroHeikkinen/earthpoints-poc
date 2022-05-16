@@ -25,7 +25,7 @@ export class FiftyPointsEmailTemplate implements IEmailTemplate {
         }
         
         return {
-            template: 'fifty-points',
+            template: 'n-points-reached',
             subject: 'You have reached 50 Earth Points!',
             context: {
                 numPointsReached: 50,

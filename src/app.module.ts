@@ -19,6 +19,7 @@ import { CronModule } from './cron/cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailTemplateModule } from './email-template/email-template.module';
 import { CanvasModule } from './canvas/canvas.module';
+import { FilterModule } from './filter/filter.module';
 import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
 import { IshangamModule } from './ishangam/ishangam.module';
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -33,7 +34,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT) || 6379,
       },
-    }),    
+    }),
     AuthModule,
     CassandraModule,
     FacebookApiModule,
@@ -48,6 +49,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     CronModule,
     EmailTemplateModule,
     CanvasModule,
+    FilterModule,
     forwardRef(()=>UnsubscribeModule),
     IshangamModule,
     AnalyticsModule
