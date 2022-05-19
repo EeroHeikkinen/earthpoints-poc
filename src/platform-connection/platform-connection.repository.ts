@@ -15,6 +15,13 @@ export class PlatformConnectionRepository implements OnModuleInit {
         return (await this.mapper.find({profileId: profileid, platform: platform})).toArray();
     }
 
+    async findByPhone(phone: string) {
+        const q = `SELECT * FROM earthpoints.platform_connection WHERE phone='${phone}' ALLOW FILTERING`;
+        const result = await this.cassandraService.client.execute(q);
+
+        return result;
+    }
+
     async findByUserId(userid: any) {
         return (await this.mapper.find({userid})).toArray();
     }
