@@ -38,6 +38,7 @@ import { UpdateUserUIDto } from './user/dto/update-user-ui.dto';
 import { UserEditBadRequestExceptionFilter } from './user/user-edit-exception.filter';
 import { plainToClass, plainToClassFromExist } from 'class-transformer';
 import { UpdateUserDto } from './user/dto/update-user.dto';
+import { UpdatePlatformConnectionDto } from './platform-connection/dto/update-platform-connection.dto';
 
 @Controller()
 export class AppController {
@@ -210,8 +211,10 @@ export class AppController {
       if(connection.platform=='earthpoints'){
         hasConnectedEPBefore = true;
       }
-      if(connection.platform=='phone'){
-        userPhone = connection.profileId;
+      if(connection.phone){
+        // Note: if multiple platforms are providing a phone number then
+        // only the latest entry will get picked up here
+        userPhone = connection.phone;
       }
     }
     const haveUnconnectedPlatforms = Object.values(platforms).some(
@@ -631,8 +634,13 @@ export class AppController {
       throw new BadRequestException("user not found!");
 
     const userWithEmail = await this.userService.findByEmail(body.email);
-    if(userWithEmail && (userWithEmail.userid.toString() != user.userid.toString()))
-      throw new BadRequestException("This E-Mail is being used by another user!");
+    if (
+      userWithEmail &&
+      userWithEmail.userid.toString() != user.userid.toString()
+    ) {
+      await this.userService.merge(req.user.userid, userWithEmail.userid);
+      //throw new BadRequestException("This E-Mail is being used by another user!");
+    }
 
     const userToUpdate = plainToClassFromExist(user,body);
     userToUpdate.emails.push(body.email);
