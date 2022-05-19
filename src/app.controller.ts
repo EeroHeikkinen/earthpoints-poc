@@ -319,28 +319,47 @@ export class AppController {
     formattedPhone = '+' + formattedPhone.replace(/\D/g, '');
 
     const user = req.user as User;
-    const existingUserId =
-      await this.userService.findOrCreateUserByEmailOrPlatform({
-        emails: [],
-        profileId: formattedPhone,
-        firstName: null,
-        platform: 'phone',
-      });
 
-    if (existingUserId) {
-      // There's an existing user with points received for phone
-      // We need to merge these profiles now
-      await this.userService.merge(user.userid, existingUserId);
+    /* Let's check first if there's already a platform connection object
+      for this 'earthpoints' platform (our platform itself, we are going a bit meta) */
+    const previousResults: UpdatePlatformConnectionDto[] =
+      await this.platformConnectionService.findByProfileIdAndPlatform(
+        user.userid,
+        'earthpoints',
+      );
+    let toUpdate;
+    if (previousResults && previousResults.length) {
+      toUpdate = previousResults[0];
+    }
+    if (!previousResults) {
+      /* No? Let's create one from scratch */
+      toUpdate = {
+        profile_id: user.userid,
+        platform: 'earthpoints',
+        auth_token: undefined,
+        auth_expiration: undefined,
+        emails: undefined,
+      };
     }
 
-    await this.platformConnectionService.create({
-      userid: user.userid,
-      profile_id: phoneNumber,
-      platform: 'phone',
-      auth_token: undefined,
-      auth_expiration: undefined,
-      emails: undefined,
-    });
+    /* Let's also check if there's some other user with this phone number 
+       If there is one, we may want to merge it into the logged in user */
+
+    const existingPlatConnsWithThisPhone =
+      await this.platformConnectionService.findByPhone(formattedPhone);
+    for (const existingPlatConn of existingPlatConnsWithThisPhone) {
+      if (existingPlatConn.userid !== user.userid) {
+        // There's an existing user registered with this phone number
+        // Let's merge these profiles now
+        await this.userService.merge(user.userid, existingPlatConn.userid);
+        /* Side effect: the old 'earthpoints' platform connection entry will get merged into the logged in user
+           Which the below update call will overwrite with data from the logged in user */
+      }
+    }
+
+    await this.platformConnectionService.update(toUpdate);
+
+    // This is a bit funny to still use since it uses the "account connected" terminology, but maybe fine...
     await this.pointEventService.rewardAccountConnected(user.userid, 'phone');
   }
 
@@ -642,10 +661,26 @@ export class AppController {
       //throw new BadRequestException("This E-Mail is being used by another user!");
     }
 
-    const userToUpdate = plainToClassFromExist(user,body);
-    userToUpdate.emails.push(body.email);
+    const userToUpdate = plainToClassFromExist(user, body);
+    if (!userToUpdate.emails.includes(body.email)) {
+      userToUpdate.emails.push(body.email);
+    }
 
     const result = await this.userService.update(userToUpdate);
+
+    if (body.phone) {
+      const existingPlatConnsWithThisPhone =
+        await this.platformConnectionService.findByPhone(body.phone);
+      for (const existingPlatConn of existingPlatConnsWithThisPhone) {
+        if (existingPlatConn.userid !== user.userid) {
+          // There's an existing user registered with this phone number
+          // Let's merge these profiles now
+          await this.userService.merge(user.userid, existingPlatConn.userid);
+          /* Side effect: the old 'earthpoints' platform connection entry will get merged into the logged in user
+            Which the below create call will overwrite with data from the logged in user */
+        }
+      }
+    }
 
     await this.platformConnectionService.create({
       userid: userToUpdate.userid,
@@ -654,9 +689,10 @@ export class AppController {
       auth_token: null,
       auth_expiration: null,
       emails: userToUpdate.emails,
-    });   
-    
-    if(body.countryCode == 'IN'){
+      ...(body.phone ? { phone: body.phone } : {}),
+    });
+
+    /*if(body.countryCode == 'IN'){
       await this.platformConnectionService.create({
         userid: userToUpdate.userid,
         profile_id: body.phone,
@@ -665,7 +701,7 @@ export class AppController {
         auth_expiration: undefined,
         emails: undefined,
       });  
-    }
+    }*/
 
     return {result: "done"};
   }  

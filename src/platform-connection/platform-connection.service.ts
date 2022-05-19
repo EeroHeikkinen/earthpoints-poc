@@ -18,6 +18,10 @@ export class PlatformConnectionService {
     return await this.repository.findByUserId(userid);
   }
 
+  async findByPhone(phone: string) {
+    return await this.repository.findByPhone(phone);
+  }
+
   async findByProfileIdAndPlatform(profileid: string, platform: string) {
     return await this.repository.findByProfileIdAndPlatform(profileid, platform)
   }
